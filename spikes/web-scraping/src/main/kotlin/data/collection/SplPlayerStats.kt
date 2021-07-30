@@ -1,14 +1,16 @@
 package data.collection
 
 import data.SmiteRole
+import data.SplTeamName
 
-class SplPlayerStats(
-    name: String,
-    role: SmiteRole,
-    kills: Int,
-    deaths: Int,
-    assists: Int,
-    playerDamage: Int
+data class SplPlayerStats(
+    val name: String = "",
+    val splTeam: SplTeamName = SplTeamName.NONE,
+    val role: SmiteRole = SmiteRole.NONE,
+    val kills: Int = -1,
+    val deaths: Int = -1,
+    val assists: Int = -1,
+    var playerDamage: Int = -1
 ) {
 
 }

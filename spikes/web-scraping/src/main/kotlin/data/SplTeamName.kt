@@ -8,5 +8,6 @@ enum class SplTeamName {
     ONI,
     SOLAR,
     TITAN,
-    VALKS
+    VALKS,
+    NONE
 }
