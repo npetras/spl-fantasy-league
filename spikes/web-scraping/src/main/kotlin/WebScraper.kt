@@ -1,5 +1,6 @@
 import data.collection.SplPlayerStats
 import org.openqa.selenium.By
+import org.openqa.selenium.WebElement
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.interactions.Actions
 
@@ -47,7 +48,7 @@ fun main() {
         val game1WinningTeamStatsXpath =
             "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[1]/div/div/div"
 
-        val game1WinningTeamStats = scrapeBasicStats(
+        val game1WinningTeamBasicStats = scrapeBasicStats(
             driver = driver, xpath = game1WinningTeamStatsXpath, teamName = game1WinningTeamText
         )
 
@@ -56,39 +57,57 @@ fun main() {
             "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[2]/div/table/tbody/tr"
         val g1WinTeamAdditionalStats = driver.findElementsByXPath(g1WinTeamAdditionalStatsXpath)
 
-        for ((i, player) in g1WinTeamAdditionalStats.withIndex()) {
-            val name = player.findElement(By.className("name")).text.uppercase()
-            val playerDamage = player.findElement(By.className("damage")).text
-            val playerDamageInt = playerDamage.replace(",", "").toInt()
-
-            val playerStats = game1WinningTeamStats[i]
-
-            if (playerStats.name == name) {
-                playerStats.playerDamage = playerDamageInt
-            } else {
-                System.err.println("Names do not match")
-            }
-
-            println(playerStats)
-        }
+        val game1WinningTeamCompleteStats = scrapeAdditionalStats(additionalStatsTable = g1WinTeamAdditionalStats, 
+            teamGameStats = game1WinningTeamBasicStats)
 
         println()
 
         // get stats for team 2
-        val game2WinningTeamStatsXpath =
+        val game1LosingTeamStatsXpath =
             "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[4]/div/div/div"
-        val game2WinningTeam =
+        val game1LosingTeam =
             driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[3]/h2")
-        val game2WinningTeamText = game2WinningTeam.text.substringBefore(" ")
+        val game1LosingTeamText = game1LosingTeam.text.substringBefore(" ")
 
-        val game2WinningTeamStats = scrapeBasicStats(
-            driver = driver, xpath = game2WinningTeamStatsXpath,
-            teamName = game2WinningTeamText
+        val game1LosingTeamBasicStats = scrapeBasicStats(
+            driver = driver, xpath = game1LosingTeamStatsXpath,
+            teamName = game1LosingTeamText
+        )
+
+        val g1LoseTeamAdditionalStatsXpath =
+            "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[5]/div/table/tbody/tr"
+        val g1LoseTeamAdditionalStats = driver.findElementsByXPath(g1LoseTeamAdditionalStatsXpath)
+
+        val game1LosingTeamCompleteStats = scrapeAdditionalStats(
+            additionalStatsTable = g1LoseTeamAdditionalStats,
+            teamGameStats = game1LosingTeamBasicStats
         )
 
     } finally {
         driver.quit()
     }
+}
+
+private fun scrapeAdditionalStats(
+    additionalStatsTable: List<WebElement>,
+    teamGameStats: ArrayList<SplPlayerStats>
+): ArrayList<SplPlayerStats> {
+    for ((i, player) in additionalStatsTable.withIndex()) {
+        val name = player.findElement(By.className("name")).text.uppercase()
+        val playerDamage = player.findElement(By.className("damage")).text
+        val playerDamageInt = playerDamage.replace(",", "").toInt()
+
+        val playerStats = teamGameStats[i]
+
+        if (playerStats.name == name) {
+            playerStats.playerDamage = playerDamageInt
+        } else {
+            System.err.println("Names do not match")
+        }
+
+        println(playerStats)
+    }
+    return teamGameStats
 }
 
 private fun scrapeBasicStats(driver: FirefoxDriver, xpath: String, teamName: String): ArrayList<SplPlayerStats> {
