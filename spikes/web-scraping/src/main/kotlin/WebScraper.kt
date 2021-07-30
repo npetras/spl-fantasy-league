@@ -13,72 +13,48 @@ fun main() {
         Thread.sleep(1000)
         // accept cookies
         acceptCookies(driver, actionProvider)
-
         // move to the previous week
         navigateToStats(driver, actionProvider)
 
         // get the date of the first sets
         val date = driver.findElementByCssSelector("div.c-MatchSummaryCard:nth-child(1) > h2:nth-child(1)")
         println(date.text)
-        val jadeDragons = driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[3]/div[1]/div/div[1]/div[1]/div[6]/div[1]/p")
+        val jadeDragons =
+            driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[3]/div[1]/div/div[1]/div[1]/div[6]/div[1]/p")
         println(jadeDragons.text)
 
         // open the stats for the game
         openGameStats(driver, actionProvider)
 
         // get the team name & match score
-        val team1Name = driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/div/div[1]/div/strong")
-        val team2Name = driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/div/div[3]/div/strong")
-        val team1Score = driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/div/div[2]/div[1]/div[1]")
-        val team2Score = driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/div/div[2]/div[1]/div[3]")
+        val team1Name =
+            driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/div/div[1]/div/strong")
+        val team2Name =
+            driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/div/div[3]/div/strong")
+        val team1Score =
+            driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/div/div[2]/div[1]/div[1]")
+        val team2Score =
+            driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/div/div[2]/div[1]/div[3]")
         println(team1Name.text)
         println(team2Name.text)
         println(team1Score.text)
         println(team2Score.text)
 
-        // Algorithm for scraping game stats
-        val game1WinningTeam = driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[1]/h2")
+        // Scrape stats for team 1
+        val game1WinningTeam =
+            driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[1]/h2")
         val game1WinningTeamText = game1WinningTeam.text.substringBefore(" ")
-        println(game1WinningTeamText)
+        val game1WinningTeamStatsXpath =
+            "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[1]/div/div/div"
 
-        val game1WinningTeamStatsXpath = "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[1]/div/div/div"
-        val game1WinningTeamPlayer1Name = driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[1]/div/div/div[10]")
-        val game1WinningTeamPlayer1Role = driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[1]/div/div/div[11]")
-        println(game1WinningTeamPlayer1Name.text)
-        println(game1WinningTeamPlayer1Role.text)
-
-        val game1WinningTeamStats = arrayListOf<SplPlayerStats>()
-        var divNum = 10
-
-        for (i in 1..5) {
-
-            val name = driver.findElementByXPath("$game1WinningTeamStatsXpath[$divNum]").text
-            divNum += 1
-            val role = driver.findElementByXPath("$game1WinningTeamStatsXpath[$divNum]").text
-            divNum += 2
-            val kills = driver.findElementByXPath("$game1WinningTeamStatsXpath[$divNum]").text
-            divNum +=1
-            val deaths = driver.findElementByXPath("$game1WinningTeamStatsXpath[$divNum]").text
-            divNum +=1
-            val assists = driver.findElementByXPath("$game1WinningTeamStatsXpath[$divNum]").text
-            divNum += 4
-
-            val playerStats = SplPlayerStats(name = name.uppercase(),
-                splTeam = enumValueOf(game1WinningTeamText),
-                role = enumValueOf(role),
-                kills = kills.toInt(),
-                deaths = deaths.toInt(),
-                assists = assists.toInt()
-            )
-            println(playerStats)
-            game1WinningTeamStats.add(playerStats)
-        }
-        println()
+        val game1WinningTeamStats = scrapeBasicStats(
+            driver = driver, xpath = game1WinningTeamStatsXpath, teamName = game1WinningTeamText
+        )
 
         // get damage stats for team 1
-        val g1WinTeamAdditionalStatsXpath = "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[2]/div/table/tbody/tr"
+        val g1WinTeamAdditionalStatsXpath =
+            "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[2]/div/table/tbody/tr"
         val g1WinTeamAdditionalStats = driver.findElementsByXPath(g1WinTeamAdditionalStatsXpath)
-        // for every tr
 
         for ((i, player) in g1WinTeamAdditionalStats.withIndex()) {
             val name = player.findElement(By.className("name")).text.uppercase()
@@ -96,43 +72,58 @@ fun main() {
             println(playerStats)
         }
 
+        println()
+
         // get stats for team 2
-        val game2WinningTeamStatsXpath = "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[4]/div/div/div"
-        val game2WinningTeam = driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[3]/h2")
+        val game2WinningTeamStatsXpath =
+            "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[4]/div/div/div"
+        val game2WinningTeam =
+            driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[3]/h2")
         val game2WinningTeamText = game2WinningTeam.text.substringBefore(" ")
 
-        val game2WinningTeamStats = arrayListOf<SplPlayerStats>()
-        var team2DivNum = 10
-
-        for (i in 1..5) {
-
-            val name = driver.findElementByXPath("$game2WinningTeamStatsXpath[$team2DivNum]").text
-            team2DivNum += 1
-            val role = driver.findElementByXPath("$game2WinningTeamStatsXpath[$team2DivNum]").text
-            team2DivNum += 2
-            val kills = driver.findElementByXPath("$game2WinningTeamStatsXpath[$team2DivNum]").text
-            team2DivNum +=1
-            val deaths = driver.findElementByXPath("$game2WinningTeamStatsXpath[$team2DivNum]").text
-            team2DivNum +=1
-            val assists = driver.findElementByXPath("$game2WinningTeamStatsXpath[$team2DivNum]").text
-            team2DivNum += 4
-
-            val playerStats = SplPlayerStats(name = name.uppercase(),
-                splTeam = enumValueOf(game2WinningTeamText),
-                role = enumValueOf(role),
-                kills = kills.toInt(),
-                deaths = deaths.toInt(),
-                assists = assists.toInt()
-            )
-            println(playerStats)
-            game2WinningTeamStats.add(playerStats)
-        }
-        println()
+        val game2WinningTeamStats = scrapeBasicStats(
+            driver = driver, xpath = game2WinningTeamStatsXpath,
+            teamName = game2WinningTeamText
+        )
 
     } finally {
         driver.quit()
     }
 }
+
+private fun scrapeBasicStats(driver: FirefoxDriver, xpath: String, teamName: String): ArrayList<SplPlayerStats> {
+
+    val teamsGameStats = arrayListOf<SplPlayerStats>()
+    var divNum = 10
+
+    for (i in 1..5) {
+
+        val name = driver.findElementByXPath("$xpath[$divNum]").text
+        divNum += 1
+        val role = driver.findElementByXPath("$xpath[$divNum]").text
+        divNum += 2
+        val kills = driver.findElementByXPath("$xpath[$divNum]").text
+        divNum += 1
+        val deaths = driver.findElementByXPath("$xpath[$divNum]").text
+        divNum += 1
+        val assists = driver.findElementByXPath("$xpath[$divNum]").text
+        divNum += 4
+
+        val playerStats = SplPlayerStats(
+            name = name.uppercase(),
+            splTeam = enumValueOf(teamName),
+            role = enumValueOf(role),
+            kills = kills.toInt(),
+            deaths = deaths.toInt(),
+            assists = assists.toInt()
+        )
+        println(playerStats)
+        teamsGameStats.add(playerStats)
+    }
+    println()
+    return teamsGameStats
+}
+
 
 private fun openGameStats(
     driver: FirefoxDriver,
