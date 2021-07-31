@@ -2,7 +2,8 @@ package data.collection
 
 import data.SplTeamName
 
-class SplGame(team1Stats: ArrayList<SplPlayerStats>,
-              team2Stats: ArrayList<SplPlayerStats>
+data class SplGame(
+    val team1Stats: ArrayList<SplPlayerStats>,
+    val team2Stats: ArrayList<SplPlayerStats>
 ) {
 }
