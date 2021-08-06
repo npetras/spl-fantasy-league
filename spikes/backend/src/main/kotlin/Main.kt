@@ -5,6 +5,7 @@ import org.openqa.selenium.By
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.interactions.Actions
+import scoring.scoreMatch
 
 fun main() {
     val driver = FirefoxDriver()
@@ -97,7 +98,7 @@ fun main() {
                 teamGameStats = losingTeamBasicStats
             )
 
-            val game = SplGame(team1Stats = winningTeamCompleteStats, team2Stats = losingTeamCompleteStats)
+            val game = SplGame(winningTeamStats = winningTeamCompleteStats, losingTeamStats = losingTeamCompleteStats)
             matchGames.add(game)
 
             // navigate to next game
@@ -126,7 +127,7 @@ fun main() {
     }
 
     // score the match
-
+    scoreMatch(splMatch)
 }
 
 private fun scrapeAdditionalStats(
