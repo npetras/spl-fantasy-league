@@ -1,10 +1,10 @@
 package scoring
 
 import data.SmiteRole
+import data.SplTeamName
 import data.collection.SplMatch
 import data.collection.SplPlayerStats
 import data.extraction.SplPlayerMatchScore
-import java.lang.Math.floor
 
 // standard pts
 const val CARRIES_KILL = 2.0
@@ -34,75 +34,82 @@ const val CARRIES_ASSIST_THRESHOLD = 10.0
 const val CARRIES_ASSIST_THRESHOLD_PTS = 1.0
 
 fun scoreMatch(splMatch: SplMatch) {
-    // make Array List team based?
-    val team1Scores = arrayListOf<SplPlayerMatchScore>()
-    val team2Scores = arrayListOf<SplPlayerMatchScore>()
+    // create SplPlayerMatchScore objects
+    val homeTeamScores = createTeamScoresBase(
+        winningTeamName = splMatch.games[0].orderTeamName,
+        teamName = splMatch.homeTeam,
+        winningTeamStats = splMatch.games[0].winningTeamStats,
+        losingTeamStats = splMatch.games[0].losingTeamStats
+    )
+
+    val awayTeamScores = createTeamScoresBase(
+        winningTeamName = splMatch.games[0].orderTeamName,
+        teamName = splMatch.awayTeam,
+        winningTeamStats = splMatch.games[0].winningTeamStats,
+        losingTeamStats = splMatch.games[0].losingTeamStats
+    )
 
     // get score for independent stats
     for (game in splMatch.games) {
         // independent stats for winning team
         for (playerStats in game.winningTeamStats) {
-            if (playerStats.splTeam == splMatch.team1) {
-                team1Scores.add(calculateIndependentStats(playerStats))
-            } else if (playerStats.splTeam == splMatch.team2) {
-                team2Scores.add(calculateIndependentStats(playerStats))
-            } else {
-                System.err.println("Error")
-            }
+            calculateAndRecordIndependentPlayerStats(
+                playerStats = playerStats,
+                homeTeam = splMatch.homeTeam,
+                awayTeam = splMatch.awayTeam,
+                homeTeamScores = homeTeamScores,
+                awayTeamScores = awayTeamScores
+            )
         }
         // independent stats for losing team
         for (playerStats in game.losingTeamStats) {
-            if (playerStats.splTeam == splMatch.team1) {
-                team1Scores.add(calculateIndependentStats(playerStats))
-            } else if (playerStats.splTeam == splMatch.team2) {
-                team2Scores.add(calculateIndependentStats(playerStats))
-            } else {
-                System.err.println("Error")
-            }
+            calculateAndRecordIndependentPlayerStats(
+                playerStats = playerStats,
+                homeTeam = splMatch.homeTeam,
+                awayTeam = splMatch.awayTeam,
+                homeTeamScores = homeTeamScores,
+                awayTeamScores = awayTeamScores
+            )
         }
     }
 
-    println(team1Scores)
-    println(team2Scores)
+    println("Home Team Scores: ")
+    println(homeTeamScores)
+    println("Away Team Scores: ")
+    println(awayTeamScores)
 
     // get scores for game wide stats
+    // top damage score
     for ((gameNum, game) in splMatch.games.withIndex()) {
-        // top damage for each team
-        var topDamageWinningTeam = SplPlayerStats()
-        for (playerStats in game.winningTeamStats) {
-            if (playerStats.playerDamage > topDamageWinningTeam.playerDamage) {
-                topDamageWinningTeam = playerStats
-            } else if (playerStats.playerDamage < topDamageWinningTeam.playerDamage) {
-                 continue
-            } else {
-                System.err.println("Two player damage numbers are equal to each other")
-            }
-        }
+        val topDamageWinningTeam = findTopDamagePlayerTeam(game.winningTeamStats)
+        recordTopDamagePlayerTeam(
+            topDamagePlayerTeam = topDamageWinningTeam,
+            homeTeam = splMatch.homeTeam,
+            awayTeam = splMatch.awayTeam,
+            homeTeamScores = homeTeamScores,
+            awayTeamScores = awayTeamScores,
+            gameNum = gameNum
+        )
 
-        if (topDamageWinningTeam.splTeam == splMatch.team1) {
-            val playerTeam1TopDmg = team1Scores.find { it.name == topDamageWinningTeam.name }
-            println(playerTeam1TopDmg)
-            playerTeam1TopDmg?.gameScores?.set(gameNum, TOP_DAMAGE_TEAM)
-            println(gameNum)
-            println(playerTeam1TopDmg)
-        } else if (topDamageWinningTeam.splTeam == splMatch.team2) {
-            val playerTeam2TopDmg = team1Scores.find { it.name == topDamageWinningTeam.name }
-            println(playerTeam2TopDmg)
-            playerTeam2TopDmg?.gameScores?.set(gameNum, TOP_DAMAGE_TEAM)
-            println(gameNum)
-            println(playerTeam2TopDmg)
-        } else {
-            System.err.println("Error neither team matches")
-        }
-
-        for (playerStats in game.losingTeamStats) {
-
-        }
+        val topDamageLosingTeam = findTopDamagePlayerTeam(game.losingTeamStats)
+        recordTopDamagePlayerTeam(
+            topDamagePlayerTeam = topDamageLosingTeam,
+            homeTeam = splMatch.homeTeam,
+            awayTeam = splMatch.awayTeam,
+            homeTeamScores = homeTeamScores,
+            awayTeamScores = awayTeamScores,
+            gameNum = gameNum
+        )
 
     }
 
+    for ((gameNum, game) in splMatch.games.withIndex()) {
+        val topAssistsWinningTeam = findAssistsPlayerTeam(game.winningTeamStats)
+    }
+
+
     // per team stats
-    //      top damage on team
+    //      top damage on team - DONE
     //      support - top assists on team?
     // overall game stats
     //      support - top assists in the game?
@@ -113,52 +120,126 @@ fun scoreMatch(splMatch: SplMatch) {
 
 }
 
-fun findTopDamageOnTeam(team: ArrayList<SplPlayerStats>, splMatch: SplMatch, team1Scores: SplPlayerMatchScore) {
-    var topDamagePlayer = SplPlayerStats()
-    for (playerStats in team) {
-        if (playerStats.playerDamage > topDamagePlayer.playerDamage) {
-            topDamagePlayer = playerStats
-        } else if (playerStats.playerDamage < topDamagePlayer.playerDamage) {
+fun findAssistsPlayerTeam(teamStats: ArrayList<SplPlayerStats>): SplPlayerStats {
+    var topAssistTeam = SplPlayerStats()
+    for (playerStats in teamStats) {
+        if (playerStats.assists > topAssistTeam.assists) {
+            topAssistTeam = playerStats
+        } else if (playerStats.assists < topAssistTeam.assists) {
+            continue
+        } else {
+            // if support is equal to another player they get credit
+            if (playerStats.role == SmiteRole.SUPPORT) {
+                topAssistTeam = playerStats
+            }
+        }
+    }
+    println(topAssistTeam)
+    return topAssistTeam
+}
+
+private fun recordTopDamagePlayerTeam(
+    topDamagePlayerTeam: SplPlayerStats,
+    homeTeam: SplTeamName,
+    awayTeam: SplTeamName,
+    homeTeamScores: ArrayList<SplPlayerMatchScore>,
+    awayTeamScores: ArrayList<SplPlayerMatchScore>,
+    gameNum: Int
+) {
+    when (topDamagePlayerTeam.splTeam) {
+        homeTeam -> {
+            val playerInHomeTeam = homeTeamScores.find { it.name == topDamagePlayerTeam.name }
+            playerInHomeTeam?.gameScores?.set(gameNum, TOP_DAMAGE_TEAM)
+        }
+        awayTeam -> {
+            val playerInAwayTeam = awayTeamScores.find { it.name == topDamagePlayerTeam.name }
+            playerInAwayTeam?.gameScores?.set(gameNum, TOP_DAMAGE_TEAM)
+        }
+        else -> {
+            System.err.println("Error")
+        }
+    }
+}
+
+private fun findTopDamagePlayerTeam(teamStats: ArrayList<SplPlayerStats>): SplPlayerStats {
+    var topDamageTeam = SplPlayerStats()
+    for (playerStats in teamStats) {
+        if (playerStats.playerDamage > topDamageTeam.playerDamage) {
+            topDamageTeam = playerStats
+        } else if (playerStats.playerDamage < topDamageTeam.playerDamage) {
             continue
         } else {
             System.err.println("Two player damage numbers are equal to each other")
         }
     }
+    println(topDamageTeam)
+    return topDamageTeam
+}
 
-    if (topDamagePlayer.splTeam == splMatch.team1) {
-        val playerTeam1TopDmg = team1Scores.find { it.name == topDamageWinningTeam.name }
-        println(playerTeam1TopDmg)
-        playerTeam1TopDmg?.gameScores?.set(gameNum, TOP_DAMAGE_TEAM)
-        println(gameNum)
-        println(playerTeam1TopDmg)
-    } else if (topDamagePlayer.splTeam == splMatch.team2) {
-        val playerTeam2TopDmg = team1Scores.find { it.name == topDamageWinningTeam.name }
-        println(playerTeam2TopDmg)
-        playerTeam2TopDmg?.gameScores?.set(gameNum, TOP_DAMAGE_TEAM)
-        println(gameNum)
-        println(playerTeam2TopDmg)
-    } else {
-        System.err.println("Error neither team matches")
+private fun calculateAndRecordIndependentPlayerStats(
+    playerStats: SplPlayerStats,
+    homeTeam: SplTeamName,
+    awayTeam: SplTeamName,
+    homeTeamScores: ArrayList<SplPlayerMatchScore>,
+    awayTeamScores: ArrayList<SplPlayerMatchScore>
+) {
+    val playerIndependentScore = calculateIndependentStats(playerStats)
+
+    when (playerStats.splTeam) {
+        homeTeam -> {
+            val playerInHomeTeam = homeTeamScores.find { it.name == playerStats.name }
+            playerInHomeTeam?.gameScores?.add(playerIndependentScore)
+        }
+        awayTeam -> {
+            val playerInAwayTeam = awayTeamScores.find { it.name == playerStats.name }
+            playerInAwayTeam?.gameScores?.add(playerIndependentScore)
+        }
+        else -> {
+            System.err.println("Error")
+        }
     }
 }
 
-fun calculateIndependentStats(playerStats: SplPlayerStats): SplPlayerMatchScore {
-    // make below code into a function
-    val playerMatchScore = SplPlayerMatchScore(
+fun createSplMatchScore(playerStats: SplPlayerStats): SplPlayerMatchScore {
+    return SplPlayerMatchScore(
         name = playerStats.name,
         role = playerStats.role,
         team = playerStats.splTeam
     )
+}
 
+fun createTeamScoresBase(
+    winningTeamName: SplTeamName,
+    teamName: SplTeamName,
+    winningTeamStats: ArrayList<SplPlayerStats>,
+    losingTeamStats: ArrayList<SplPlayerStats>
+): ArrayList<SplPlayerMatchScore> {
+    val teamScores = arrayListOf<SplPlayerMatchScore>()
+
+    if (winningTeamName == teamName) {
+        for (playerStats in winningTeamStats) {
+            teamScores.add(createSplMatchScore(playerStats))
+        }
+    } else {
+        for (playerStats in losingTeamStats) {
+            teamScores.add(createSplMatchScore(playerStats))
+        }
+    }
+    return teamScores
+}
+
+fun calculateIndependentStats(playerStats: SplPlayerStats): Double {
+    // make below code into a function
+    var independentGameScore = 0.0
     when (playerStats.role) {
         SmiteRole.HUNTER, SmiteRole.JUNGLE, SmiteRole.MID ->
-            playerMatchScore.gameScores.add(calculateCarryIndepedentStats(playerStats))
+            independentGameScore = calculateCarryIndepedentStats(playerStats)
         SmiteRole.SOLO, SmiteRole.SUPPORT ->
-            playerMatchScore.gameScores.add(calculateTankIndepedentStats(playerStats))
+            independentGameScore = calculateTankIndepedentStats(playerStats)
         else ->
             System.err.println("Error, player does not fall into the two valid role types")
     }
-    return playerMatchScore
+    return independentGameScore
 }
 
 fun calculateTankIndepedentStats(playerStats: SplPlayerStats): Double {

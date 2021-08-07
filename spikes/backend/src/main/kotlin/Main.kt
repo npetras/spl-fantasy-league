@@ -98,12 +98,18 @@ fun main() {
                 teamGameStats = losingTeamBasicStats
             )
 
-            val game = SplGame(winningTeamStats = winningTeamCompleteStats, losingTeamStats = losingTeamCompleteStats)
+            val game = SplGame(
+                orderTeamName = enumValueOf(winningTeamText),
+                chaosTeamName = enumValueOf(losingTeamText),
+                winningTeamStats = winningTeamCompleteStats,
+                losingTeamStats = losingTeamCompleteStats
+            )
+            println(game)
             matchGames.add(game)
 
             // navigate to next game
             if (gameNum < numOfGames) {
-                val nextGameXPath = "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[1]/div[${gameNum+1}]"
+                val nextGameXPath = "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[1]/div[${gameNum + 1}]"
                 val nextGameButton = driver.findElementByXPath(nextGameXPath)
                 actionProvider.clickAndHold(nextGameButton).build().perform()
                 actionProvider.release(nextGameButton).build().perform()
@@ -111,11 +117,12 @@ fun main() {
 
         }
 
-        splMatch = SplMatch(date = dateText,
-            team1 = enumValueOf(team1NameText),
-            team2 = enumValueOf(team2NameText),
-            team1Score = team1ScoreInt,
-            team2Score = team2ScoreInt,
+        splMatch = SplMatch(
+            date = dateText,
+            homeTeam = enumValueOf(team1NameText),
+            awayTeam = enumValueOf(team2NameText),
+            homeTeamScore = team1ScoreInt,
+            awayTeamScore = team2ScoreInt,
             games = matchGames
         )
 
