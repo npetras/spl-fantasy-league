@@ -18,7 +18,7 @@ data class SplPlayerMatchScore(
             }
             this.overallMatchScore = cumulativeScore
         } else {
-            System.out.println("Game scores are empty")
+            println("Game scores are empty")
         }
     }
 }

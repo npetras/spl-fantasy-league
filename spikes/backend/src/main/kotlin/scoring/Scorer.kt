@@ -142,20 +142,107 @@ fun scoreMatch(splMatch: SplMatch) {
     }
 
     // find and record the score for Player with the top kills in the game
+    for ((gameNum, game) in splMatch.games.withIndex()) {
+        val topKillsPlayerGame = findTopKillsPlayer(
+            (game.winningTeamStats + game.losingTeamStats) as ArrayList<SplPlayerStats>
+        )
+        recordTopKillsPlayerGame(
+            topKillPlayerGame = topKillsPlayerGame,
+            homeTeam = splMatch.homeTeam,
+            awayTeam = splMatch.awayTeam,
+            homeTeamScores = homeTeamScores,
+            awayTeamScores = awayTeamScores,
+            gameNum = gameNum
+        )
+    }
+
+    // calculate overall match score
+    for (playerScore in homeTeamScores) {
+        playerScore.calculateOverallMatchScore()
+    }
+    for (playerScore in awayTeamScores) {
+        playerScore.calculateOverallMatchScore()
+    }
+
 
     // record extra points for teams that win in 2-0 'sweep' fashion
-    
+    // done afterwards because it is a per match score not a per game score
+    if (splMatch.homeTeamScore == 2 && splMatch.awayTeamScore == 0) {
+        for (playerScore in homeTeamScores) {
+            playerScore.overallMatchScore += SWEEP_VICTORY
+        }
+    } else if (splMatch.homeTeamScore == 0 && splMatch.awayTeamScore == 2) {
+        for (playerScore in awayTeamScores) {
+            playerScore.overallMatchScore += SWEEP_VICTORY
+        }
+    }
 
-    // per team stats
-    //      top damage on team - DONE
-    //      support - top assists on team?
-    // overall game stats
-    //      support - top assists in the game?
-    //      top kills - pts change depending on if it is Carry role or solo
-    //                  supports get no points for top kills
-    // sweep victory ?
-    //      check the score and identify the players that need to gain the extra point on their score
 
+    println("${splMatch.homeTeam} Home Team Scores")
+    for (playerScore in homeTeamScores) {
+        println("${playerScore.name} ${playerScore.gameScores} ${playerScore.overallMatchScore}")
+    }
+
+    println()
+    println("${splMatch.awayTeam} Away Team Scores")
+    for (playerScore in awayTeamScores) {
+        println("${playerScore.name} ${playerScore.gameScores} ${playerScore.overallMatchScore}")
+    }
+}
+
+fun findTopKillsPlayer(teamStats: ArrayList<SplPlayerStats>): SplPlayerStats {
+    var topKillsPlayer = SplPlayerStats()
+    for (playerStats in teamStats) {
+        if (playerStats.kills > topKillsPlayer.kills) {
+            topKillsPlayer = playerStats
+        } else if (playerStats.kills < topKillsPlayer.kills) {
+            continue
+        } else {
+            continue
+        }
+    }
+    println(topKillsPlayer)
+    return topKillsPlayer
+}
+
+fun recordTopKillsPlayerGame(
+    topKillPlayerGame: SplPlayerStats,
+    homeTeam: SplTeamName,
+    awayTeam: SplTeamName,
+    homeTeamScores: ArrayList<SplPlayerMatchScore>,
+    awayTeamScores: ArrayList<SplPlayerMatchScore>,
+    gameNum: Int
+) {
+    when (topKillPlayerGame.splTeam) {
+        homeTeam -> {
+            val playerInHomeTeam = homeTeamScores.find { it.name == topKillPlayerGame.name }
+            recordTopKillPtsBasedOnRole(playerInHomeTeam, gameNum)
+        }
+        awayTeam -> {
+            val playerInAwayTeam = awayTeamScores.find { it.name == topKillPlayerGame.name }
+            recordTopKillPtsBasedOnRole(playerInAwayTeam, gameNum)
+        }
+        else -> {
+            System.err.println("Error")
+        }
+    }
+}
+
+private fun recordTopKillPtsBasedOnRole(topKillsPlayer: SplPlayerMatchScore?, gameNum: Int) {
+    when (topKillsPlayer?.role) {
+        SmiteRole.JUNGLE, SmiteRole.MID, SmiteRole.HUNTER -> {
+            topKillsPlayer.gameScores[gameNum] += CARRIES_TOP_KILLS_GAME
+        }
+        SmiteRole.SOLO -> {
+            topKillsPlayer.gameScores[gameNum] += SOLO_TOP_KILLS_GAME
+        }
+        SmiteRole.SUPPORT -> {
+            println("Support had top kills in the game")
+        }
+        else -> {
+            System.err.println("Error")
+        }
+    }
 }
 
 fun recordTopAssistPlayerGame(
@@ -325,27 +412,27 @@ fun calculateIndependentStats(playerStats: SplPlayerStats): Double {
     var independentGameScore = 0.0
     when (playerStats.role) {
         SmiteRole.HUNTER, SmiteRole.JUNGLE, SmiteRole.MID ->
-            independentGameScore = calculateCarryIndepedentStats(playerStats)
+            independentGameScore = calculateCarryIndependentStats(playerStats)
         SmiteRole.SOLO, SmiteRole.SUPPORT ->
-            independentGameScore = calculateTankIndepedentStats(playerStats)
+            independentGameScore = calculateTankIndependentStats(playerStats)
         else ->
             System.err.println("Error, player does not fall into the two valid role types")
     }
     return independentGameScore
 }
 
-fun calculateTankIndepedentStats(playerStats: SplPlayerStats): Double {
+fun calculateCarryIndependentStats(playerStats: SplPlayerStats): Double {
     val killPts = playerStats.kills * CARRIES_KILL
-    println("${playerStats.name} Kill points: $killPts")
     val deathsPts = playerStats.deaths * DEATH
     val assistBonusPts = kotlin.math.floor(playerStats.assists / CARRIES_ASSIST_THRESHOLD)
     val noDeathsBonusPts = if (playerStats.deaths == 0) CARRIES_NO_DEATH else 0.0
+
+    println("${playerStats.name} Kill points: $killPts")
     return (killPts + deathsPts + assistBonusPts + noDeathsBonusPts)
 }
 
-fun calculateCarryIndepedentStats(playerStats: SplPlayerStats): Double {
+fun calculateTankIndependentStats(playerStats: SplPlayerStats): Double {
     val killPts = playerStats.kills * TANKS_KILL
-    println("${playerStats.name} Kill points: $killPts")
     val deathPts = playerStats.deaths * DEATH
     val assistPts = playerStats.assists * TANKS_ASSIST
 
@@ -358,5 +445,6 @@ fun calculateCarryIndepedentStats(playerStats: SplPlayerStats): Double {
             0.0
         }
 
+    println("${playerStats.name} Kill points: $killPts")
     return (killPts + deathPts + assistPts + noDeathsBonusPts)
 }
