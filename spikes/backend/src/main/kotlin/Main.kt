@@ -8,9 +8,10 @@ import org.openqa.selenium.interactions.Actions
 import org.slf4j.LoggerFactory
 import scoring.scoreMatch
 
-fun main() {
-    val log = LoggerFactory.getLogger("Main")
+val log = LoggerFactory.getLogger("Main")
 
+
+fun main() {
     val driver = FirefoxDriver()
     lateinit var splMatch: SplMatch
 
@@ -61,7 +62,7 @@ fun main() {
 
         for (gameNum in 1..numOfGames) {
 
-            log.debug("#### Game $gameNum Stats ###")
+            log.debug("Game $gameNum Stats: ")
 
             // Scrape stats for order team
             val orderTeamStatsHeader =
@@ -113,7 +114,7 @@ fun main() {
                 orderTeamStats = orderTeamCompleteStats,
                 chaosTeamStats = chaosTeamCompleteStats
             )
-            println(game)
+            log.debug(game.toString())
             matchGames.add(game)
 
             // navigate to next game
@@ -135,8 +136,8 @@ fun main() {
             games = matchGames
         )
 
-        println("Spl Match Stats")
-        println(splMatch)
+        log.debug("SPL Match Stats: ")
+        log.debug(splMatch.toString())
 
     } finally {
         driver.quit()
@@ -163,7 +164,7 @@ private fun scrapeAdditionalStats(
             System.err.println("Names do not match")
         }
 
-        println(playerStats)
+        log.info(playerStats.toString())
     }
     return teamGameStats
 }
@@ -194,10 +195,9 @@ private fun scrapeBasicStats(driver: FirefoxDriver, xpath: String, teamName: Str
             deaths = deaths.toInt(),
             assists = assists.toInt()
         )
-        println(playerStats)
+        log.debug(playerStats.toString())
         teamsGameStats.add(playerStats)
     }
-    println()
     return teamsGameStats
 }
 
