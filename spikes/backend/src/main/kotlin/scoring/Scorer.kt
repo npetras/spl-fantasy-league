@@ -2,8 +2,9 @@ package scoring
 
 import data.SmiteRole
 import data.SplTeamName
-import data.collection.SplMatch
+import data.collection.SplMatchStats
 import data.collection.SplPlayerStats
+import data.extraction.SplMatchScore
 import data.extraction.SplPlayerMatchScore
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -37,30 +38,30 @@ const val CARRIES_ASSIST_THRESHOLD_PTS = 1.0
 
 val log: Logger = LoggerFactory.getLogger("Scorer")
 
-fun scoreMatch(splMatch: SplMatch) {
+fun scoreMatch(splMatchStats: SplMatchStats): SplMatchScore {
     // create SplPlayerMatchScore objects
     val homeTeamScores = createTeamScoresBase(
-        winningTeamName = splMatch.games[0].orderTeamName,
-        teamName = splMatch.homeTeam,
-        winningTeamStats = splMatch.games[0].orderTeamStats,
-        losingTeamStats = splMatch.games[0].chaosTeamStats
+        winningTeamName = splMatchStats.games[0].orderTeamName,
+        teamName = splMatchStats.homeTeamName,
+        winningTeamStats = splMatchStats.games[0].orderTeamStats,
+        losingTeamStats = splMatchStats.games[0].chaosTeamStats
     )
 
     val awayTeamScores = createTeamScoresBase(
-        winningTeamName = splMatch.games[0].orderTeamName,
-        teamName = splMatch.awayTeam,
-        winningTeamStats = splMatch.games[0].orderTeamStats,
-        losingTeamStats = splMatch.games[0].chaosTeamStats
+        winningTeamName = splMatchStats.games[0].orderTeamName,
+        teamName = splMatchStats.awayTeamName,
+        winningTeamStats = splMatchStats.games[0].orderTeamStats,
+        losingTeamStats = splMatchStats.games[0].chaosTeamStats
     )
 
     // get score for independent stats
-    for (game in splMatch.games) {
+    for (game in splMatchStats.games) {
         // independent stats for winning team
         for (playerStats in game.orderTeamStats) {
             calculateAndRecordIndependentPlayerStats(
                 playerStats = playerStats,
-                homeTeam = splMatch.homeTeam,
-                awayTeam = splMatch.awayTeam,
+                homeTeam = splMatchStats.homeTeamName,
+                awayTeam = splMatchStats.awayTeamName,
                 homeTeamScores = homeTeamScores,
                 awayTeamScores = awayTeamScores
             )
@@ -69,8 +70,8 @@ fun scoreMatch(splMatch: SplMatch) {
         for (playerStats in game.chaosTeamStats) {
             calculateAndRecordIndependentPlayerStats(
                 playerStats = playerStats,
-                homeTeam = splMatch.homeTeam,
-                awayTeam = splMatch.awayTeam,
+                homeTeam = splMatchStats.homeTeamName,
+                awayTeam = splMatchStats.awayTeamName,
                 homeTeamScores = homeTeamScores,
                 awayTeamScores = awayTeamScores
             )
@@ -83,13 +84,13 @@ fun scoreMatch(splMatch: SplMatch) {
 
     // get scores for game wide stats
     // top damage score
-    for ((gameNum, game) in splMatch.games.withIndex()) {
+    for ((gameNum, game) in splMatchStats.games.withIndex()) {
         val topDamageOrderTeam = findTopDamagePlayerTeam(game.orderTeamStats)
 
         recordTopDamagePlayerTeam(
             topDamagePlayerTeam = topDamageOrderTeam,
-            homeTeam = splMatch.homeTeam,
-            awayTeam = splMatch.awayTeam,
+            homeTeam = splMatchStats.homeTeamName,
+            awayTeam = splMatchStats.awayTeamName,
             homeTeamScores = homeTeamScores,
             awayTeamScores = awayTeamScores,
             gameNum = gameNum
@@ -101,8 +102,8 @@ fun scoreMatch(splMatch: SplMatch) {
         val topDamageChaosTeam = findTopDamagePlayerTeam(game.chaosTeamStats)
         recordTopDamagePlayerTeam(
             topDamagePlayerTeam = topDamageChaosTeam,
-            homeTeam = splMatch.homeTeam,
-            awayTeam = splMatch.awayTeam,
+            homeTeam = splMatchStats.homeTeamName,
+            awayTeam = splMatchStats.awayTeamName,
             homeTeamScores = homeTeamScores,
             awayTeamScores = awayTeamScores,
             gameNum = gameNum
@@ -114,12 +115,12 @@ fun scoreMatch(splMatch: SplMatch) {
     }
 
     // record the score for supports with top assists on their team
-    for ((gameNum, game) in splMatch.games.withIndex()) {
+    for ((gameNum, game) in splMatchStats.games.withIndex()) {
         val topAssistsOrderTeam = findAssistsPlayer(game.orderTeamStats)
         recordTopAssistPlayerTeam(
             topAssistPlayerTeam = topAssistsOrderTeam,
-            homeTeam = splMatch.homeTeam,
-            awayTeam = splMatch.awayTeam,
+            homeTeam = splMatchStats.homeTeamName,
+            awayTeam = splMatchStats.awayTeamName,
             homeTeamScores = homeTeamScores,
             awayTeamScores = awayTeamScores,
             gameNum = gameNum
@@ -130,8 +131,8 @@ fun scoreMatch(splMatch: SplMatch) {
         val topAssistsChaosTeam = findAssistsPlayer(game.chaosTeamStats)
         recordTopAssistPlayerTeam(
             topAssistPlayerTeam = topAssistsChaosTeam,
-            homeTeam = splMatch.homeTeam,
-            awayTeam = splMatch.awayTeam,
+            homeTeam = splMatchStats.homeTeamName,
+            awayTeam = splMatchStats.awayTeamName,
             homeTeamScores = homeTeamScores,
             awayTeamScores = awayTeamScores,
             gameNum = gameNum
@@ -141,14 +142,14 @@ fun scoreMatch(splMatch: SplMatch) {
     }
 
     // find and record the score for supports with top overall assists in the whole game
-    for ((gameNum, game) in splMatch.games.withIndex()) {
+    for ((gameNum, game) in splMatchStats.games.withIndex()) {
         val topAssistsPlayerGame = findAssistsPlayer(
             (game.orderTeamStats + game.chaosTeamStats) as ArrayList<SplPlayerStats>
         )
         recordTopAssistPlayerGame(
             topAssistPlayerGame = topAssistsPlayerGame,
-            homeTeam = splMatch.homeTeam,
-            awayTeam = splMatch.awayTeam,
+            homeTeam = splMatchStats.homeTeamName,
+            awayTeam = splMatchStats.awayTeamName,
             homeTeamScores = homeTeamScores,
             awayTeamScores = awayTeamScores,
             gameNum = gameNum
@@ -158,14 +159,14 @@ fun scoreMatch(splMatch: SplMatch) {
     }
 
     // find and record the score for Player with the top kills in the game
-    for ((gameNum, game) in splMatch.games.withIndex()) {
+    for ((gameNum, game) in splMatchStats.games.withIndex()) {
         val topKillsPlayerGame = findTopKillsPlayer(
             (game.orderTeamStats + game.chaosTeamStats) as ArrayList<SplPlayerStats>
         )
         recordTopKillsPlayerGame(
             topKillPlayerGame = topKillsPlayerGame,
-            homeTeam = splMatch.homeTeam,
-            awayTeam = splMatch.awayTeam,
+            homeTeam = splMatchStats.homeTeamName,
+            awayTeam = splMatchStats.awayTeamName,
             homeTeamScores = homeTeamScores,
             awayTeamScores = awayTeamScores,
             gameNum = gameNum
@@ -185,27 +186,24 @@ fun scoreMatch(splMatch: SplMatch) {
 
     // record extra points for teams that win in 2-0 'sweep' fashion
     // done afterwards because it is a per match score not a per game score
-    if (splMatch.homeTeamScore == 2 && splMatch.awayTeamScore == 0) {
+    if (splMatchStats.homeTeamScore == 2 && splMatchStats.awayTeamScore == 0) {
         for (playerScore in homeTeamScores) {
             playerScore.overallMatchScore += SWEEP_VICTORY
         }
-    } else if (splMatch.homeTeamScore == 0 && splMatch.awayTeamScore == 2) {
+    } else if (splMatchStats.homeTeamScore == 0 && splMatchStats.awayTeamScore == 2) {
         for (playerScore in awayTeamScores) {
             playerScore.overallMatchScore += SWEEP_VICTORY
         }
     }
 
 
-    println("${splMatch.homeTeam} Home Team Scores")
-    for (playerScore in homeTeamScores) {
-        println("${playerScore.name} ${playerScore.gameScores} ${playerScore.overallMatchScore}")
-    }
 
-    println()
-    println("${splMatch.awayTeam} Away Team Scores")
-    for (playerScore in awayTeamScores) {
-        println("${playerScore.name} ${playerScore.gameScores} ${playerScore.overallMatchScore}")
-    }
+    return SplMatchScore(
+        homeTeamName = splMatchStats.homeTeamName,
+        awayTeamName = splMatchStats.awayTeamName,
+        homeTeamScores = homeTeamScores,
+        awayTeamScores = awayTeamScores
+    )
 }
 
 fun findTopKillsPlayer(teamStats: ArrayList<SplPlayerStats>): SplPlayerStats {

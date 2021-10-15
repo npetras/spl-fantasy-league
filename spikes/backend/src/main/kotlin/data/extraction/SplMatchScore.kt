@@ -1,6 +1,10 @@
 package data.extraction
 
+import data.SplTeamName
+
 data class SplMatchScore(
-    val team1MatchScores: ArrayList<SplPlayerMatchScore>,
-    val team2MatchScores: ArrayList<SplPlayerMatchScore>
+    val homeTeamName: SplTeamName,
+    val awayTeamName: SplTeamName,
+    val homeTeamScores: ArrayList<SplPlayerMatchScore>,
+    val awayTeamScores: ArrayList<SplPlayerMatchScore>
 )
