@@ -5,6 +5,8 @@ import data.SplTeamName
 import data.collection.SplMatch
 import data.collection.SplPlayerStats
 import data.extraction.SplPlayerMatchScore
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 // standard pts
 const val CARRIES_KILL = 2.0
@@ -32,6 +34,8 @@ const val FIRE_GIANT = 1.0
 // if a carry has more than the assists specified by the threshold they gain the specified bonus points
 const val CARRIES_ASSIST_THRESHOLD = 10.0
 const val CARRIES_ASSIST_THRESHOLD_PTS = 1.0
+
+val log: Logger = LoggerFactory.getLogger("Scorer")
 
 fun scoreMatch(splMatch: SplMatch) {
     // create SplPlayerMatchScore objects
@@ -72,18 +76,31 @@ fun scoreMatch(splMatch: SplMatch) {
             )
         }
     }
-
-    println("Home Team Scores: ")
-    println(homeTeamScores)
-    println("Away Team Scores: ")
-    println(awayTeamScores)
+    log.debug("Home Team Match Scores, without game and team-wide stats added: ")
+    log.debug(homeTeamScores.toString())
+    log.debug("Away Team Match Scores, without game and team-wide stats added: ")
+    log.debug(awayTeamScores.toString())
 
     // get scores for game wide stats
     // top damage score
     for ((gameNum, game) in splMatch.games.withIndex()) {
-        val topDamageWinningTeam = findTopDamagePlayerTeam(game.orderTeamStats)
+        val topDamageOrderTeam = findTopDamagePlayerTeam(game.orderTeamStats)
+
         recordTopDamagePlayerTeam(
-            topDamagePlayerTeam = topDamageWinningTeam,
+            topDamagePlayerTeam = topDamageOrderTeam,
+            homeTeam = splMatch.homeTeam,
+            awayTeam = splMatch.awayTeam,
+            homeTeamScores = homeTeamScores,
+            awayTeamScores = awayTeamScores,
+            gameNum = gameNum
+        )
+        log.debug("Game Specific Stats, Game No ${gameNum + 1}: ")
+        log.debug("Top Damage Player, Order Team (${game.orderTeamName}): ")
+        log.debug(topDamageOrderTeam.toString())
+
+        val topDamageChaosTeam = findTopDamagePlayerTeam(game.chaosTeamStats)
+        recordTopDamagePlayerTeam(
+            topDamagePlayerTeam = topDamageChaosTeam,
             homeTeam = splMatch.homeTeam,
             awayTeam = splMatch.awayTeam,
             homeTeamScores = homeTeamScores,
@@ -91,15 +108,8 @@ fun scoreMatch(splMatch: SplMatch) {
             gameNum = gameNum
         )
 
-        val topDamageLosingTeam = findTopDamagePlayerTeam(game.chaosTeamStats)
-        recordTopDamagePlayerTeam(
-            topDamagePlayerTeam = topDamageLosingTeam,
-            homeTeam = splMatch.homeTeam,
-            awayTeam = splMatch.awayTeam,
-            homeTeamScores = homeTeamScores,
-            awayTeamScores = awayTeamScores,
-            gameNum = gameNum
-        )
+        log.debug("Top Damage Player, Chaos Team (${game.chaosTeamName}): ")
+        log.debug(topDamageChaosTeam.toString())
 
     }
 
@@ -114,6 +124,8 @@ fun scoreMatch(splMatch: SplMatch) {
             awayTeamScores = awayTeamScores,
             gameNum = gameNum
         )
+        log.debug("Top Assists, Order Team (${game.orderTeamName}): ")
+        log.debug(topAssistsOrderTeam.toString())
 
         val topAssistsChaosTeam = findAssistsPlayer(game.chaosTeamStats)
         recordTopAssistPlayerTeam(
@@ -124,6 +136,8 @@ fun scoreMatch(splMatch: SplMatch) {
             awayTeamScores = awayTeamScores,
             gameNum = gameNum
         )
+        log.debug("Top Assists, Chaos Team (${game.chaosTeamName}): ")
+        log.debug(topAssistsChaosTeam.toString())
     }
 
     // find and record the score for supports with top overall assists in the whole game
@@ -139,6 +153,8 @@ fun scoreMatch(splMatch: SplMatch) {
             awayTeamScores = awayTeamScores,
             gameNum = gameNum
         )
+        log.debug("Top Assist Player in the Game: ")
+        log.debug(topAssistsPlayerGame.toString())
     }
 
     // find and record the score for Player with the top kills in the game
@@ -154,6 +170,8 @@ fun scoreMatch(splMatch: SplMatch) {
             awayTeamScores = awayTeamScores,
             gameNum = gameNum
         )
+        log.debug("Top Kills Player in the Game: ")
+        log.debug(topKillsPlayerGame.toString())
     }
 
     // calculate overall match score
@@ -201,7 +219,6 @@ fun findTopKillsPlayer(teamStats: ArrayList<SplPlayerStats>): SplPlayerStats {
             continue
         }
     }
-    println(topKillsPlayer)
     return topKillsPlayer
 }
 
@@ -237,7 +254,7 @@ private fun recordTopKillPtsBasedOnRole(topKillsPlayer: SplPlayerMatchScore?, ga
             topKillsPlayer.gameScores[gameNum] += SOLO_TOP_KILLS_GAME
         }
         SmiteRole.SUPPORT -> {
-            println("Support had top kills in the game")
+            log.info("Support had top kills in the game")
         }
         else -> {
             System.err.println("Error")
@@ -313,7 +330,6 @@ fun findAssistsPlayer(teamStats: ArrayList<SplPlayerStats>): SplPlayerStats {
             }
         }
     }
-    println(topAssistPlayer)
     return topAssistPlayer
 }
 
@@ -351,7 +367,6 @@ private fun findTopDamagePlayerTeam(teamStats: ArrayList<SplPlayerStats>): SplPl
             System.err.println("Two player damage numbers are equal to each other")
         }
     }
-    println(topDamageTeam)
     return topDamageTeam
 }
 
@@ -426,8 +441,6 @@ fun calculateCarryIndependentStats(playerStats: SplPlayerStats): Double {
     val deathsPts = playerStats.deaths * DEATH
     val assistBonusPts = kotlin.math.floor(playerStats.assists / CARRIES_ASSIST_THRESHOLD)
     val noDeathsBonusPts = if (playerStats.deaths == 0) CARRIES_NO_DEATH else 0.0
-
-    println("${playerStats.name} Kill points: $killPts")
     return (killPts + deathsPts + assistBonusPts + noDeathsBonusPts)
 }
 
@@ -444,7 +457,5 @@ fun calculateTankIndependentStats(playerStats: SplPlayerStats): Double {
         } else {
             0.0
         }
-
-    println("${playerStats.name} Kill points: $killPts")
     return (killPts + deathPts + assistPts + noDeathsBonusPts)
 }

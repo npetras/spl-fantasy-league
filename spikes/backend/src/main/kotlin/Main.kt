@@ -5,10 +5,11 @@ import org.openqa.selenium.By
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.interactions.Actions
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import scoring.scoreMatch
 
-val log = LoggerFactory.getLogger("Main")
+val log: Logger = LoggerFactory.getLogger("Main")
 
 
 fun main() {
@@ -164,7 +165,7 @@ private fun scrapeAdditionalStats(
             System.err.println("Names do not match")
         }
 
-        log.info(playerStats.toString())
+        log.debug(playerStats.toString())
     }
     return teamGameStats
 }
