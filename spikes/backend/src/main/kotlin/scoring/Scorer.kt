@@ -38,21 +38,21 @@ fun scoreMatch(splMatch: SplMatch) {
     val homeTeamScores = createTeamScoresBase(
         winningTeamName = splMatch.games[0].orderTeamName,
         teamName = splMatch.homeTeam,
-        winningTeamStats = splMatch.games[0].winningTeamStats,
-        losingTeamStats = splMatch.games[0].losingTeamStats
+        winningTeamStats = splMatch.games[0].orderTeamStats,
+        losingTeamStats = splMatch.games[0].chaosTeamStats
     )
 
     val awayTeamScores = createTeamScoresBase(
         winningTeamName = splMatch.games[0].orderTeamName,
         teamName = splMatch.awayTeam,
-        winningTeamStats = splMatch.games[0].winningTeamStats,
-        losingTeamStats = splMatch.games[0].losingTeamStats
+        winningTeamStats = splMatch.games[0].orderTeamStats,
+        losingTeamStats = splMatch.games[0].chaosTeamStats
     )
 
     // get score for independent stats
     for (game in splMatch.games) {
         // independent stats for winning team
-        for (playerStats in game.winningTeamStats) {
+        for (playerStats in game.orderTeamStats) {
             calculateAndRecordIndependentPlayerStats(
                 playerStats = playerStats,
                 homeTeam = splMatch.homeTeam,
@@ -62,7 +62,7 @@ fun scoreMatch(splMatch: SplMatch) {
             )
         }
         // independent stats for losing team
-        for (playerStats in game.losingTeamStats) {
+        for (playerStats in game.chaosTeamStats) {
             calculateAndRecordIndependentPlayerStats(
                 playerStats = playerStats,
                 homeTeam = splMatch.homeTeam,
@@ -81,7 +81,7 @@ fun scoreMatch(splMatch: SplMatch) {
     // get scores for game wide stats
     // top damage score
     for ((gameNum, game) in splMatch.games.withIndex()) {
-        val topDamageWinningTeam = findTopDamagePlayerTeam(game.winningTeamStats)
+        val topDamageWinningTeam = findTopDamagePlayerTeam(game.orderTeamStats)
         recordTopDamagePlayerTeam(
             topDamagePlayerTeam = topDamageWinningTeam,
             homeTeam = splMatch.homeTeam,
@@ -91,7 +91,7 @@ fun scoreMatch(splMatch: SplMatch) {
             gameNum = gameNum
         )
 
-        val topDamageLosingTeam = findTopDamagePlayerTeam(game.losingTeamStats)
+        val topDamageLosingTeam = findTopDamagePlayerTeam(game.chaosTeamStats)
         recordTopDamagePlayerTeam(
             topDamagePlayerTeam = topDamageLosingTeam,
             homeTeam = splMatch.homeTeam,
@@ -105,7 +105,7 @@ fun scoreMatch(splMatch: SplMatch) {
 
     // record the score for supports with top assists on their team
     for ((gameNum, game) in splMatch.games.withIndex()) {
-        val topAssistsOrderTeam = findAssistsPlayer(game.winningTeamStats)
+        val topAssistsOrderTeam = findAssistsPlayer(game.orderTeamStats)
         recordTopAssistPlayerTeam(
             topAssistPlayerTeam = topAssistsOrderTeam,
             homeTeam = splMatch.homeTeam,
@@ -115,7 +115,7 @@ fun scoreMatch(splMatch: SplMatch) {
             gameNum = gameNum
         )
 
-        val topAssistsChaosTeam = findAssistsPlayer(game.losingTeamStats)
+        val topAssistsChaosTeam = findAssistsPlayer(game.chaosTeamStats)
         recordTopAssistPlayerTeam(
             topAssistPlayerTeam = topAssistsChaosTeam,
             homeTeam = splMatch.homeTeam,
@@ -129,7 +129,7 @@ fun scoreMatch(splMatch: SplMatch) {
     // find and record the score for supports with top overall assists in the whole game
     for ((gameNum, game) in splMatch.games.withIndex()) {
         val topAssistsPlayerGame = findAssistsPlayer(
-            (game.winningTeamStats + game.losingTeamStats) as ArrayList<SplPlayerStats>
+            (game.orderTeamStats + game.chaosTeamStats) as ArrayList<SplPlayerStats>
         )
         recordTopAssistPlayerGame(
             topAssistPlayerGame = topAssistsPlayerGame,
@@ -144,7 +144,7 @@ fun scoreMatch(splMatch: SplMatch) {
     // find and record the score for Player with the top kills in the game
     for ((gameNum, game) in splMatch.games.withIndex()) {
         val topKillsPlayerGame = findTopKillsPlayer(
-            (game.winningTeamStats + game.losingTeamStats) as ArrayList<SplPlayerStats>
+            (game.orderTeamStats + game.chaosTeamStats) as ArrayList<SplPlayerStats>
         )
         recordTopKillsPlayerGame(
             topKillPlayerGame = topKillsPlayerGame,
