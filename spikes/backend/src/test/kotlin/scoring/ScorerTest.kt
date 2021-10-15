@@ -1,0 +1,4 @@
+package scoring
+
+class ScorerTest {
+}
