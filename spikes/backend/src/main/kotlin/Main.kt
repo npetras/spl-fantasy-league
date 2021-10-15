@@ -29,6 +29,8 @@ fun main() {
         val heading = driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/h1")
         val weeksSubHeading = driver.findElementByXPath("/html/body/div[1]/div/div[1]/div/div[2]/div/div[2]/p")
         val date = driver.findElementByCssSelector("div.c-MatchSummaryCard:nth-child(1) > h2:nth-child(1)")
+        // stored in variable, so it can be used later on, even when it is no longer part of the DOM
+        val dateText = date.text
         println(heading.text)
         println(weeksSubHeading.text)
         println(date.text)
@@ -125,7 +127,7 @@ fun main() {
         }
 
         splMatch = SplMatch(
-            date = date.text,
+            date = dateText,
             homeTeam = enumValueOf(homeTeamNameText),
             awayTeam = enumValueOf(awayTeamNameText),
             homeTeamScore = homeTeamScoreInt,
