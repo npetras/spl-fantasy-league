@@ -7,10 +7,10 @@ import kotlin.collections.ArrayList
 
 data class SplMatch(
     val date: String,
-    val team1: SplTeamName,
-    val team2: SplTeamName,
-    val team1Score: Int,
-    val team2Score: Int,
+    val homeTeam: SplTeamName,
+    val awayTeam: SplTeamName,
+    val homeTeamScore: Int,
+    val awayTeamScore: Int,
     val games: ArrayList<SplGame>
 ) {
 }

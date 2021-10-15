@@ -5,6 +5,12 @@ import org.openqa.selenium.By
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.interactions.Actions
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import scoring.scoreMatch
+
+val log: Logger = LoggerFactory.getLogger("Main")
+
 
 fun main() {
     val driver = FirefoxDriver()
@@ -14,95 +20,107 @@ fun main() {
         driver.get("https://www.smiteproleague.com/scores")
         val actionProvider = Actions(driver)
 
+        // delay allowing the cookies box to pop up
         Thread.sleep(1000)
         // accept cookies
         acceptCookies(driver, actionProvider)
         // move to the previous week
         navigateToStats(driver, actionProvider)
 
-        // get the date of the first sets
+        // print the heading, weeks subheading and the date of the match
+        val heading = driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/h1")
+        val weeksSubHeading = driver.findElementByXPath("/html/body/div[1]/div/div[1]/div/div[2]/div/div[2]/p")
         val date = driver.findElementByCssSelector("div.c-MatchSummaryCard:nth-child(1) > h2:nth-child(1)")
+        // stored in variable, so it can be used later on, even when it is no longer part of the DOM
         val dateText = date.text
-        println(dateText)
+        println(heading.text)
+        println(weeksSubHeading.text)
+        println(date.text)
 
         // open the stats for the game
         openGameStats(driver, actionProvider)
 
         // get the team name & match score
-        val team1Name =
+        val homeTeamName =
             driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/div/div[1]/div/strong")
-        val team2Name =
+        val awayTeamName =
             driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/div/div[3]/div/strong")
-        val team1Score =
+        val homeTeamScore =
             driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/div/div[2]/div[1]/div[1]")
-        val team2Score =
+        val awayTeamScore =
             driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/div/div[2]/div[1]/div[3]")
-        val team1NameText = team1Name.text
-        val team2NameText = team2Name.text
-        val team1ScoreInt = team1Score.text.toInt()
-        val team2ScoreInt = team2Score.text.toInt()
-        println("$team1ScoreInt $team2ScoreInt")
+        val homeTeamNameText = homeTeamName.text
+        val awayTeamNameText = awayTeamName.text
+        val homeTeamScoreInt = homeTeamScore.text.toInt()
+        val awayTeamScoreInt = awayTeamScore.text.toInt()
+        println("$homeTeamNameText vs $awayTeamNameText")
+        println("Score: $homeTeamNameText $homeTeamScoreInt $awayTeamNameText $awayTeamScoreInt")
 
-
-        val numOfGames = team1ScoreInt + team2ScoreInt
-        println(numOfGames)
+        val numOfGames = homeTeamScoreInt + awayTeamScoreInt
+        log.debug("No. of Games: $numOfGames")
 
         val matchGames = arrayListOf<SplGame>()
 
         for (gameNum in 1..numOfGames) {
 
-            println("#### Game $gameNum Stats ###")
+            log.debug("Game $gameNum Stats: ")
 
-            // Scrape stats for winning team
-            val winningTeamStatsHeader =
+            // Scrape stats for order team
+            val orderTeamStatsHeader =
                 driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[1]/h2")
-            val winningTeamText = winningTeamStatsHeader.text.substringBefore(" ")
-            val winningTeamBasicStatsXPath =
+            val orderTeamText = orderTeamStatsHeader.text.substringBefore(" ")
+            val orderTeamBasicStatsXPath =
                 "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[1]/div/div/div"
 
-            val winningTeamBasicStats = scrapeBasicStats(
+            val orderTeamBasicStats = scrapeBasicStats(
                 driver = driver,
-                xpath = winningTeamBasicStatsXPath,
-                teamName = winningTeamText
+                xpath = orderTeamBasicStatsXPath,
+                teamName = orderTeamText
             )
-            // get damage stats for winning team
-            val winningTeamAdditionalStatsXPath =
+            // get damage stats for order team
+            val orderTeamAdditionalStatsXPath =
                 "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[2]/div/table/tbody/tr"
-            val winningTeamAdditionalStatsTable = driver.findElementsByXPath(winningTeamAdditionalStatsXPath)
+            val orderTeamAdditionalStatsTable = driver.findElementsByXPath(orderTeamAdditionalStatsXPath)
 
-            val winningTeamCompleteStats = scrapeAdditionalStats(
-                additionalStatsTable = winningTeamAdditionalStatsTable,
-                teamGameStats = winningTeamBasicStats
+            val orderTeamCompleteStats = scrapeAdditionalStats(
+                additionalStatsTable = orderTeamAdditionalStatsTable,
+                teamGameStats = orderTeamBasicStats
             )
 
-            // scrape stats for losing team
-            val losingTeamBasicStatsXPath =
+            // scrape stats for chaos team
+            val chaosTeamBasicStatsXPath =
                 "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[4]/div/div/div"
-            val losingTeam =
+            val chaosTeam =
                 driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[3]/h2")
-            val losingTeamText = losingTeam.text.substringBefore(" ")
+            val chaosTeamText = chaosTeam.text.substringBefore(" ")
 
-            val losingTeamBasicStats = scrapeBasicStats(
+            val chaosTeamBasicStats = scrapeBasicStats(
                 driver = driver,
-                xpath = losingTeamBasicStatsXPath,
-                teamName = losingTeamText
+                xpath = chaosTeamBasicStatsXPath,
+                teamName = chaosTeamText
             )
 
-            val losingTeamAdditionalStatsXPath =
+            val chaosTeamAdditionalStatsXPath =
                 "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[5]/div/table/tbody/tr"
-            val losingTeamAdditionalStatsTable = driver.findElementsByXPath(losingTeamAdditionalStatsXPath)
+            val chaosTeamAdditionalStatsTable = driver.findElementsByXPath(chaosTeamAdditionalStatsXPath)
 
-            val losingTeamCompleteStats = scrapeAdditionalStats(
-                additionalStatsTable = losingTeamAdditionalStatsTable,
-                teamGameStats = losingTeamBasicStats
+            val chaosTeamCompleteStats = scrapeAdditionalStats(
+                additionalStatsTable = chaosTeamAdditionalStatsTable,
+                teamGameStats = chaosTeamBasicStats
             )
 
-            val game = SplGame(team1Stats = winningTeamCompleteStats, team2Stats = losingTeamCompleteStats)
+            val game = SplGame(
+                orderTeamName = enumValueOf(orderTeamText),
+                chaosTeamName = enumValueOf(chaosTeamText),
+                orderTeamStats = orderTeamCompleteStats,
+                chaosTeamStats = chaosTeamCompleteStats
+            )
+            log.debug(game.toString())
             matchGames.add(game)
 
             // navigate to next game
             if (gameNum < numOfGames) {
-                val nextGameXPath = "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[1]/div[${gameNum+1}]"
+                val nextGameXPath = "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[1]/div[${gameNum + 1}]"
                 val nextGameButton = driver.findElementByXPath(nextGameXPath)
                 actionProvider.clickAndHold(nextGameButton).build().perform()
                 actionProvider.release(nextGameButton).build().perform()
@@ -110,23 +128,24 @@ fun main() {
 
         }
 
-        splMatch = SplMatch(date = dateText,
-            team1 = enumValueOf(team1NameText),
-            team2 = enumValueOf(team2NameText),
-            team1Score = team1ScoreInt,
-            team2Score = team2ScoreInt,
+        splMatch = SplMatch(
+            date = dateText,
+            homeTeam = enumValueOf(homeTeamNameText),
+            awayTeam = enumValueOf(awayTeamNameText),
+            homeTeamScore = homeTeamScoreInt,
+            awayTeamScore = awayTeamScoreInt,
             games = matchGames
         )
 
-        println("Spl Match Stats")
-        println(splMatch)
+        log.debug("SPL Match Stats: ")
+        log.debug(splMatch.toString())
 
     } finally {
         driver.quit()
     }
 
     // score the match
-
+    scoreMatch(splMatch)
 }
 
 private fun scrapeAdditionalStats(
@@ -146,7 +165,7 @@ private fun scrapeAdditionalStats(
             System.err.println("Names do not match")
         }
 
-        println(playerStats)
+        log.debug(playerStats.toString())
     }
     return teamGameStats
 }
@@ -177,10 +196,9 @@ private fun scrapeBasicStats(driver: FirefoxDriver, xpath: String, teamName: Str
             deaths = deaths.toInt(),
             assists = assists.toInt()
         )
-        println(playerStats)
+        log.debug(playerStats.toString())
         teamsGameStats.add(playerStats)
     }
-    println()
     return teamsGameStats
 }
 
@@ -190,7 +208,7 @@ private fun openGameStats(
     actionProvider: Actions
 ) {
     val matchStats =
-        driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[3]/div[1]/div/div[1]/div[1]/div[10]/a[2]")
+        driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[3]/div[1]/div/div[1]/div[1]/div[10]/a")
     actionProvider.clickAndHold(matchStats).build().perform()
     actionProvider.release(matchStats).build().perform()
     Thread.sleep(2000)
@@ -213,6 +231,4 @@ private fun acceptCookies(
     val acceptCookiesButton = driver.findElementByCssSelector(".approve")
     actionProvider.clickAndHold(acceptCookiesButton).build().perform()
     actionProvider.release(acceptCookiesButton).build().perform()
-    val heading = driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/h1")
-    println(heading.text)
 }
