@@ -198,7 +198,7 @@ private fun openGameStats(
     actionProvider: Actions
 ) {
     val matchStats =
-        driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[3]/div[1]/div/div[1]/div[1]/div[10]/a[2]")
+        driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[3]/div[1]/div/div[1]/div[1]/div[10]/a")
     actionProvider.clickAndHold(matchStats).build().perform()
     actionProvider.release(matchStats).build().perform()
     Thread.sleep(2000)
