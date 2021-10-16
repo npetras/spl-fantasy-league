@@ -1,16 +1,14 @@
 package data.collection
 
 import data.SplTeamName
-import java.time.LocalDate
-import java.util.Date
 import kotlin.collections.ArrayList
 
-data class SplMatch(
+data class SplMatchStats(
     val date: String,
-    val homeTeam: SplTeamName,
-    val awayTeam: SplTeamName,
+    val homeTeamName: SplTeamName,
+    val awayTeamName: SplTeamName,
     val homeTeamScore: Int,
     val awayTeamScore: Int,
-    val games: ArrayList<SplGame>
+    val games: ArrayList<SplGameStats>
 ) {
 }

@@ -1,5 +1,5 @@
-import data.collection.SplGame
-import data.collection.SplMatch
+import data.collection.SplGameStats
+import data.collection.SplMatchStats
 import data.collection.SplPlayerStats
 import org.openqa.selenium.By
 import org.openqa.selenium.WebElement
@@ -14,7 +14,7 @@ val log: Logger = LoggerFactory.getLogger("Main")
 
 fun main() {
     val driver = FirefoxDriver()
-    lateinit var splMatch: SplMatch
+    lateinit var splMatchStats: SplMatchStats
 
     try {
         driver.get("https://www.smiteproleague.com/scores")
@@ -59,7 +59,7 @@ fun main() {
         val numOfGames = homeTeamScoreInt + awayTeamScoreInt
         log.debug("No. of Games: $numOfGames")
 
-        val matchGames = arrayListOf<SplGame>()
+        val matchGames = arrayListOf<SplGameStats>()
 
         for (gameNum in 1..numOfGames) {
 
@@ -109,7 +109,7 @@ fun main() {
                 teamGameStats = chaosTeamBasicStats
             )
 
-            val game = SplGame(
+            val game = SplGameStats(
                 orderTeamName = enumValueOf(orderTeamText),
                 chaosTeamName = enumValueOf(chaosTeamText),
                 orderTeamStats = orderTeamCompleteStats,
@@ -128,24 +128,35 @@ fun main() {
 
         }
 
-        splMatch = SplMatch(
+        splMatchStats = SplMatchStats(
             date = dateText,
-            homeTeam = enumValueOf(homeTeamNameText),
-            awayTeam = enumValueOf(awayTeamNameText),
+            homeTeamName = enumValueOf(homeTeamNameText),
+            awayTeamName = enumValueOf(awayTeamNameText),
             homeTeamScore = homeTeamScoreInt,
             awayTeamScore = awayTeamScoreInt,
             games = matchGames
         )
 
         log.debug("SPL Match Stats: ")
-        log.debug(splMatch.toString())
+        log.debug(splMatchStats.toString())
 
     } finally {
         driver.quit()
     }
 
     // score the match
-    scoreMatch(splMatch)
+    val matchScores = scoreMatch(splMatchStats)
+
+    println("${matchScores.homeTeamName} Team Scores: ")
+    for (playerScore in matchScores.homeTeamScores) {
+        println("${playerScore.name} ${playerScore.gameScores} ${playerScore.overallMatchScore}")
+    }
+
+    println()
+    println("${matchScores.awayTeamName} Team Scores: ")
+    for (playerScore in matchScores.awayTeamScores) {
+        println("${playerScore.name} ${playerScore.gameScores} ${playerScore.overallMatchScore}")
+    }
 }
 
 private fun scrapeAdditionalStats(
