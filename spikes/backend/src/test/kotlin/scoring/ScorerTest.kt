@@ -10,9 +10,15 @@ import data.extraction.SplPlayerMatchScore
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions.assertEquals
 
+/**
+ * Test class for Scorer sources
+ */
 class ScorerTest {
 
-    // test 2 game set
+    /**
+     * Basic test for [scoreMatch] function, using data from a sample game in phase 2 week 4 of the
+     * Smite Pro League 2021.
+     */
     @Test
     fun `test basic 2 game sweep victory set - Kings vs Levis Phase 2 Week 4 Cut Down`() {
 
@@ -319,6 +325,11 @@ class ScorerTest {
         assertEquals(splMatchExpectedScores, actualMatchScores)
     }
 
+    /**
+     * Basic test for [scoreMatch] function, using altered data from a sample game in phase 2 week 4 of the
+     * Smite Pro League 2021.
+     * This test makes sure to check that bonus points for sweep victories are added.
+     */
     @Test
     fun `test basic 3 game set - Kings vs Levis Phase 2 Week 4`() {
         val game1KingsStats = arrayListOf<SplPlayerStats>(
@@ -725,8 +736,12 @@ class ScorerTest {
         assertEquals(splMatchExpectedScores, actualMatchScores)
     }
 
-    // test 3 game set - multiple top damage team, multiple top assists team, multiple top kills games, multiple top
-    // assists game
+    /**
+     * More complex test for [scoreMatch] function, using altered data from a sample game in phase 2 week 4 of the
+     * Smite Pro League 2021.
+     * The data has been changed so that there are multiple instances of players having the same number of top assists,
+     * kills, damage to ensure that if multiple players gain the top value for a stat they both get rewarded.
+     */
     @Test
     fun `test complex 3 game set - Kings vs Levis Phase 2 Week 4 Altered`() {
         val game1KingsStats = arrayListOf<SplPlayerStats>(
