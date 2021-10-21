@@ -14,5 +14,12 @@ Community members have set-up Discord servers to host a SPL fantasy league simil
 * **spikes**: Experimental code to aid the development of the application, currently includes skeleton code for a possible database and spring web service
 
 ### Technology Stack
+Currently:
+* Kotlin (JVM) Application
+
+In future hope to use:
+* Spring for Backend
+* Angular for Frontend
+* PostgreSQL for Database
 
 ## Installation and Execution
