@@ -29,6 +29,7 @@ const val SUPP_NO_DEATHS = 4.0
 const val TOP_DAMAGE_TEAM = 1.0
 const val PENTA_KILL = 10.0
 const val SWEEP_VICTORY = 1.0
+const val GAME_WIN = 1.0
 const val GOLD_FURY = 0.5
 const val FIRE_GIANT = 1.0
 
@@ -183,6 +184,15 @@ fun scoreMatch(splMatchStats: SplMatchStats): SplMatchScore {
         playerScore.calculateOverallMatchScore()
     }
 
+    // give each player a point for a game victory
+    for (playerScore in homeTeamScores) {
+        playerScore.overallMatchScore += GAME_WIN * splMatchStats.homeTeamScore
+    }
+
+    for (playerScore in awayTeamScores) {
+        playerScore.overallMatchScore += GAME_WIN * splMatchStats.awayTeamScore
+    }
+
     // record extra points for teams that win in 2-0 'sweep' fashion
     // done afterwards because it is a per match score not a per game score
     if (splMatchStats.homeTeamScore == 2 && splMatchStats.awayTeamScore == 0) {
@@ -194,8 +204,6 @@ fun scoreMatch(splMatchStats: SplMatchStats): SplMatchScore {
             playerScore.overallMatchScore += SWEEP_VICTORY
         }
     }
-
-
 
     return SplMatchScore(
         homeTeamName = splMatchStats.homeTeamName,

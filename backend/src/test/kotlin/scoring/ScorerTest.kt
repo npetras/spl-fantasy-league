@@ -243,35 +243,35 @@ class ScorerTest {
                 role = SmiteRole.MID,
                 team = SplTeamName.KINGS,
                 gameScores = arrayListOf(15.0, 9.0),
-                overallMatchScore = 25.0
+                overallMatchScore = 27.0
             ),
             SplPlayerMatchScore(
                 name = "CAPTAINTWIG",
                 role = SmiteRole.JUNGLE,
                 team = SplTeamName.KINGS,
                 gameScores = arrayListOf(-1.0, 0.0),
-                overallMatchScore = 0.0
+                overallMatchScore = 2.0
             ),
             SplPlayerMatchScore(
                 name = "GENETICS",
                 role = SmiteRole.SUPPORT,
                 team = SplTeamName.KINGS,
                 gameScores = arrayListOf(8.5, 1.0),
-                overallMatchScore = 10.5
+                overallMatchScore = 12.5
             ),
             SplPlayerMatchScore(
                 name = "NETRIOID",
                 role = SmiteRole.HUNTER,
                 team = SplTeamName.KINGS,
                 gameScores = arrayListOf(13.0, 4.0),
-                overallMatchScore = 18.0
+                overallMatchScore = 20.0
             ),
             SplPlayerMatchScore(
                 name = "VARIETY",
                 role = SmiteRole.SOLO,
                 team = SplTeamName.KINGS,
                 gameScores = arrayListOf(6.0, -0.5),
-                overallMatchScore = 6.5
+                overallMatchScore = 8.5
             )
         )
 
@@ -656,35 +656,35 @@ class ScorerTest {
                 role = SmiteRole.MID,
                 team = SplTeamName.KINGS,
                 gameScores = arrayListOf(-4.0, 15.0, 9.0),
-                overallMatchScore = 20.0
+                overallMatchScore = 22.0
             ),
             SplPlayerMatchScore(
                 name = "CAPTAINTWIG",
                 role = SmiteRole.JUNGLE,
                 team = SplTeamName.KINGS,
                 gameScores = arrayListOf(-4.0, -1.0, 0.0),
-                overallMatchScore = -5.0
+                overallMatchScore = -3.0
             ),
             SplPlayerMatchScore(
                 name = "GENETICS",
                 role = SmiteRole.SUPPORT,
                 team = SplTeamName.KINGS,
                 gameScores = arrayListOf(-3.0, 8.5, 1.0),
-                overallMatchScore = 6.5
+                overallMatchScore = 8.5
             ),
             SplPlayerMatchScore(
                 name = "NETRIOID",
                 role = SmiteRole.HUNTER,
                 team = SplTeamName.KINGS,
                 gameScores = arrayListOf(-4.0, 13.0, 4.0),
-                overallMatchScore = 13.0
+                overallMatchScore = 15.0
             ),
             SplPlayerMatchScore(
                 name = "VARIETY",
                 role = SmiteRole.SOLO,
                 team = SplTeamName.KINGS,
                 gameScores = arrayListOf(0.0, 6.0, -0.5),
-                overallMatchScore = 5.5
+                overallMatchScore = 7.5
             )
         )
         val lvthnTeamScores = arrayListOf<SplPlayerMatchScore>(
@@ -693,35 +693,35 @@ class ScorerTest {
                 role = SmiteRole.SOLO,
                 team = SplTeamName.LVTHN,
                 gameScores = arrayListOf(8.0, -3.0, 7.0),
-                overallMatchScore = 12.0
+                overallMatchScore = 13.0
             ),
             SplPlayerMatchScore(
                 name = "PANITOM",
                 role = SmiteRole.JUNGLE,
                 team = SplTeamName.LVTHN,
                 gameScores = arrayListOf(12.0, -3.0, 13.0),
-                overallMatchScore = 22.0
+                overallMatchScore = 23.0
             ),
             SplPlayerMatchScore(
                 name = "RONNGYU",
                 role = SmiteRole.SUPPORT,
                 team = SplTeamName.LVTHN,
                 gameScores = arrayListOf(13.0, 2.0, 6.5),
-                overallMatchScore = 21.5
+                overallMatchScore = 22.5
             ),
             SplPlayerMatchScore(
                 name = "SHEENTO",
                 role = SmiteRole.MID,
                 team = SplTeamName.LVTHN,
                 gameScores = arrayListOf(17.0, 6.0, 10.0),
-                overallMatchScore = 33.0
+                overallMatchScore = 34.0
             ),
             SplPlayerMatchScore(
                 name = "ZAPMAN",
                 role = SmiteRole.HUNTER,
                 team = SplTeamName.LVTHN,
                 gameScores = arrayListOf(13.0, 7.0, 5.0),
-                overallMatchScore = 25.0
+                overallMatchScore = 26.0
             )
         )
         val splMatchExpectedScores = SplMatchScore(
@@ -1062,35 +1062,35 @@ class ScorerTest {
                 role = SmiteRole.MID,
                 team = SplTeamName.KINGS,
                 gameScores = arrayListOf(1.0, 15.0, 9.0),
-                overallMatchScore = 25.0
+                overallMatchScore = 27.0
             ),
             SplPlayerMatchScore(
                 name = "CAPTAINTWIG",
                 role = SmiteRole.JUNGLE,
                 team = SplTeamName.KINGS,
                 gameScores = arrayListOf(-4.0, -1.0, 0.0),
-                overallMatchScore = -5.0
+                overallMatchScore = -3.0
             ),
             SplPlayerMatchScore(
                 name = "GENETICS",
                 role = SmiteRole.SUPPORT,
                 team = SplTeamName.KINGS,
                 gameScores = arrayListOf(-1.0, 8.5, 3.0),
-                overallMatchScore = 10.5
+                overallMatchScore = 12.5
             ),
             SplPlayerMatchScore(
                 name = "NETRIOID",
                 role = SmiteRole.HUNTER,
                 team = SplTeamName.KINGS,
                 gameScores = arrayListOf(-4.0, 13.0, 4.0),
-                overallMatchScore = 13.0
+                overallMatchScore = 15.0
             ),
             SplPlayerMatchScore(
                 name = "VARIETY",
                 role = SmiteRole.SOLO,
                 team = SplTeamName.KINGS,
                 gameScores = arrayListOf(0.0, 6.0, -0.5),
-                overallMatchScore = 5.5
+                overallMatchScore = 7.5
             )
         )
         val lvthnTeamScores = arrayListOf<SplPlayerMatchScore>(
@@ -1099,35 +1099,35 @@ class ScorerTest {
                 role = SmiteRole.SOLO,
                 team = SplTeamName.LVTHN,
                 gameScores = arrayListOf(9.5, -3.0, 4.5),
-                overallMatchScore = 11.0
+                overallMatchScore = 12.0
             ),
             SplPlayerMatchScore(
                 name = "PANITOM",
                 role = SmiteRole.JUNGLE,
                 team = SplTeamName.LVTHN,
                 gameScores = arrayListOf(12.0, -3.0, 13.0),
-                overallMatchScore = 22.0
+                overallMatchScore = 23.0
             ),
             SplPlayerMatchScore(
                 name = "RONNGYU",
                 role = SmiteRole.SUPPORT,
                 team = SplTeamName.LVTHN,
                 gameScores = arrayListOf(13.0, 2.0, 8.5),
-                overallMatchScore = 23.5
+                overallMatchScore = 24.5
             ),
             SplPlayerMatchScore(
                 name = "SHEENTO",
                 role = SmiteRole.MID,
                 team = SplTeamName.LVTHN,
                 gameScores = arrayListOf(17.0, 6.0, 10.0),
-                overallMatchScore = 33.0
+                overallMatchScore = 34.0
             ),
             SplPlayerMatchScore(
                 name = "ZAPMAN",
                 role = SmiteRole.HUNTER,
                 team = SplTeamName.LVTHN,
                 gameScores = arrayListOf(16.0, 12.0, 5.0),
-                overallMatchScore = 33.0
+                overallMatchScore = 34.0
             )
         )
         val splMatchExpectedScores = SplMatchScore(
