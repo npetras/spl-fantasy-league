@@ -39,20 +39,24 @@ const val CARRIES_ASSIST_THRESHOLD_PTS = 1.0
 
 val log: Logger = LoggerFactory.getLogger("Scorer")
 
+/**
+ * Returns the scores for each player for each game and the overall match, all packaged in a [SplMatchScore] object.
+ * The scores are derived from the [splMatchStats] that are provided.
+ */
 fun scoreMatch(splMatchStats: SplMatchStats): SplMatchScore {
     // create SplPlayerMatchScore objects
     val homeTeamScores = createTeamScoresBase(
-        winningTeamName = splMatchStats.games[0].orderTeamName,
+        orderTeamName = splMatchStats.games[0].orderTeamName,
         teamName = splMatchStats.homeTeamName,
-        winningTeamStats = splMatchStats.games[0].orderTeamStats,
-        losingTeamStats = splMatchStats.games[0].chaosTeamStats
+        orderTeamStats = splMatchStats.games[0].orderTeamStats,
+        chaosTeamStats = splMatchStats.games[0].chaosTeamStats
     )
 
     val awayTeamScores = createTeamScoresBase(
-        winningTeamName = splMatchStats.games[0].orderTeamName,
+        orderTeamName = splMatchStats.games[0].orderTeamName,
         teamName = splMatchStats.awayTeamName,
-        winningTeamStats = splMatchStats.games[0].orderTeamStats,
-        losingTeamStats = splMatchStats.games[0].chaosTeamStats
+        orderTeamStats = splMatchStats.games[0].orderTeamStats,
+        chaosTeamStats = splMatchStats.games[0].chaosTeamStats
     )
 
     // get score for independent stats
@@ -213,7 +217,48 @@ fun scoreMatch(splMatchStats: SplMatchStats): SplMatchScore {
     )
 }
 
-fun findTopKillsPlayers(teamStats: ArrayList<SplPlayerStats>): ArrayList<SplPlayerStats> {
+/**
+ * Returns a [SplPlayerMatchScore] that is already populated with the name, role and team name of each player for the
+ * [teamName] provided.
+ *
+ * @param orderTeamName The name of the order team for a specific game
+ */
+fun createTeamScoresBase(
+    orderTeamName: SplTeamName,
+    teamName: SplTeamName,
+    orderTeamStats: ArrayList<SplPlayerStats>,
+    chaosTeamStats: ArrayList<SplPlayerStats>
+): ArrayList<SplPlayerMatchScore> {
+    val teamScores = arrayListOf<SplPlayerMatchScore>()
+
+    if (orderTeamName == teamName) {
+        for (playerStats in orderTeamStats) {
+            teamScores.add(createSplPlayerMatchScore(playerStats))
+        }
+    } else {
+        for (playerStats in chaosTeamStats) {
+            teamScores.add(createSplPlayerMatchScore(playerStats))
+        }
+    }
+    return teamScores
+}
+
+/**
+ * Returns an [SplPlayerMatchScore] that is based on the [playerStats] provided.
+ * The [SplPlayerMatchScore] will have the same name, role and team as [playerStats].
+ */
+fun createSplPlayerMatchScore(playerStats: SplPlayerStats): SplPlayerMatchScore {
+    return SplPlayerMatchScore(
+        name = playerStats.name,
+        role = playerStats.role,
+        team = playerStats.splTeam
+    )
+}
+
+/**
+ * Returns the player ([SplPlayerStats]) with the top kills in the [teamStats] ArrayList
+ */
+private fun findTopKillsPlayers(teamStats: ArrayList<SplPlayerStats>): ArrayList<SplPlayerStats> {
     var topKillsPlayers = arrayListOf<SplPlayerStats>(SplPlayerStats())
     for (playerStats in teamStats) {
         if (playerStats.kills > topKillsPlayers[0].kills) {
@@ -228,7 +273,19 @@ fun findTopKillsPlayers(teamStats: ArrayList<SplPlayerStats>): ArrayList<SplPlay
     return topKillsPlayers
 }
 
-fun recordTopKillsPlayersGame(
+/**
+ * Awards points to the players with the top kills in one of the games, by finding them in
+ * [homeTeamScores] or [awayTeamScores] and updating the respective team scores, either [homeTeamScores] or
+ * [awayTeamScores]
+ *
+ * @param topKillPlayersGame The player(s) with the top kills in the game
+ * @param homeTeam Home team name
+ * @param awayTeam Away team name
+ * @param homeTeamScores Home team scores
+ * @param awayTeamScores Away team scores
+ * @param gameNum The game number that is being considered -- the game in which the players got the top kills
+ */
+private fun recordTopKillsPlayersGame(
     topKillPlayersGame: ArrayList<SplPlayerStats>,
     homeTeam: SplTeamName,
     awayTeam: SplTeamName,
@@ -255,6 +312,9 @@ fun recordTopKillsPlayersGame(
     }
 }
 
+/**
+ * Awards the [topKillsPlayer] in [gameNum] with the right amount of points based on their role
+ */
 private fun recordTopKillPtsBasedOnRole(topKillsPlayer: SplPlayerMatchScore?, gameNum: Int) {
     when (topKillsPlayer?.role) {
         SmiteRole.JUNGLE, SmiteRole.MID, SmiteRole.HUNTER -> {
@@ -272,7 +332,19 @@ private fun recordTopKillPtsBasedOnRole(topKillsPlayer: SplPlayerMatchScore?, ga
     }
 }
 
-fun recordTopAssistPlayers(
+/**
+ * Awards points to the players with the top assist in the game on their team or game-wide, by finding them in
+ * [homeTeamScores] or [awayTeamScores] and updating the respective team scores, either [homeTeamScores] or
+ * [awayTeamScores]
+ *
+ * @param topAssistPlayers The player(s) with the top assist on their team or in the game
+ * @param homeTeam Home team name
+ * @param awayTeam Away team name
+ * @param homeTeamScores Home team scores
+ * @param awayTeamScores Away team scores
+ * @param gameNum The game number that is being considered -- the game in which the players got the top assists
+ */
+private fun recordTopAssistPlayers(
     topAssistPlayers: ArrayList<SplPlayerStats>,
     homeTeam: SplTeamName,
     awayTeam: SplTeamName,
@@ -302,7 +374,6 @@ fun recordTopAssistPlayers(
     }
 }
 
-
 /**
  * Returns the player(s)([SplPlayerStats]) with the top assists in the team for the game provided with [teamStats].
  */
@@ -322,8 +393,17 @@ fun findAssistsPlayers(teamStats: ArrayList<SplPlayerStats>): ArrayList<SplPlaye
 }
 
 /**
- * Records the top damage player for each team, by adding the corresponding bonus points to the player's
- * total for that game.
+ * Awards points to the players with the top damage on their team, by finding them in
+ * [homeTeamScores] or [awayTeamScores] and updating the respective team scores, either [homeTeamScores] or
+ * [awayTeamScores]
+ *
+ * @param topDamagePlayerTeam The player(s) with the top damage on their team
+ * @param homeTeam Home team name
+ * @param awayTeam Away team name
+ * @param homeTeamScores Home team scores
+ * @param awayTeamScores Away team scores
+ * @param gameNum The game number that is being considered -- the game in which the players got the top damage on their
+ * team
  */
 private fun recordTopDamagePlayersTeam(
     topDamagePlayerTeam: ArrayList<SplPlayerStats>,
@@ -357,7 +437,8 @@ private fun recordTopDamagePlayersTeam(
 
 /**
  * Returns an [ArrayList] of the player(s) ([SplPlayerStats]) with the top damage within [teamStats].
- * Top damage player(s) on the team. It is extremely unlikely that two players on one team have the same damage.
+ * Top damage player(s) on the team.
+ * It is extremely unlikely that two players on one team have the same damage.
  */
 private fun findTopDamagePlayerTeam(teamStats: ArrayList<SplPlayerStats>): ArrayList<SplPlayerStats> {
     var topDamageTeam = arrayListOf<SplPlayerStats>(SplPlayerStats())
@@ -374,6 +455,17 @@ private fun findTopDamagePlayerTeam(teamStats: ArrayList<SplPlayerStats>): Array
     return topDamageTeam
 }
 
+/**
+ * Calculates the and awards points to each player for their independent stats. The independent stats are the stats
+ * for which points can be awarded without considering any other players stats in the game, like kills, deaths,
+ * assists, no death bonuses, etc.
+ *
+ * @param playerStats The stats for the player who is being scored
+ * @param homeTeam The home team in the match
+ * @param awayTeam The away team in the match
+ * @param homeTeamScores Home team scores
+ * @param awayTeamScores Home team scores
+ */
 private fun calculateAndRecordIndependentPlayerStats(
     playerStats: SplPlayerStats,
     homeTeam: SplTeamName,
@@ -396,34 +488,6 @@ private fun calculateAndRecordIndependentPlayerStats(
             System.err.println("Error")
         }
     }
-}
-
-fun createSplMatchScore(playerStats: SplPlayerStats): SplPlayerMatchScore {
-    return SplPlayerMatchScore(
-        name = playerStats.name,
-        role = playerStats.role,
-        team = playerStats.splTeam
-    )
-}
-
-fun createTeamScoresBase(
-    winningTeamName: SplTeamName,
-    teamName: SplTeamName,
-    winningTeamStats: ArrayList<SplPlayerStats>,
-    losingTeamStats: ArrayList<SplPlayerStats>
-): ArrayList<SplPlayerMatchScore> {
-    val teamScores = arrayListOf<SplPlayerMatchScore>()
-
-    if (winningTeamName == teamName) {
-        for (playerStats in winningTeamStats) {
-            teamScores.add(createSplMatchScore(playerStats))
-        }
-    } else {
-        for (playerStats in losingTeamStats) {
-            teamScores.add(createSplMatchScore(playerStats))
-        }
-    }
-    return teamScores
 }
 
 fun calculateIndependentStats(playerStats: SplPlayerStats): Double {
@@ -463,3 +527,4 @@ fun calculateTankIndependentStats(playerStats: SplPlayerStats): Double {
         }
     return (killPts + deathPts + assistPts + noDeathsBonusPts)
 }
+
