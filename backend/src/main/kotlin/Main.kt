@@ -13,7 +13,10 @@ import scoring.scoreMatch
 
 val log: Logger = LoggerFactory.getLogger("Main")
 
-
+/**
+ * Scrapes the required data from the Smite Pro League website, and sends the scraped data to the Scrorer functions,
+ * that score the matches scraped.
+ */
 fun main() {
     val driver = FirefoxDriver()
 
