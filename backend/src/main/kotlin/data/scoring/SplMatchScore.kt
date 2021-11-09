@@ -1,4 +1,4 @@
-package data.extraction
+package data.scoring
 
 import data.SplTeamName
 
