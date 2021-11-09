@@ -4,8 +4,8 @@ import data.SmiteRole
 import data.SplTeamName
 import data.collection.SplMatchStats
 import data.collection.SplPlayerStats
-import data.extraction.SplMatchScore
-import data.extraction.SplPlayerMatchScore
+import data.scoring.SplMatchScore
+import data.scoring.SplPlayerMatchScore
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

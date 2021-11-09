@@ -5,8 +5,8 @@ import data.SplTeamName
 import data.collection.SplGameStats
 import data.collection.SplMatchStats
 import data.collection.SplPlayerStats
-import data.extraction.SplMatchScore
-import data.extraction.SplPlayerMatchScore
+import data.scoring.SplMatchScore
+import data.scoring.SplPlayerMatchScore
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions.assertEquals
 
