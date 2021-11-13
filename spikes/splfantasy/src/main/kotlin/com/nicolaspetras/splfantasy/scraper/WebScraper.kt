@@ -16,7 +16,11 @@ import org.slf4j.LoggerFactory
 
 val log: Logger = LoggerFactory.getLogger("Main")
 
-fun scrapeWebsite(): ArrayList<SplMatchScore> {
+/**
+ * Returns an ArrayList of the scores for each scraped match.
+ * Scrapes the SmitePro website for the current or previous week's stats, and scores the scrapped stats for each match
+ * using [scoreMatch].
+ */
 fun scrapeWebsiteAndScoreStats(): ArrayList<SplMatchScore> {
     val driver = FirefoxDriver()
     var matchScoresWeek = arrayListOf<SplMatchScore>()
