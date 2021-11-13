@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory
 val log: Logger = LoggerFactory.getLogger("Main")
 
 fun scrapeWebsite(): ArrayList<SplMatchScore> {
+fun scrapeWebsiteAndScoreStats(): ArrayList<SplMatchScore> {
     val driver = FirefoxDriver()
     var matchScoresWeek = arrayListOf<SplMatchScore>()
 
