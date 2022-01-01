@@ -1,5 +1,28 @@
 <p>match-scores works</p>
-<div class="row" *ngFor="let match of matchScores">
-  <h1>Match: {{match.homeTeamName}} vs {{match.awayTeamName}}</h1>
-  <h2>Score: {{match.homeTeamScore}}:{{match.awayTeamScore}}</h2>
+<div *ngIf="(matchScores$ | async)">
+  <div class="row" *ngFor="let match of matchScores$ | async">
+    <h1>Match: {{match.homeTeamName}} vs {{match.awayTeamName}}</h1>
+    <h2>Score: {{match.homeTeamScore}}:{{match.awayTeamScore}}</h2>
+
+    <h3>{{match.homeTeamName}} Scores</h3>
+    <table class="table table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Player Name</th>
+        <th scope="col">Role</th>
+        <th scope="col">Match Total</th>
+      </tr>
+      </thead>
+      <tbody *ngFor="let player of match.homeTeamScores">
+      <tr>
+        <td>{{player.name}}</td>
+        <td>{{player.role}}</td>
+        <td>{{player.overallMatchScore}}</td>
+      </tr>
+      </tbody>
+    </table>
+    <h3>Away Team Scores</h3>
+
+  </div>
 </div>
+

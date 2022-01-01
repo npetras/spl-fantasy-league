@@ -10,17 +10,12 @@ import {MatchScoresService} from "./match-scores.service";
 })
 export class MatchScoresComponent implements OnInit {
   error: any
-  matchScores: Array<SplMatchScore> | undefined
+  matchScores$: Observable<Array<SplMatchScore>> | undefined
 
   constructor(private matchScoresService: MatchScoresService) { }
 
   ngOnInit(): void {
-    this.matchScoresService.getMatchStats()
-      .subscribe(
-        (data: Array<SplMatchScore>) => {
-          this.matchScores = data;
-        }
-      )
+    this.matchScores$ = this.matchScoresService.getMatchStats()
   }
 
 }

@@ -11,8 +11,6 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 
-
-
 @RestController
 @CrossOrigin(origins = ["*"])
 class SplFantasyController {
