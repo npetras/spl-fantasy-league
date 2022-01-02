@@ -11,9 +11,11 @@ import org.slf4j.LoggerFactory
 
 // standard pts
 const val CARRIES_KILL = 2.0
-const val TANKS_KILL = 1.5
+const val SOLO_KILL = 1.5
+const val SUPP_KILLS = 1.0
 const val DEATH = -1.0
-const val TANKS_ASSIST = 0.5
+const val CARRIES_ASSIST = 0.5
+const val TANKS_ASSIST = 1
 
 // bonus pts
 // role specific
@@ -21,7 +23,7 @@ const val CARRIES_TOP_KILLS_GAME = 1.0
 const val CARRIES_NO_DEATH = 3.0
 const val SUPP_TOP_ASSISTS_GAME = 1.0
 const val SUPP_TOP_ASSISTS_TEAM = 1.0
-const val SOLO_NO_DEATHS = 2.0
+const val SOLO_NO_DEATHS = 3.0
 const val SOLO_TOP_KILLS_GAME = 2.0
 const val SUPP_NO_DEATHS = 4.0
 
@@ -32,10 +34,6 @@ const val SWEEP_VICTORY = 1.0
 const val GAME_WIN = 1.0
 const val GOLD_FURY = 0.5
 const val FIRE_GIANT = 1.0
-
-// if a carry has more than the assists specified by the threshold they gain the specified bonus points
-const val CARRIES_ASSIST_THRESHOLD = 10.0
-const val CARRIES_ASSIST_THRESHOLD_PTS = 1.0
 
 val log: Logger = LoggerFactory.getLogger("Scorer")
 
@@ -199,11 +197,11 @@ fun scoreMatch(splMatchStats: SplMatchStats): SplMatchScore {
 
     // record extra points for teams that win in 2-0 'sweep' fashion
     // done afterwards because it is a per match score not a per game score
-    if (splMatchStats.homeTeamScore == 2 && splMatchStats.awayTeamScore == 0) {
+    if (splMatchStats.homeTeamScore >= 2 && splMatchStats.awayTeamScore == 0) {
         for (playerScore in homeTeamScores) {
             playerScore.overallMatchScore += SWEEP_VICTORY
         }
-    } else if (splMatchStats.homeTeamScore == 0 && splMatchStats.awayTeamScore == 2) {
+    } else if (splMatchStats.homeTeamScore == 0 && splMatchStats.awayTeamScore >= 2) {
         for (playerScore in awayTeamScores) {
             playerScore.overallMatchScore += SWEEP_VICTORY
         }
@@ -507,13 +505,14 @@ fun calculateIndependentStats(playerStats: SplPlayerStats): Double {
 fun calculateCarryIndependentStats(playerStats: SplPlayerStats): Double {
     val killPts = playerStats.kills * CARRIES_KILL
     val deathsPts = playerStats.deaths * DEATH
-    val assistBonusPts = kotlin.math.floor(playerStats.assists / CARRIES_ASSIST_THRESHOLD)
+    val assistPts = playerStats.assists * CARRIES_ASSIST
     val noDeathsBonusPts = if (playerStats.deaths == 0) CARRIES_NO_DEATH else 0.0
-    return (killPts + deathsPts + assistBonusPts + noDeathsBonusPts)
+    return (killPts + deathsPts + assistPts + noDeathsBonusPts)
 }
 
 fun calculateTankIndependentStats(playerStats: SplPlayerStats): Double {
-    val killPts = playerStats.kills * TANKS_KILL
+    val killPts =
+        if (playerStats.role == SmiteRole.SOLO) playerStats.kills * SOLO_KILL else playerStats.kills * SUPP_KILLS
     val deathPts = playerStats.deaths * DEATH
     val assistPts = playerStats.assists * TANKS_ASSIST
 

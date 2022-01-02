@@ -242,36 +242,36 @@ class ScorerTest {
                 name = "BIGMANTINGZ",
                 role = SmiteRole.MID,
                 team = SplTeamName.KINGS,
-                gameScores = arrayListOf(15.0, 9.0),
-                overallMatchScore = 27.0
+                gameScores = arrayListOf(19.0, 11.5),
+                overallMatchScore = 33.5
             ),
             SplPlayerMatchScore(
                 name = "CAPTAINTWIG",
                 role = SmiteRole.JUNGLE,
                 team = SplTeamName.KINGS,
-                gameScores = arrayListOf(-1.0, 0.0),
-                overallMatchScore = 2.0
+                gameScores = arrayListOf(3.5, 3.0),
+                overallMatchScore = 9.5
             ),
             SplPlayerMatchScore(
                 name = "GENETICS",
                 role = SmiteRole.SUPPORT,
                 team = SplTeamName.KINGS,
-                gameScores = arrayListOf(8.5, 1.0),
-                overallMatchScore = 12.5
+                gameScores = arrayListOf(16.0, 6.0),
+                overallMatchScore = 25.0
             ),
             SplPlayerMatchScore(
                 name = "NETRIOID",
                 role = SmiteRole.HUNTER,
                 team = SplTeamName.KINGS,
-                gameScores = arrayListOf(13.0, 4.0),
-                overallMatchScore = 20.0
+                gameScores = arrayListOf(17.0, 5.0),
+                overallMatchScore = 25.0
             ),
             SplPlayerMatchScore(
                 name = "VARIETY",
                 role = SmiteRole.SOLO,
                 team = SplTeamName.KINGS,
-                gameScores = arrayListOf(6.0, -0.5),
-                overallMatchScore = 8.5
+                gameScores = arrayListOf(11.5, 1.5),
+                overallMatchScore = 16.0
             )
         )
 
@@ -280,36 +280,36 @@ class ScorerTest {
                 name = "JARCORRR",
                 role = SmiteRole.SOLO,
                 team = SplTeamName.LVTHN,
-                gameScores = arrayListOf(-3.0, 7.0),
-                overallMatchScore = 4.0
+                gameScores = arrayListOf(-1.0, 14.5),
+                overallMatchScore = 13.5
             ),
             SplPlayerMatchScore(
                 name = "PANITOM",
                 role = SmiteRole.JUNGLE,
                 team = SplTeamName.LVTHN,
-                gameScores = arrayListOf(-3.0, 13.0),
-                overallMatchScore = 10.0
+                gameScores = arrayListOf(-0.5, 17.0),
+                overallMatchScore = 16.5
             ),
             SplPlayerMatchScore(
                 name = "RONNGYU",
                 role = SmiteRole.SUPPORT,
                 team = SplTeamName.LVTHN,
-                gameScores = arrayListOf(2.0, 6.5),
-                overallMatchScore = 8.5
+                gameScores = arrayListOf(4.0, 12.0),
+                overallMatchScore = 16.0
             ),
             SplPlayerMatchScore(
                 name = "SHEENTO",
                 role = SmiteRole.MID,
                 team = SplTeamName.LVTHN,
-                gameScores = arrayListOf(6.0, 10.0),
-                overallMatchScore = 16.0
+                gameScores = arrayListOf(8.0, 13.0),
+                overallMatchScore = 21.0
             ),
             SplPlayerMatchScore(
                 name = "ZAPMAN",
                 role = SmiteRole.HUNTER,
                 team = SplTeamName.LVTHN,
-                gameScores = arrayListOf(7.0, 5.0),
-                overallMatchScore = 12.0
+                gameScores = arrayListOf(8.5, 8.5),
+                overallMatchScore = 17.0
             )
         )
 
