@@ -6,5 +6,7 @@ enum class SmiteRole {
     MID,
     SUPPORT,
     HUNTER,
+    SUB,
+    COACH,
     NONE
 }

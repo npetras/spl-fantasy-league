@@ -1,13 +1,14 @@
 package scoring
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
 import data.SmiteRole
 import data.SplTeamName
 import data.collection.SplMatchStats
 import data.collection.SplPlayerStats
 import data.scoring.SplMatchScore
 import data.scoring.SplPlayerMatchScore
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 // standard pts
 const val CARRIES_KILL = 2.0
@@ -324,6 +325,9 @@ private fun recordTopKillPtsBasedOnRole(topKillsPlayer: SplPlayerMatchScore?, ga
         SmiteRole.SUPPORT -> {
             log.info("Support had top kills in the game")
         }
+        SmiteRole.SUB -> {
+            log.error("Sub is of unknown role, register them with a temporary role")
+        }
         else -> {
             System.err.println("Error")
         }
@@ -496,6 +500,8 @@ fun calculateIndependentStats(playerStats: SplPlayerStats): Double {
             independentGameScore = calculateCarryIndependentStats(playerStats)
         SmiteRole.SOLO, SmiteRole.SUPPORT ->
             independentGameScore = calculateTankIndependentStats(playerStats)
+        SmiteRole.SUB ->
+            log.error("Sub is of unknown role, register them with a temporary role")
         else ->
             System.err.println("Error, player does not fall into the two valid role types")
     }
