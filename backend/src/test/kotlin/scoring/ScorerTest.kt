@@ -1,12 +1,12 @@
 package scoring
 
 import data.SmiteRole
-import data.SplTeamName
+import data.TeamName
 import data.collection.SplGameStats
 import data.collection.SplMatchStats
 import data.collection.SplPlayerStats
-import data.scoring.SplMatchScore
-import data.scoring.SplPlayerMatchScore
+import data.scoring.MatchScore
+import data.scoring.PlayerScore
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions.assertEquals
 
@@ -25,7 +25,7 @@ class ScorerTest {
         val game1KingsStats = arrayListOf<SplPlayerStats>(
             SplPlayerStats(
                 name = "BIGMANTINGZ",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.MID,
                 kills = 7,
                 deaths = 1,
@@ -34,7 +34,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "CAPTAINTWIG",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.JUNGLE,
                 kills = 2,
                 deaths = 5,
@@ -43,7 +43,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "GENETICS",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.SUPPORT,
                 kills = 0,
                 deaths = 1,
@@ -52,7 +52,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "NETRIOID",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.HUNTER,
                 kills = 7,
                 deaths = 2,
@@ -61,7 +61,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "VARIETY",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.SOLO,
                 kills = 1,
                 deaths = 1,
@@ -73,7 +73,7 @@ class ScorerTest {
         val game1LvthnStats = arrayListOf<SplPlayerStats>(
             SplPlayerStats(
                 name = "JARCORRR",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.SOLO,
                 kills = 0,
                 deaths = 5,
@@ -82,7 +82,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "PANITOM",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.JUNGLE,
                 kills = 1,
                 deaths = 5,
@@ -91,7 +91,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "RONNGYU",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.SUPPORT,
                 kills = 1,
                 deaths = 3,
@@ -100,7 +100,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "SHEENTO",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.MID,
                 kills = 3,
                 deaths = 1,
@@ -109,7 +109,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "ZAPMAN",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.HUNTER,
                 kills = 5,
                 deaths = 3,
@@ -119,8 +119,8 @@ class ScorerTest {
         )
 
         val game1Stats = SplGameStats(
-            orderTeamName = SplTeamName.KINGS,
-            chaosTeamName = SplTeamName.LVTHN,
+            orderTeamName = TeamName.KINGS,
+            chaosTeamName = TeamName.LVTHN,
             orderTeamStats = game1KingsStats,
             chaosTeamStats = game1LvthnStats
         )
@@ -128,7 +128,7 @@ class ScorerTest {
         val game2LvthnStats = arrayListOf<SplPlayerStats>(
             SplPlayerStats(
                 name = "JARCORRR",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.SOLO,
                 kills = 1,
                 deaths = 2,
@@ -137,7 +137,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "PANITOM",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.JUNGLE,
                 kills = 7,
                 deaths = 3,
@@ -146,7 +146,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "RONNGYU",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.SUPPORT,
                 kills = 1,
                 deaths = 1,
@@ -155,7 +155,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "SHEENTO",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.MID,
                 kills = 6,
                 deaths = 3,
@@ -164,7 +164,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "ZAPMAN",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.HUNTER,
                 kills = 4,
                 deaths = 3,
@@ -176,7 +176,7 @@ class ScorerTest {
         val game2KingsStats = arrayListOf<SplPlayerStats>(
             SplPlayerStats(
                 name = "BIGMANTINGZ",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.MID,
                 kills = 5,
                 deaths = 2,
@@ -185,7 +185,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "CAPTAINTWIG",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.JUNGLE,
                 kills = 2,
                 deaths = 4,
@@ -194,7 +194,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "GENETICS",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.SUPPORT,
                 kills = 0,
                 deaths = 5,
@@ -203,7 +203,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "NETRIOID",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.HUNTER,
                 kills = 4,
                 deaths = 4,
@@ -212,7 +212,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "VARIETY",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.SOLO,
                 kills = 1,
                 deaths = 4,
@@ -222,100 +222,100 @@ class ScorerTest {
         )
 
         val game2Stats = SplGameStats(
-            orderTeamName = SplTeamName.LVTHN,
-            chaosTeamName = SplTeamName.KINGS,
+            orderTeamName = TeamName.LVTHN,
+            chaosTeamName = TeamName.KINGS,
             orderTeamStats = game2LvthnStats,
             chaosTeamStats = game2KingsStats
         )
 
         val splMatchStats = SplMatchStats(
             date = "30 July 2021",
-            homeTeamName = SplTeamName.LVTHN,
-            awayTeamName = SplTeamName.KINGS,
+            homeTeamName = TeamName.LVTHN,
+            awayTeamName = TeamName.KINGS,
             homeTeamScore = 0,
             awayTeamScore = 2,
             games = arrayListOf(game1Stats, game2Stats)
         )
 
-        val kingsTeamScores = arrayListOf<SplPlayerMatchScore>(
-            SplPlayerMatchScore(
+        val kingsTeamScores = arrayListOf<PlayerScore>(
+            PlayerScore(
                 name = "BIGMANTINGZ",
                 role = SmiteRole.MID,
-                team = SplTeamName.KINGS,
+                team = TeamName.KINGS,
                 gameScores = arrayListOf(19.0, 11.5),
                 overallMatchScore = 33.5
             ),
-            SplPlayerMatchScore(
+            PlayerScore(
                 name = "CAPTAINTWIG",
                 role = SmiteRole.JUNGLE,
-                team = SplTeamName.KINGS,
+                team = TeamName.KINGS,
                 gameScores = arrayListOf(3.5, 3.0),
                 overallMatchScore = 9.5
             ),
-            SplPlayerMatchScore(
+            PlayerScore(
                 name = "GENETICS",
                 role = SmiteRole.SUPPORT,
-                team = SplTeamName.KINGS,
+                team = TeamName.KINGS,
                 gameScores = arrayListOf(16.0, 6.0),
                 overallMatchScore = 25.0
             ),
-            SplPlayerMatchScore(
+            PlayerScore(
                 name = "NETRIOID",
                 role = SmiteRole.HUNTER,
-                team = SplTeamName.KINGS,
+                team = TeamName.KINGS,
                 gameScores = arrayListOf(17.0, 5.0),
                 overallMatchScore = 25.0
             ),
-            SplPlayerMatchScore(
+            PlayerScore(
                 name = "VARIETY",
                 role = SmiteRole.SOLO,
-                team = SplTeamName.KINGS,
+                team = TeamName.KINGS,
                 gameScores = arrayListOf(11.5, 1.5),
                 overallMatchScore = 16.0
             )
         )
 
-        val lvthnTeamScores = arrayListOf<SplPlayerMatchScore>(
-            SplPlayerMatchScore(
+        val lvthnTeamScores = arrayListOf<PlayerScore>(
+            PlayerScore(
                 name = "JARCORRR",
                 role = SmiteRole.SOLO,
-                team = SplTeamName.LVTHN,
+                team = TeamName.LVTHN,
                 gameScores = arrayListOf(-1.0, 14.5),
                 overallMatchScore = 13.5
             ),
-            SplPlayerMatchScore(
+            PlayerScore(
                 name = "PANITOM",
                 role = SmiteRole.JUNGLE,
-                team = SplTeamName.LVTHN,
+                team = TeamName.LVTHN,
                 gameScores = arrayListOf(-0.5, 17.0),
                 overallMatchScore = 16.5
             ),
-            SplPlayerMatchScore(
+            PlayerScore(
                 name = "RONNGYU",
                 role = SmiteRole.SUPPORT,
-                team = SplTeamName.LVTHN,
+                team = TeamName.LVTHN,
                 gameScores = arrayListOf(4.0, 12.0),
                 overallMatchScore = 16.0
             ),
-            SplPlayerMatchScore(
+            PlayerScore(
                 name = "SHEENTO",
                 role = SmiteRole.MID,
-                team = SplTeamName.LVTHN,
+                team = TeamName.LVTHN,
                 gameScores = arrayListOf(8.0, 13.0),
                 overallMatchScore = 21.0
             ),
-            SplPlayerMatchScore(
+            PlayerScore(
                 name = "ZAPMAN",
                 role = SmiteRole.HUNTER,
-                team = SplTeamName.LVTHN,
+                team = TeamName.LVTHN,
                 gameScores = arrayListOf(8.5, 8.5),
                 overallMatchScore = 17.0
             )
         )
 
-        val splMatchExpectedScores = SplMatchScore(
-            homeTeamName = SplTeamName.LVTHN,
-            awayTeamName = SplTeamName.KINGS,
+        val splMatchExpectedScores = MatchScore(
+            homeTeamName = TeamName.LVTHN,
+            awayTeamName = TeamName.KINGS,
             homeTeamScores = lvthnTeamScores,
             awayTeamScores = kingsTeamScores
         )
@@ -335,7 +335,7 @@ class ScorerTest {
         val game1KingsStats = arrayListOf<SplPlayerStats>(
             SplPlayerStats(
                 name = "BIGMANTINGZ",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.MID,
                 kills = 0,
                 deaths = 4,
@@ -344,7 +344,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "CAPTAINTWIG",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.JUNGLE,
                 kills = 0,
                 deaths = 4,
@@ -353,7 +353,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "GENETICS",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.SUPPORT,
                 kills = 0,
                 deaths = 3,
@@ -362,7 +362,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "NETRIOID",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.HUNTER,
                 kills = 0,
                 deaths = 4,
@@ -371,7 +371,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "VARIETY",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.SOLO,
                 kills = 0,
                 deaths = 1,
@@ -383,7 +383,7 @@ class ScorerTest {
         val game1LvthnStats = arrayListOf<SplPlayerStats>(
             SplPlayerStats(
                 name = "JARCORRR",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.SOLO,
                 kills = 1,
                 deaths = 0,
@@ -392,7 +392,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "PANITOM",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.JUNGLE,
                 kills = 4,
                 deaths = 0,
@@ -401,7 +401,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "RONNGYU",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.SUPPORT,
                 kills = 0,
                 deaths = 0,
@@ -410,7 +410,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "SHEENTO",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.MID,
                 kills = 6,
                 deaths = 0,
@@ -419,7 +419,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "ZAPMAN",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.HUNTER,
                 kills = 5,
                 deaths = 0,
@@ -429,8 +429,8 @@ class ScorerTest {
         )
 
         val game1Stats = SplGameStats(
-            orderTeamName = SplTeamName.KINGS,
-            chaosTeamName = SplTeamName.LVTHN,
+            orderTeamName = TeamName.KINGS,
+            chaosTeamName = TeamName.LVTHN,
             orderTeamStats = game1KingsStats,
             chaosTeamStats = game1LvthnStats
         )
@@ -438,7 +438,7 @@ class ScorerTest {
         val game2KingsStats = arrayListOf<SplPlayerStats>(
             SplPlayerStats(
                 name = "BIGMANTINGZ",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.MID,
                 kills = 7,
                 deaths = 1,
@@ -447,7 +447,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "CAPTAINTWIG",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.JUNGLE,
                 kills = 2,
                 deaths = 5,
@@ -456,7 +456,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "GENETICS",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.SUPPORT,
                 kills = 0,
                 deaths = 1,
@@ -465,7 +465,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "NETRIOID",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.HUNTER,
                 kills = 7,
                 deaths = 2,
@@ -474,7 +474,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "VARIETY",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.SOLO,
                 kills = 1,
                 deaths = 1,
@@ -486,7 +486,7 @@ class ScorerTest {
         val game2LvthnStats = arrayListOf<SplPlayerStats>(
             SplPlayerStats(
                 name = "JARCORRR",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.SOLO,
                 kills = 0,
                 deaths = 5,
@@ -495,7 +495,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "PANITOM",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.JUNGLE,
                 kills = 1,
                 deaths = 5,
@@ -504,7 +504,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "RONNGYU",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.SUPPORT,
                 kills = 1,
                 deaths = 3,
@@ -513,7 +513,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "SHEENTO",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.MID,
                 kills = 3,
                 deaths = 1,
@@ -522,7 +522,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "ZAPMAN",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.HUNTER,
                 kills = 5,
                 deaths = 3,
@@ -532,8 +532,8 @@ class ScorerTest {
         )
 
         val game2Stats = SplGameStats(
-            orderTeamName = SplTeamName.KINGS,
-            chaosTeamName = SplTeamName.LVTHN,
+            orderTeamName = TeamName.KINGS,
+            chaosTeamName = TeamName.LVTHN,
             orderTeamStats = game2KingsStats,
             chaosTeamStats = game2LvthnStats
         )
@@ -541,7 +541,7 @@ class ScorerTest {
         val game3LvthnStats = arrayListOf<SplPlayerStats>(
             SplPlayerStats(
                 name = "JARCORRR",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.SOLO,
                 kills = 1,
                 deaths = 2,
@@ -550,7 +550,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "PANITOM",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.JUNGLE,
                 kills = 7,
                 deaths = 3,
@@ -559,7 +559,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "RONNGYU",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.SUPPORT,
                 kills = 1,
                 deaths = 1,
@@ -568,7 +568,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "SHEENTO",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.MID,
                 kills = 6,
                 deaths = 3,
@@ -577,7 +577,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "ZAPMAN",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.HUNTER,
                 kills = 4,
                 deaths = 3,
@@ -589,7 +589,7 @@ class ScorerTest {
         val game3KingsStats = arrayListOf<SplPlayerStats>(
             SplPlayerStats(
                 name = "BIGMANTINGZ",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.MID,
                 kills = 5,
                 deaths = 2,
@@ -598,7 +598,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "CAPTAINTWIG",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.JUNGLE,
                 kills = 2,
                 deaths = 4,
@@ -607,7 +607,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "GENETICS",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.SUPPORT,
                 kills = 0,
                 deaths = 5,
@@ -616,7 +616,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "NETRIOID",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.HUNTER,
                 kills = 4,
                 deaths = 4,
@@ -625,7 +625,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "VARIETY",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.SOLO,
                 kills = 1,
                 deaths = 4,
@@ -635,98 +635,98 @@ class ScorerTest {
         )
 
         val game3Stats = SplGameStats(
-            orderTeamName = SplTeamName.LVTHN,
-            chaosTeamName = SplTeamName.KINGS,
+            orderTeamName = TeamName.LVTHN,
+            chaosTeamName = TeamName.KINGS,
             orderTeamStats = game3LvthnStats,
             chaosTeamStats = game3KingsStats
         )
 
         val splMatchStats = SplMatchStats(
             date = "30 July 2021",
-            homeTeamName = SplTeamName.LVTHN,
-            awayTeamName = SplTeamName.KINGS,
+            homeTeamName = TeamName.LVTHN,
+            awayTeamName = TeamName.KINGS,
             homeTeamScore = 1,
             awayTeamScore = 2,
             games = arrayListOf(game1Stats, game2Stats, game3Stats)
         )
 
-        val kingsTeamScores = arrayListOf<SplPlayerMatchScore>(
-            SplPlayerMatchScore(
+        val kingsTeamScores = arrayListOf<PlayerScore>(
+            PlayerScore(
                 name = "BIGMANTINGZ",
                 role = SmiteRole.MID,
-                team = SplTeamName.KINGS,
+                team = TeamName.KINGS,
                 gameScores = arrayListOf(-4.0, 15.0, 9.0),
                 overallMatchScore = 22.0
             ),
-            SplPlayerMatchScore(
+            PlayerScore(
                 name = "CAPTAINTWIG",
                 role = SmiteRole.JUNGLE,
-                team = SplTeamName.KINGS,
+                team = TeamName.KINGS,
                 gameScores = arrayListOf(-4.0, -1.0, 0.0),
                 overallMatchScore = -3.0
             ),
-            SplPlayerMatchScore(
+            PlayerScore(
                 name = "GENETICS",
                 role = SmiteRole.SUPPORT,
-                team = SplTeamName.KINGS,
+                team = TeamName.KINGS,
                 gameScores = arrayListOf(-3.0, 8.5, 1.0),
                 overallMatchScore = 8.5
             ),
-            SplPlayerMatchScore(
+            PlayerScore(
                 name = "NETRIOID",
                 role = SmiteRole.HUNTER,
-                team = SplTeamName.KINGS,
+                team = TeamName.KINGS,
                 gameScores = arrayListOf(-4.0, 13.0, 4.0),
                 overallMatchScore = 15.0
             ),
-            SplPlayerMatchScore(
+            PlayerScore(
                 name = "VARIETY",
                 role = SmiteRole.SOLO,
-                team = SplTeamName.KINGS,
+                team = TeamName.KINGS,
                 gameScores = arrayListOf(0.0, 6.0, -0.5),
                 overallMatchScore = 7.5
             )
         )
-        val lvthnTeamScores = arrayListOf<SplPlayerMatchScore>(
-            SplPlayerMatchScore(
+        val lvthnTeamScores = arrayListOf<PlayerScore>(
+            PlayerScore(
                 name = "JARCORRR",
                 role = SmiteRole.SOLO,
-                team = SplTeamName.LVTHN,
+                team = TeamName.LVTHN,
                 gameScores = arrayListOf(8.0, -3.0, 7.0),
                 overallMatchScore = 13.0
             ),
-            SplPlayerMatchScore(
+            PlayerScore(
                 name = "PANITOM",
                 role = SmiteRole.JUNGLE,
-                team = SplTeamName.LVTHN,
+                team = TeamName.LVTHN,
                 gameScores = arrayListOf(12.0, -3.0, 13.0),
                 overallMatchScore = 23.0
             ),
-            SplPlayerMatchScore(
+            PlayerScore(
                 name = "RONNGYU",
                 role = SmiteRole.SUPPORT,
-                team = SplTeamName.LVTHN,
+                team = TeamName.LVTHN,
                 gameScores = arrayListOf(13.0, 2.0, 6.5),
                 overallMatchScore = 22.5
             ),
-            SplPlayerMatchScore(
+            PlayerScore(
                 name = "SHEENTO",
                 role = SmiteRole.MID,
-                team = SplTeamName.LVTHN,
+                team = TeamName.LVTHN,
                 gameScores = arrayListOf(17.0, 6.0, 10.0),
                 overallMatchScore = 34.0
             ),
-            SplPlayerMatchScore(
+            PlayerScore(
                 name = "ZAPMAN",
                 role = SmiteRole.HUNTER,
-                team = SplTeamName.LVTHN,
+                team = TeamName.LVTHN,
                 gameScores = arrayListOf(13.0, 7.0, 5.0),
                 overallMatchScore = 26.0
             )
         )
-        val splMatchExpectedScores = SplMatchScore(
-            homeTeamName = SplTeamName.LVTHN,
-            awayTeamName = SplTeamName.KINGS,
+        val splMatchExpectedScores = MatchScore(
+            homeTeamName = TeamName.LVTHN,
+            awayTeamName = TeamName.KINGS,
             homeTeamScores = lvthnTeamScores,
             awayTeamScores = kingsTeamScores
         )
@@ -747,7 +747,7 @@ class ScorerTest {
         val game1KingsStats = arrayListOf<SplPlayerStats>(
             SplPlayerStats(
                 name = "BIGMANTINGZ",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.MID,
                 kills = 2,
                 deaths = 4,
@@ -756,7 +756,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "CAPTAINTWIG",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.JUNGLE,
                 kills = 0,
                 deaths = 4,
@@ -765,7 +765,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "GENETICS",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.SUPPORT,
                 kills = 0,
                 deaths = 3,
@@ -774,7 +774,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "NETRIOID",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.HUNTER,
                 kills = 0,
                 deaths = 4,
@@ -783,7 +783,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "VARIETY",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.SOLO,
                 kills = 0,
                 deaths = 1,
@@ -794,7 +794,7 @@ class ScorerTest {
         val game1LvthnStats = arrayListOf<SplPlayerStats>(
             SplPlayerStats(
                 name = "JARCORRR",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.SOLO,
                 kills = 2,
                 deaths = 0,
@@ -803,7 +803,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "PANITOM",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.JUNGLE,
                 kills = 4,
                 deaths = 0,
@@ -812,7 +812,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "RONNGYU",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.SUPPORT,
                 kills = 0,
                 deaths = 0,
@@ -821,7 +821,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "SHEENTO",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.MID,
                 kills = 6,
                 deaths = 0,
@@ -830,7 +830,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "ZAPMAN",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.HUNTER,
                 kills = 6,
                 deaths = 0,
@@ -839,8 +839,8 @@ class ScorerTest {
             )
         )
         val game1Stats = SplGameStats(
-            orderTeamName = SplTeamName.KINGS,
-            chaosTeamName = SplTeamName.LVTHN,
+            orderTeamName = TeamName.KINGS,
+            chaosTeamName = TeamName.LVTHN,
             orderTeamStats = game1KingsStats,
             chaosTeamStats = game1LvthnStats
         )
@@ -848,7 +848,7 @@ class ScorerTest {
         val game2KingsStats = arrayListOf<SplPlayerStats>(
             SplPlayerStats(
                 name = "BIGMANTINGZ",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.MID,
                 kills = 7,
                 deaths = 1,
@@ -857,7 +857,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "CAPTAINTWIG",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.JUNGLE,
                 kills = 2,
                 deaths = 5,
@@ -866,7 +866,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "GENETICS",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.SUPPORT,
                 kills = 0,
                 deaths = 1,
@@ -875,7 +875,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "NETRIOID",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.HUNTER,
                 kills = 7,
                 deaths = 2,
@@ -884,7 +884,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "VARIETY",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.SOLO,
                 kills = 1,
                 deaths = 1,
@@ -895,7 +895,7 @@ class ScorerTest {
         val game2LvthnStats = arrayListOf<SplPlayerStats>(
             SplPlayerStats(
                 name = "JARCORRR",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.SOLO,
                 kills = 0,
                 deaths = 5,
@@ -904,7 +904,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "PANITOM",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.JUNGLE,
                 kills = 1,
                 deaths = 5,
@@ -913,7 +913,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "RONNGYU",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.SUPPORT,
                 kills = 1,
                 deaths = 3,
@@ -922,7 +922,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "SHEENTO",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.MID,
                 kills = 3,
                 deaths = 1,
@@ -931,7 +931,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "ZAPMAN",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.HUNTER,
                 kills = 7,
                 deaths = 3,
@@ -940,8 +940,8 @@ class ScorerTest {
             )
         )
         val game2Stats = SplGameStats(
-            orderTeamName = SplTeamName.KINGS,
-            chaosTeamName = SplTeamName.LVTHN,
+            orderTeamName = TeamName.KINGS,
+            chaosTeamName = TeamName.LVTHN,
             orderTeamStats = game2KingsStats,
             chaosTeamStats = game2LvthnStats
         )
@@ -949,7 +949,7 @@ class ScorerTest {
         val game3LvthnStats = arrayListOf<SplPlayerStats>(
             SplPlayerStats(
                 name = "JARCORRR",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.SOLO,
                 kills = 1,
                 deaths = 2,
@@ -958,7 +958,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "PANITOM",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.JUNGLE,
                 kills = 7,
                 deaths = 3,
@@ -967,7 +967,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "RONNGYU",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.SUPPORT,
                 kills = 1,
                 deaths = 1,
@@ -976,7 +976,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "SHEENTO",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.MID,
                 kills = 6,
                 deaths = 3,
@@ -985,7 +985,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "ZAPMAN",
-                splTeam = SplTeamName.LVTHN,
+                splTeam = TeamName.LVTHN,
                 role = SmiteRole.HUNTER,
                 kills = 4,
                 deaths = 3,
@@ -996,7 +996,7 @@ class ScorerTest {
         val game3KingsStats = arrayListOf<SplPlayerStats>(
             SplPlayerStats(
                 name = "BIGMANTINGZ",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.MID,
                 kills = 5,
                 deaths = 2,
@@ -1005,7 +1005,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "CAPTAINTWIG",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.JUNGLE,
                 kills = 2,
                 deaths = 4,
@@ -1014,7 +1014,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "GENETICS",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.SUPPORT,
                 kills = 0,
                 deaths = 5,
@@ -1023,7 +1023,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "NETRIOID",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.HUNTER,
                 kills = 4,
                 deaths = 4,
@@ -1032,7 +1032,7 @@ class ScorerTest {
             ),
             SplPlayerStats(
                 name = "VARIETY",
-                splTeam = SplTeamName.KINGS,
+                splTeam = TeamName.KINGS,
                 role = SmiteRole.SOLO,
                 kills = 1,
                 deaths = 4,
@@ -1041,98 +1041,98 @@ class ScorerTest {
             )
         )
         val game3Stats = SplGameStats(
-            orderTeamName = SplTeamName.LVTHN,
-            chaosTeamName = SplTeamName.KINGS,
+            orderTeamName = TeamName.LVTHN,
+            chaosTeamName = TeamName.KINGS,
             orderTeamStats = game3LvthnStats,
             chaosTeamStats = game3KingsStats
         )
 
         val splMatchStats = SplMatchStats(
             date = "30 July 2021",
-            homeTeamName = SplTeamName.LVTHN,
-            awayTeamName = SplTeamName.KINGS,
+            homeTeamName = TeamName.LVTHN,
+            awayTeamName = TeamName.KINGS,
             homeTeamScore = 1,
             awayTeamScore = 2,
             games = arrayListOf(game1Stats, game2Stats, game3Stats)
         )
 
-        val kingsTeamScores = arrayListOf<SplPlayerMatchScore>(
-            SplPlayerMatchScore(
+        val kingsTeamScores = arrayListOf<PlayerScore>(
+            PlayerScore(
                 name = "BIGMANTINGZ",
                 role = SmiteRole.MID,
-                team = SplTeamName.KINGS,
+                team = TeamName.KINGS,
                 gameScores = arrayListOf(1.0, 15.0, 9.0),
                 overallMatchScore = 27.0
             ),
-            SplPlayerMatchScore(
+            PlayerScore(
                 name = "CAPTAINTWIG",
                 role = SmiteRole.JUNGLE,
-                team = SplTeamName.KINGS,
+                team = TeamName.KINGS,
                 gameScores = arrayListOf(-4.0, -1.0, 0.0),
                 overallMatchScore = -3.0
             ),
-            SplPlayerMatchScore(
+            PlayerScore(
                 name = "GENETICS",
                 role = SmiteRole.SUPPORT,
-                team = SplTeamName.KINGS,
+                team = TeamName.KINGS,
                 gameScores = arrayListOf(-1.0, 8.5, 3.0),
                 overallMatchScore = 12.5
             ),
-            SplPlayerMatchScore(
+            PlayerScore(
                 name = "NETRIOID",
                 role = SmiteRole.HUNTER,
-                team = SplTeamName.KINGS,
+                team = TeamName.KINGS,
                 gameScores = arrayListOf(-4.0, 13.0, 4.0),
                 overallMatchScore = 15.0
             ),
-            SplPlayerMatchScore(
+            PlayerScore(
                 name = "VARIETY",
                 role = SmiteRole.SOLO,
-                team = SplTeamName.KINGS,
+                team = TeamName.KINGS,
                 gameScores = arrayListOf(0.0, 6.0, -0.5),
                 overallMatchScore = 7.5
             )
         )
-        val lvthnTeamScores = arrayListOf<SplPlayerMatchScore>(
-            SplPlayerMatchScore(
+        val lvthnTeamScores = arrayListOf<PlayerScore>(
+            PlayerScore(
                 name = "JARCORRR",
                 role = SmiteRole.SOLO,
-                team = SplTeamName.LVTHN,
+                team = TeamName.LVTHN,
                 gameScores = arrayListOf(9.5, -3.0, 4.5),
                 overallMatchScore = 12.0
             ),
-            SplPlayerMatchScore(
+            PlayerScore(
                 name = "PANITOM",
                 role = SmiteRole.JUNGLE,
-                team = SplTeamName.LVTHN,
+                team = TeamName.LVTHN,
                 gameScores = arrayListOf(12.0, -3.0, 13.0),
                 overallMatchScore = 23.0
             ),
-            SplPlayerMatchScore(
+            PlayerScore(
                 name = "RONNGYU",
                 role = SmiteRole.SUPPORT,
-                team = SplTeamName.LVTHN,
+                team = TeamName.LVTHN,
                 gameScores = arrayListOf(13.0, 2.0, 8.5),
                 overallMatchScore = 24.5
             ),
-            SplPlayerMatchScore(
+            PlayerScore(
                 name = "SHEENTO",
                 role = SmiteRole.MID,
-                team = SplTeamName.LVTHN,
+                team = TeamName.LVTHN,
                 gameScores = arrayListOf(17.0, 6.0, 10.0),
                 overallMatchScore = 34.0
             ),
-            SplPlayerMatchScore(
+            PlayerScore(
                 name = "ZAPMAN",
                 role = SmiteRole.HUNTER,
-                team = SplTeamName.LVTHN,
+                team = TeamName.LVTHN,
                 gameScores = arrayListOf(16.0, 12.0, 5.0),
                 overallMatchScore = 34.0
             )
         )
-        val splMatchExpectedScores = SplMatchScore(
-            homeTeamName = SplTeamName.LVTHN,
-            awayTeamName = SplTeamName.KINGS,
+        val splMatchExpectedScores = MatchScore(
+            homeTeamName = TeamName.LVTHN,
+            awayTeamName = TeamName.KINGS,
             homeTeamScores = lvthnTeamScores,
             awayTeamScores = kingsTeamScores
         )

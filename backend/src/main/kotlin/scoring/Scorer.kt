@@ -4,11 +4,11 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 import data.SmiteRole
-import data.SplTeamName
+import data.TeamName
 import data.collection.SplMatchStats
 import data.collection.SplPlayerStats
-import data.scoring.SplMatchScore
-import data.scoring.SplPlayerMatchScore
+import data.scoring.MatchScore
+import data.scoring.PlayerScore
 
 // standard pts
 const val CARRIES_KILL = 2.0
@@ -39,10 +39,10 @@ const val FIRE_GIANT = 1.0
 val log: Logger = LoggerFactory.getLogger("Scorer")
 
 /**
- * Returns the scores for each player for each game and the overall match, all packaged in a [SplMatchScore] object.
+ * Returns the scores for each player for each game and the overall match, all packaged in a [MatchScore] object.
  * The scores are derived from the [splMatchStats] that are provided.
  */
-fun scoreMatch(splMatchStats: SplMatchStats): SplMatchScore {
+fun scoreMatch(splMatchStats: SplMatchStats): MatchScore {
     // create SplPlayerMatchScore objects
     val homeTeamScores = createTeamScoresBase(
         orderTeamName = splMatchStats.games[0].orderTeamName,
@@ -208,7 +208,7 @@ fun scoreMatch(splMatchStats: SplMatchStats): SplMatchScore {
         }
     }
 
-    return SplMatchScore(
+    return MatchScore(
         homeTeamName = splMatchStats.homeTeamName,
         awayTeamName = splMatchStats.awayTeamName,
         homeTeamScores = homeTeamScores,
@@ -217,18 +217,18 @@ fun scoreMatch(splMatchStats: SplMatchStats): SplMatchScore {
 }
 
 /**
- * Returns a [SplPlayerMatchScore] that is already populated with the name, role and team name of each player for the
+ * Returns a [PlayerScore] that is already populated with the name, role and team name of each player for the
  * [teamName] provided.
  *
  * @param orderTeamName The name of the order team for a specific game
  */
 fun createTeamScoresBase(
-    orderTeamName: SplTeamName,
-    teamName: SplTeamName,
+    orderTeamName: TeamName,
+    teamName: TeamName,
     orderTeamStats: ArrayList<SplPlayerStats>,
     chaosTeamStats: ArrayList<SplPlayerStats>
-): ArrayList<SplPlayerMatchScore> {
-    val teamScores = arrayListOf<SplPlayerMatchScore>()
+): ArrayList<PlayerScore> {
+    val teamScores = arrayListOf<PlayerScore>()
 
     if (orderTeamName == teamName) {
         for (playerStats in orderTeamStats) {
@@ -243,11 +243,11 @@ fun createTeamScoresBase(
 }
 
 /**
- * Returns an [SplPlayerMatchScore] that is based on the [playerStats] provided.
- * The [SplPlayerMatchScore] will have the same name, role and team as [playerStats].
+ * Returns an [PlayerScore] that is based on the [playerStats] provided.
+ * The [PlayerScore] will have the same name, role and team as [playerStats].
  */
-fun createSplPlayerMatchScore(playerStats: SplPlayerStats): SplPlayerMatchScore {
-    return SplPlayerMatchScore(
+fun createSplPlayerMatchScore(playerStats: SplPlayerStats): PlayerScore {
+    return PlayerScore(
         name = playerStats.name,
         role = playerStats.role,
         team = playerStats.splTeam
@@ -286,10 +286,10 @@ private fun findTopKillsPlayers(teamStats: ArrayList<SplPlayerStats>): ArrayList
  */
 private fun recordTopKillsPlayersGame(
     topKillPlayersGame: ArrayList<SplPlayerStats>,
-    homeTeam: SplTeamName,
-    awayTeam: SplTeamName,
-    homeTeamScores: ArrayList<SplPlayerMatchScore>,
-    awayTeamScores: ArrayList<SplPlayerMatchScore>,
+    homeTeam: TeamName,
+    awayTeam: TeamName,
+    homeTeamScores: ArrayList<PlayerScore>,
+    awayTeamScores: ArrayList<PlayerScore>,
     gameNum: Int
 ) {
     for (player in topKillPlayersGame) {
@@ -314,7 +314,7 @@ private fun recordTopKillsPlayersGame(
 /**
  * Awards the [topKillsPlayer] in [gameNum] with the right amount of points based on their role
  */
-private fun recordTopKillPtsBasedOnRole(topKillsPlayer: SplPlayerMatchScore?, gameNum: Int) {
+private fun recordTopKillPtsBasedOnRole(topKillsPlayer: PlayerScore?, gameNum: Int) {
     when (topKillsPlayer?.role) {
         SmiteRole.JUNGLE, SmiteRole.MID, SmiteRole.HUNTER -> {
             topKillsPlayer.gameScores[gameNum] += CARRIES_TOP_KILLS_GAME
@@ -348,10 +348,10 @@ private fun recordTopKillPtsBasedOnRole(topKillsPlayer: SplPlayerMatchScore?, ga
  */
 private fun recordTopAssistPlayers(
     topAssistPlayers: ArrayList<SplPlayerStats>,
-    homeTeam: SplTeamName,
-    awayTeam: SplTeamName,
-    homeTeamScores: ArrayList<SplPlayerMatchScore>,
-    awayTeamScores: ArrayList<SplPlayerMatchScore>,
+    homeTeam: TeamName,
+    awayTeam: TeamName,
+    homeTeamScores: ArrayList<PlayerScore>,
+    awayTeamScores: ArrayList<PlayerScore>,
     gameNum: Int
 ) {
     for (player in topAssistPlayers) {
@@ -409,10 +409,10 @@ fun findAssistsPlayers(teamStats: ArrayList<SplPlayerStats>): ArrayList<SplPlaye
  */
 private fun recordTopDamagePlayersTeam(
     topDamagePlayerTeam: ArrayList<SplPlayerStats>,
-    homeTeam: SplTeamName,
-    awayTeam: SplTeamName,
-    homeTeamScores: ArrayList<SplPlayerMatchScore>,
-    awayTeamScores: ArrayList<SplPlayerMatchScore>,
+    homeTeam: TeamName,
+    awayTeam: TeamName,
+    homeTeamScores: ArrayList<PlayerScore>,
+    awayTeamScores: ArrayList<PlayerScore>,
     gameNum: Int
 ) {
     for (player in topDamagePlayerTeam) {
@@ -470,10 +470,10 @@ private fun findTopDamagePlayerTeam(teamStats: ArrayList<SplPlayerStats>): Array
  */
 private fun calculateAndRecordIndependentPlayerStats(
     playerStats: SplPlayerStats,
-    homeTeam: SplTeamName,
-    awayTeam: SplTeamName,
-    homeTeamScores: ArrayList<SplPlayerMatchScore>,
-    awayTeamScores: ArrayList<SplPlayerMatchScore>
+    homeTeam: TeamName,
+    awayTeam: TeamName,
+    homeTeamScores: ArrayList<PlayerScore>,
+    awayTeamScores: ArrayList<PlayerScore>
 ) {
     val playerIndependentScore = calculateIndependentStats(playerStats)
 

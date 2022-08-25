@@ -1,12 +1,17 @@
 package data.scoring
 
-import data.SmiteRole
-import data.SplTeamName
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
-data class SplPlayerMatchScore(
+import data.SmiteRole
+import data.TeamName
+
+val log: Logger = LoggerFactory.getLogger("SplPlayerMatchScore")
+
+data class PlayerScore(
     val name: String = "",
     val role: SmiteRole = SmiteRole.NONE,
-    val team: SplTeamName = SplTeamName.NONE,
+    val team: TeamName = TeamName.NONE,
     var gameScores: ArrayList<Double> = arrayListOf(),
     var overallMatchScore: Double = 0.0
 ) {
@@ -18,7 +23,7 @@ data class SplPlayerMatchScore(
             }
             this.overallMatchScore = cumulativeScore
         } else {
-            println("Game scores are empty")
+            log.info("Game scores are empty")
         }
     }
 }

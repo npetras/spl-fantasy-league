@@ -1,6 +1,6 @@
 package data
 
-enum class SplTeamName {
+enum class TeamName {
     LVTHN,
     KINGS,
     JADE,
