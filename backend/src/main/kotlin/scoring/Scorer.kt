@@ -524,9 +524,9 @@ fun calculateTankIndependentStats(playerStats: SplPlayerStats): Double {
 
     val noDeathsBonusPts =
         if (playerStats.role == SmiteRole.SUPPORT && playerStats.deaths == 0) {
-            4.0
+            SUPP_NO_DEATHS
         } else if (playerStats.role == SmiteRole.SOLO && playerStats.deaths == 0) {
-            2.0
+            SOLO_NO_DEATHS
         } else {
             0.0
         }
