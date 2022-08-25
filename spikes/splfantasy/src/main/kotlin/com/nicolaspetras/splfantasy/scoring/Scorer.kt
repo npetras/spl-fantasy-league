@@ -200,11 +200,11 @@ fun scoreMatch(splMatchStats: SplMatchStats): SplMatchScore {
 
     // record extra points for teams that win in 2-0 'sweep' fashion
     // done afterwards because it is a per match score not a per game score
-    if (splMatchStats.homeTeamScore == 2 && splMatchStats.awayTeamScore == 0) {
+    if (splMatchStats.homeTeamScore >= 2 && splMatchStats.awayTeamScore == 0) {
         for (playerScore in homeTeamScores) {
             playerScore.overallMatchScore += SWEEP_VICTORY
         }
-    } else if (splMatchStats.homeTeamScore == 0 && splMatchStats.awayTeamScore == 2) {
+    } else if (splMatchStats.homeTeamScore == 0 && splMatchStats.awayTeamScore >= 2) {
         for (playerScore in awayTeamScores) {
             playerScore.overallMatchScore += SWEEP_VICTORY
         }
@@ -213,6 +213,8 @@ fun scoreMatch(splMatchStats: SplMatchStats): SplMatchScore {
     return SplMatchScore(
         homeTeamName = splMatchStats.homeTeamName,
         awayTeamName = splMatchStats.awayTeamName,
+        homeTeamScore = splMatchStats.homeTeamScore,
+        awayTeamScore = splMatchStats.awayTeamScore,
         homeTeamScores = homeTeamScores,
         awayTeamScores = awayTeamScores
     )

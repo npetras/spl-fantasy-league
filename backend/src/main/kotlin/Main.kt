@@ -21,7 +21,7 @@ fun main() {
     val driver = FirefoxDriver()
 
     try {
-        driver.get("https://www.smiteproleague.com/scores")
+        driver.get("https://www.smiteproleague.com/matches/3377")
         val actionProvider = Actions(driver)
         val js: JavascriptExecutor = driver
 
@@ -31,20 +31,20 @@ fun main() {
         acceptCookies(driver, actionProvider)
 
         // print the heading, weeks subheading and the date of the match
-        val heading = driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/h1")
-        val weeksSubHeading = driver.findElementByXPath("/html/body/div[1]/div/div[1]/div/div[2]/div/div[2]/p")
-        val date = driver.findElementByCssSelector("div.c-MatchSummaryCard:nth-child(1) > h2:nth-child(1)")
-        // stored in variable, so it can be used later on, even when it is no longer part of the DOM
-        val dateText = date.text
-        println(heading.text)
-        println(weeksSubHeading.text)
-        println(date.text)
-        println()
+//        val heading = driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/h1")
+//        val weeksSubHeading = driver.findElementByXPath("/html/body/div[1]/div/div[1]/div/div[2]/div/div[2]/p")
+//        val date = driver.findElementByCssSelector("div.c-MatchSummaryCard:nth-child(1) > h2:nth-child(1)")
+//        // stored in variable, so it can be used later on, even when it is no longer part of the DOM
+//        val dateText = date.text
+//        println(heading.text)
+//        println(weeksSubHeading.text)
+//        println(date.text)
+//        println()
 
         // for every group of matches
-        val matchesGroupedByDayXpath = "/html/body/div/div/div[1]/div/div[2]/div/div[3]/div[1]/div/div"
-        val matchGroups = driver.findElementsByXPath(matchesGroupedByDayXpath)
-        val noMatchGroups = matchGroups.size
+//        val matchesGroupedByDayXpath = "/html/body/div/div/div[1]/div/div[2]/div/div[3]/div[1]/div/div"
+//        val matchGroups = driver.findElementsByXPath(matchesGroupedByDayXpath)
+//        val noMatchGroups = matchGroups.size
 
         val scoresWrapperXPath = "/html/body/div/div/div[1]/div/div[2]/div/div[3]/div[1]/div"
 
@@ -54,24 +54,11 @@ fun main() {
         // move to the previous week
 //        moveToPrevWeek(driver, actionProvider)
 
-        for (i in 1..noMatchGroups) {
-            val matchesInGroupXPath = "$scoresWrapperXPath/div[$i]/div"
-            val matchesInGroup = driver.findElementsByXPath(matchesInGroupXPath)
-            val noOfMatches = matchesInGroup.size
-            // for all matches scrape the stats and score the games
-            for (j in 1..noOfMatches) {
-                val openMatchStatsButtonXPath = "$matchesInGroupXPath[$j]/div[10]/a"
-                openGameStats(driver, actionProvider, js, openMatchStatsButtonXPath)
-                // TODO: date text will be wrong for match groups after the first
-                val splMatchStats = scrapeMatchStats(dateText, driver, actionProvider)
+
+                val splMatchStats = scrapeMatchStats("", driver, actionProvider)
                 log.debug("SPL Match Stats: ")
                 log.debug(splMatchStats.toString())
                 calculateAndPrintScores(splMatchStats)
-                // back out of match (set)
-                driver.navigate().back()
-                Thread.sleep(1000)
-            }
-        }
 
 //        openGameStats(driver, actionProvider, js,
 //            "/html/body/div/div/div[1]/div/div[2]/div/div[3]/div[1]/div/div[2]/div[1]/div[10]/a")
