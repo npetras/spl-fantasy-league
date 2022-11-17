@@ -14,7 +14,7 @@ import scoring.scoreMatch
 val log: Logger = LoggerFactory.getLogger("Main")
 
 /**
- * Scrapes the required data from the Smite Pro League website, and sends the scraped data to the Scrorer functions,
+ * Scrapes the required data from to Smite Pro League website, and sends the scraped data to the Scrorer functions,
  * that score the matches scraped.
  */
 fun main() {
@@ -31,9 +31,9 @@ fun main() {
         acceptCookies(driver, actionProvider)
 
         // print the heading, weeks subheading and the date of the match
-        val heading = driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/h1")
-        val weeksSubHeading = driver.findElementByXPath("/html/body/div[1]/div/div[1]/div/div[2]/div/div[2]/p")
-        val date = driver.findElementByCssSelector("div.c-MatchSummaryCard:nth-child(1) > h2:nth-child(1)")
+        val heading = driver.findElement(By.xpath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/h1"))
+        val weeksSubHeading = driver.findElement(By.xpath("/html/body/div[1]/div/div[1]/div/div[2]/div/div[2]/p"))
+        val date = driver.findElement(By.cssSelector("div.c-MatchSummaryCard:nth-child(1) > h2:nth-child(1)"))
         // stored in variable, so it can be used later on, even when it is no longer part of the DOM
         val dateText = date.text
         println(heading.text)
@@ -43,7 +43,7 @@ fun main() {
 
         // for every group of matches
         val matchesGroupedByDayXpath = "/html/body/div/div/div[1]/div/div[2]/div/div[3]/div[1]/div/div"
-        val matchGroups = driver.findElementsByXPath(matchesGroupedByDayXpath)
+        val matchGroups = driver.findElements(By.xpath(matchesGroupedByDayXpath))
         val noMatchGroups = matchGroups.size
 
         val scoresWrapperXPath = "/html/body/div/div/div[1]/div/div[2]/div/div[3]/div[1]/div"
@@ -56,7 +56,7 @@ fun main() {
 
         for (i in 1..noMatchGroups) {
             val matchesInGroupXPath = "$scoresWrapperXPath/div[$i]/div"
-            val matchesInGroup = driver.findElementsByXPath(matchesInGroupXPath)
+            val matchesInGroup = driver.findElements(By.xpath(matchesInGroupXPath))
             val noOfMatches = matchesInGroup.size
             // for all matches scrape the stats and score the games
             for (j in 1..noOfMatches) {
@@ -108,13 +108,13 @@ private fun scrapeMatchStats(
 ): SplMatchStats {
     // get the team name & match score
     val homeTeamName =
-        driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/div/div[1]/div/strong")
+        driver.findElement(By.xpath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/div/div[1]/div/strong"))
     val awayTeamName =
-        driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/div/div[3]/div/strong")
+        driver.findElement(By.xpath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/div/div[3]/div/strong"))
     val homeTeamScore =
-        driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/div/div[2]/div[1]/div[1]")
+        driver.findElement(By.xpath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/div/div[2]/div[1]/div[1]"))
     val awayTeamScore =
-        driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/div/div[2]/div[1]/div[3]")
+        driver.findElement(By.xpath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/div/div[2]/div[1]/div[3]"))
     val homeTeamNameText = homeTeamName.text
     val awayTeamNameText = awayTeamName.text
     val homeTeamScoreInt = homeTeamScore.text.toInt()
@@ -135,7 +135,7 @@ private fun scrapeMatchStats(
 
         // Scrape stats for order team
         val orderTeamStatsHeader =
-            driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[1]/h2")
+            driver.findElement(By.xpath("/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[1]/h2"))
         val orderTeamText = orderTeamStatsHeader.text.substringBefore(" ")
         val orderTeamBasicStatsXPath =
             "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[1]/div/div/div"
@@ -148,7 +148,7 @@ private fun scrapeMatchStats(
         // get damage stats for order team
         val orderTeamAdditionalStatsXPath =
             "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[2]/div/table/tbody/tr"
-        val orderTeamAdditionalStatsTable = driver.findElementsByXPath(orderTeamAdditionalStatsXPath)
+        val orderTeamAdditionalStatsTable = driver.findElements(By.xpath(orderTeamAdditionalStatsXPath))
 
         val orderTeamCompleteStats = scrapeAdditionalStats(
             additionalStatsTable = orderTeamAdditionalStatsTable,
@@ -159,7 +159,7 @@ private fun scrapeMatchStats(
         val chaosTeamBasicStatsXPath =
             "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[4]/div/div/div"
         val chaosTeam =
-            driver.findElementByXPath("/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[3]/h2")
+            driver.findElement(By.xpath("""/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[3]/h2"""))
         val chaosTeamText = chaosTeam.text.substringBefore(" ")
 
         val chaosTeamBasicStats = scrapeBasicStats(
@@ -170,7 +170,7 @@ private fun scrapeMatchStats(
 
         val chaosTeamAdditionalStatsXPath =
             "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[5]/div/table/tbody/tr"
-        val chaosTeamAdditionalStatsTable = driver.findElementsByXPath(chaosTeamAdditionalStatsXPath)
+        val chaosTeamAdditionalStatsTable = driver.findElements(By.xpath(chaosTeamAdditionalStatsXPath))
 
         val chaosTeamCompleteStats = scrapeAdditionalStats(
             additionalStatsTable = chaosTeamAdditionalStatsTable,
@@ -189,7 +189,7 @@ private fun scrapeMatchStats(
         // navigate to next game
         if (gameNum < numOfGames) {
             val nextGameXPath = "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[1]/div[${gameNum + 1}]"
-            val nextGameButton = driver.findElementByXPath(nextGameXPath)
+            val nextGameButton = driver.findElement(By.xpath(nextGameXPath))
             actionProvider.clickAndHold(nextGameButton).build().perform()
             actionProvider.release(nextGameButton).build().perform()
         }
@@ -234,15 +234,15 @@ private fun scrapeBasicStats(driver: FirefoxDriver, xpath: String, teamName: Str
 
     for (i in 1..5) {
 
-        val name = driver.findElementByXPath("$xpath[$divNum]").text
+        val name = driver.findElement(By.xpath("$xpath[$divNum]")).text
         divNum += 1
-        val role = driver.findElementByXPath("$xpath[$divNum]").text
+        val role = driver.findElement(By.xpath("$xpath[$divNum]")).text
         divNum += 2
-        val kills = driver.findElementByXPath("$xpath[$divNum]").text
+        val kills = driver.findElement(By.xpath("$xpath[$divNum]")).text
         divNum += 1
-        val deaths = driver.findElementByXPath("$xpath[$divNum]").text
+        val deaths = driver.findElement(By.xpath("$xpath[$divNum]")).text
         divNum += 1
-        val assists = driver.findElementByXPath("$xpath[$divNum]").text
+        val assists = driver.findElement(By.xpath("$xpath[$divNum]")).text
         divNum += 4
 
         val playerStats = SplPlayerStats(
@@ -267,8 +267,8 @@ private fun openGameStats(
     openMatchStatsButtonXPath: String
 ) {
     val matchStatsButton =
-        driver.findElementByXPath(openMatchStatsButtonXPath)
-    js.executeScript("arguments[0].scrollIntoView();", matchStatsButton);
+        driver.findElement(By.xpath(openMatchStatsButtonXPath))
+    js.executeScript("arguments[0].scrollIntoView();", matchStatsButton)
     actionProvider.clickAndHold(matchStatsButton).build().perform()
     actionProvider.release(matchStatsButton).build().perform()
     Thread.sleep(2000)
@@ -278,7 +278,7 @@ private fun moveToPrevWeek(
     driver: FirefoxDriver,
     actionProvider: Actions
 ) {
-    val prevArrow = driver.findElementByCssSelector(".date-selector > div:nth-child(1)")
+    val prevArrow = driver.findElement(By.cssSelector(".date-selector > div:nth-child(1)"))
     actionProvider.clickAndHold(prevArrow).build().perform()
     actionProvider.release(prevArrow).build().perform()
     Thread.sleep(2000)
@@ -288,7 +288,7 @@ private fun acceptCookies(
     driver: FirefoxDriver,
     actionProvider: Actions
 ) {
-    val acceptCookiesButton = driver.findElementByCssSelector(".approve")
+    val acceptCookiesButton = driver.findElement(By.cssSelector(".approve"))
     actionProvider.clickAndHold(acceptCookiesButton).build().perform()
     actionProvider.release(acceptCookiesButton).build().perform()
 }
