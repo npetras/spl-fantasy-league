@@ -7,22 +7,22 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 abstract class Rubric {
-    val log: Logger = LoggerFactory.getLogger(javaClass)
+    private val log: Logger = LoggerFactory.getLogger(javaClass)
     abstract val soloCalculator: PlayerPointsCalculator
     abstract val jungleCalculator: PlayerPointsCalculator
     abstract val midCalculator: PlayerPointsCalculator
     abstract val supportCalculator: PlayerPointsCalculator
     abstract val hunterCalculator: PlayerPointsCalculator
 
-    fun calculatePlayerScore(role: SmiteRole, playerStats: SplPlayerStats): Double {
-        return when(role) {
+    fun calculatePlayerScore(playerStats: SplPlayerStats): Double {
+        return when(playerStats.role) {
             SmiteRole.SOLO -> soloCalculator.calculatePoints(playerStats)
             SmiteRole.JUNGLE -> jungleCalculator.calculatePoints(playerStats)
             SmiteRole.MID -> midCalculator.calculatePoints(playerStats)
             SmiteRole.SUPPORT -> supportCalculator.calculatePoints(playerStats)
             SmiteRole.HUNTER -> hunterCalculator.calculatePoints(playerStats)
             else -> {
-                log.error("Invalid role type provided: $role")
+                log.error("Invalid role type provided: $playerStats.role")
                 -1.0
             }
         }

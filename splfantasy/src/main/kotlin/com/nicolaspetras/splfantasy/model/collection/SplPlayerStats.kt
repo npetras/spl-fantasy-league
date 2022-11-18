@@ -10,12 +10,12 @@ data class SplPlayerStats(
     val kills: Int = -1,
     val deaths: Int = -1,
     val assists: Int = -1,
-    val mitigatedDamage: Int = -1,
+    var mitigatedDamage: Int = -1,
     var playerDamage: Int = -1,
-    val goldPerMin: Int = -1,
-    val wards: Int = -1,
-    val structureDamage: Int = -1,
-    val healing: Int = -1
+    var goldPerMin: Int = -1,
+    var wards: Int = -1,
+    var structureDamage: Int = -1,
+    var healing: Int = -1
 ) {
 
 }

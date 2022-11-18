@@ -72,23 +72,6 @@ fun scrapeSplStats(): SplMatchStats {
     }
 }
 
-//private fun calculateAndPrintScores(splMatchStats: SplMatchStats) {
-//    // score the match
-//    val matchScores = scoreMatch(splMatchStats)
-//
-//    println("${matchScores.homeTeamName} Team Scores: ")
-//    for (playerScore in matchScores.homeTeamScores) {
-//        println("${playerScore.name} ${playerScore.gameScores} ${playerScore.overallMatchScore}")
-//    }
-//
-//    println()
-//    println("${matchScores.awayTeamName} Team Scores: ")
-//    for (playerScore in matchScores.awayTeamScores) {
-//        println("${playerScore.name} ${playerScore.gameScores} ${playerScore.overallMatchScore}")
-//    }
-//    println()
-//}
-
 
 private fun scrapeMatchStats(
     dateText: String,
@@ -200,13 +183,27 @@ private fun scrapeAdditionalStats(
 ): ArrayList<SplPlayerStats> {
     for ((i, player) in additionalStatsTable.withIndex()) {
         val name = player.findElement(By.className("name")).text.uppercase()
+        val goldPerMin = player.findElement(By.className("gpm")).text.toInt()
         val playerDamage = player.findElement(By.className("damage")).text
         val playerDamageInt = playerDamage.replace(",", "").toInt()
+        val mitigatedDamage = player.findElement(By.className("dmg_mtgtd")).text
+        val mitigatedDamageInt = mitigatedDamage.replace(",", "").toInt()
+        val structureDamage = player.findElement(By.className("strct_dmg")).text
+        val structureDamageInt = structureDamage.replace(",", "").toInt()
+        val healing = player.findElement(By.className("healing")).text
+        val healingInt = healing.replace(",", "").toInt()
+        val wards = player.findElement(By.className("wards")).text.toInt()
+
 
         val playerStats = teamGameStats[i]
 
         if (playerStats.name == name) {
+            playerStats.goldPerMin = goldPerMin
             playerStats.playerDamage = playerDamageInt
+            playerStats.mitigatedDamage = mitigatedDamageInt
+            playerStats.structureDamage = structureDamageInt
+            playerStats.healing = healingInt
+            playerStats.wards = wards
         } else {
             System.err.println("Names do not match")
         }
