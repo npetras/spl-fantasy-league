@@ -1,6 +1,8 @@
 package com.nicolaspetras.splfantasy.service.scraper
 
+import com.nicolaspetras.splfantasy.model.collection.SplGameStats
 import com.nicolaspetras.splfantasy.model.collection.SplMatchStats
+import com.nicolaspetras.splfantasy.model.collection.SplPlayerStats
 import io.github.bonigarcia.wdm.WebDriverManager
 import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptExecutor
@@ -10,8 +12,6 @@ import org.openqa.selenium.interactions.Actions
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import com.nicolaspetras.splfantasy.service.scorer.scoreMatch
-
 val log: Logger = LoggerFactory.getLogger("WebScraper")
 
 fun scrapeSplStats(): SplMatchStats {
@@ -19,7 +19,7 @@ fun scrapeSplStats(): SplMatchStats {
     val driver = FirefoxDriver()
 
     try {
-        driver.get("https://www.smiteproleague.com/scores")
+        driver.get("https://www.smiteproleague.com/matches/3913")
         val actionProvider = Actions(driver)
         val js: JavascriptExecutor = driver
 
@@ -59,7 +59,8 @@ fun scrapeSplStats(): SplMatchStats {
 //        }
         val splMatchStats = scrapeMatchStats("", driver, actionProvider)
         log.debug("SPL Match Stats: ")
-        log.debug(splMatchStats.toString())
+        print(splMatchStats.toString())
+        return splMatchStats
 
 //        openGameStats(driver, actionProvider, js,
 //            "/html/body/div/div/div[1]/div/div[2]/div/div[3]/div[1]/div/div[2]/div[1]/div[10]/a")
