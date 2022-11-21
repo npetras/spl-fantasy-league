@@ -10,32 +10,17 @@ import com.nicolaspetras.splfantasy.service.scorer.rubric.Rubric
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class Scorer(val rubric: Rubric = OfficialRubricV1()) {
+class Scorer(private val rubric: Rubric = OfficialRubricV1()) {
     private val log: Logger = LoggerFactory.getLogger(javaClass)
 
     fun scoreMatch(matchStats: SplMatchStats): SplMatchScore {
-        val homeTeamScores = createAwayTeamScoresBase(matchStats)
+        val homeTeamScores = createHomeTeamScoresBase(matchStats)
         val awayTeamScores = createAwayTeamScoresBase(matchStats)
 
         for (game in matchStats.games) {
-            for (playerStats in game.orderTeamStats) {
-                val playerScore = rubric.calculatePlayerScore(playerStats)
-                val teamScores =
-                    when (playerStats.splTeam) {
-                        matchStats.homeTeamName -> {
-                            homeTeamScores
-                        }
-                        matchStats.awayTeamName -> {
-                            awayTeamScores
-                        }
-                        else -> {
-                            log.error("Invalid team name: ${playerStats.splTeam}")
-                            arrayListOf<SplPlayerMatchScore>()
-                        }
-                    }
-                val player = teamScores.find {it.name == playerStats.name}
-                player?.gameScores?.add(playerScore)
-            }
+            scorePlayersOnTeam(game.orderTeamStats, matchStats, homeTeamScores, awayTeamScores)
+            scorePlayersOnTeam(game.chaosTeamStats, matchStats, homeTeamScores, awayTeamScores)
+            scoreBonusPoints(homeTeamScores, awayTeamScores)
         }
 
         return SplMatchScore(
@@ -44,6 +29,42 @@ class Scorer(val rubric: Rubric = OfficialRubricV1()) {
             homeTeamScores = homeTeamScores,
             awayTeamScores = awayTeamScores
         )
+    }
+
+    /**
+     * Adds bonus points earned by each player in the game
+     */
+    private fun scoreBonusPoints(homeTeamScores: List<SplPlayerMatchScore>, awayTeamScores: List<SplPlayerMatchScore>) {
+//        scoreTeamBonusPts()
+    }
+
+    /**
+     * Scores all the players on the team provided: Order or Chaos
+     */
+    private fun scorePlayersOnTeam(
+        teamStats: ArrayList<SplPlayerStats>,
+        matchStats: SplMatchStats,
+        homeTeamScores: ArrayList<SplPlayerMatchScore>,
+        awayTeamScores: ArrayList<SplPlayerMatchScore>
+    ) {
+        for (playerStats in teamStats) {
+            val playerScore = rubric.calculatePlayerScore(playerStats)
+            val teamScoresForCurrentPlayer =
+                when (playerStats.splTeam) {
+                    matchStats.homeTeamName -> {
+                        homeTeamScores
+                    }
+                    matchStats.awayTeamName -> {
+                        awayTeamScores
+                    }
+                    else -> {
+                        log.error("Invalid team name: ${playerStats.splTeam}")
+                        arrayListOf<SplPlayerMatchScore>()
+                    }
+                }
+            val player = teamScoresForCurrentPlayer.find { it.name == playerStats.name }
+            player?.gameScores?.add(playerScore)
+        }
     }
 
     /**

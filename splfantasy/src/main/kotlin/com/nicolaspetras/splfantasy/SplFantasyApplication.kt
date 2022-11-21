@@ -1,10 +1,12 @@
 package com.nicolaspetras.splfantasy
 
 import com.nicolaspetras.splfantasy.model.score.SplMatchScore
+import com.nicolaspetras.splfantasy.model.score.SplPlayerMatchScore
 import com.nicolaspetras.splfantasy.service.scorer.Scorer
 import com.nicolaspetras.splfantasy.service.scraper.scrapeSplStats
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import java.math.RoundingMode
 
 @SpringBootApplication
 class SplFantasyApplication
@@ -19,14 +21,18 @@ fun main(args: Array<String>) {
 
 fun printScores(matchScores: SplMatchScore) {
     println("${matchScores.homeTeamName} Team Scores: ")
-    for (playerScore in matchScores.homeTeamScores) {
-        println("${playerScore.name} ${playerScore.gameScores} ${playerScore.overallMatchScore}")
-    }
+    printTeamsScores(matchScores.homeTeamScores)
+    println("\n${matchScores.awayTeamName} Team Scores: ")
+    printTeamsScores(matchScores.awayTeamScores)
+    println()
+}
 
-    println()
-    println("${matchScores.awayTeamName} Team Scores: ")
-    for (playerScore in matchScores.awayTeamScores) {
-        println("${playerScore.name} ${playerScore.gameScores} ${playerScore.overallMatchScore}")
+private fun printTeamsScores(teamScores: List<SplPlayerMatchScore>) {
+    for (playerScore in teamScores) {
+        println("${playerScore.name} ")
+        playerScore.gameScores.forEach {
+            print("${it.toBigDecimal().setScale(3, RoundingMode.UP).toDouble()} ")
+        }
+        println("\t\t${playerScore.overallMatchScore().toBigDecimal().setScale(3, RoundingMode.UP)}")
     }
-    println()
 }

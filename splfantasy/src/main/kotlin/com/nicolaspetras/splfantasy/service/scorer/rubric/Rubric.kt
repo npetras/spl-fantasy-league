@@ -14,6 +14,9 @@ abstract class Rubric {
     abstract val supportCalculator: PlayerPointsCalculator
     abstract val hunterCalculator: PlayerPointsCalculator
 
+    /**
+     * Returns the player's score. The score will be calculated differently for each role.
+     */
     fun calculatePlayerScore(playerStats: SplPlayerStats): Double {
         return when(playerStats.role) {
             SmiteRole.SOLO -> soloCalculator.calculatePoints(playerStats)

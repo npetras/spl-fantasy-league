@@ -16,15 +16,18 @@ class PlayerPointsCalculator(
     private val healingPts: Double
 ): PointsCalculator {
     override fun calculatePoints(playerStats: SplPlayerStats): Double {
-        return ((killPts * playerStats.kills)
-                + (deathPts * playerStats.deaths)
-                + (assistPts * playerStats.assists)
-                + (damageMitigationPts * playerStats.mitigatedDamage)
-                + (playerDamagePts * playerStats.playerDamage)
-                + (goldPerMinPts * playerStats.goldPerMin)
-                + (wardPts * playerStats.wards)
-                + (structureDamagePts * playerStats.structureDamage)
-                + (if (playerStats.deaths == 0) deathlessPts else 0.0)
-                + (healingPts * playerStats.healing))
+        val killsScore = killPts * playerStats.kills
+        val deathsScore = deathPts * playerStats.deaths
+        val assistScore = assistPts * playerStats.assists
+        val damageMitigationScore = damageMitigationPts * playerStats.mitigatedDamage
+        val playerDamageScore = playerDamagePts * playerStats.playerDamage
+        val goldScore = goldPerMinPts * playerStats.goldPerMin
+        val wardScore = wardPts * playerStats.wards
+        val structureDamageScore = structureDamagePts * playerStats.structureDamage
+        val deathlessScore = if (playerStats.deaths == 0) deathlessPts else 0.0
+        val healingScore = healingPts * playerStats.healing
+        return killsScore + deathsScore + assistScore + damageMitigationScore +
+                playerDamageScore + goldScore + wardScore + structureDamageScore +
+                deathlessScore + healingScore
     }
 }

@@ -27,7 +27,7 @@ const val CARRY_JUNG_PLAYER_DMG_PTS = 0.0001
 // gold per min, wards, structure damage
 const val GOLD_PER_MIN_PTS = 0.001
 const val WARDS_PTS = 0.1
-const val STRUCTURE_DMG_PTS = 0.1
+const val STRUCTURE_DMG_PTS = 0.00025
 
 // deathless
 const val SOLO_DEATHLESS = 2.0

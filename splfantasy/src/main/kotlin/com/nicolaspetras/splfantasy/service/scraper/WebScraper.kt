@@ -21,7 +21,6 @@ fun scrapeSplStats(): SplMatchStats {
     try {
         driver.get("https://www.smiteproleague.com/matches/3913")
         val actionProvider = Actions(driver)
-        val js: JavascriptExecutor = driver
 
         // delay allowing the cookies box to pop up
         Thread.sleep(1000)
