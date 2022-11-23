@@ -19,6 +19,7 @@ fun scrapeSplStats(): SplMatchStats {
     val driver = FirefoxDriver()
 
     try {
+        val resultLinkClass = "link results"
         driver.get("https://www.smiteproleague.com/matches/3913")
         val actionProvider = Actions(driver)
 
