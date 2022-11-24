@@ -1,5 +1,7 @@
 package com.nicolaspetras.splfantasy.service.scorer
 
+import com.nicolaspetras.splfantasy.model.SmiteRole
+import com.nicolaspetras.splfantasy.model.SplPlayerSeasonScore
 import com.nicolaspetras.splfantasy.model.SplTeamName
 import com.nicolaspetras.splfantasy.model.collection.SplMatchStats
 import com.nicolaspetras.splfantasy.model.collection.SplPlayerStats
@@ -29,6 +31,14 @@ class Scorer(private val rubric: Rubric = OfficialRubricV1()) {
             homeTeamScores = homeTeamScores,
             awayTeamScores = awayTeamScores
         )
+    }
+
+    fun scoreMatches(matchStatsList: List<SplMatchStats>): ArrayList<SplMatchScore> {
+        val matchScores = arrayListOf<SplMatchScore>()
+        for (match in matchStatsList) {
+            matchScores.add(scoreMatch(match))
+        }
+        return matchScores
     }
 
     /**
@@ -129,5 +139,19 @@ class Scorer(private val rubric: Rubric = OfficialRubricV1()) {
             team = playerStats.splTeam
         )
     }
+}
 
+fun combineScoresForEachPlayer(playerMatchScores: ArrayList<SplPlayerMatchScore>): ArrayList<SplPlayerSeasonScore> {
+    val playerSeasonScores = hashMapOf<Pair<SmiteRole, SplTeamName>, SplPlayerSeasonScore>()
+    for (playerScore in playerMatchScores) {
+        val roleAndTeam = Pair(playerScore.role, playerScore.team)
+        if (playerSeasonScores.contains(roleAndTeam)) {
+            playerSeasonScores[roleAndTeam]?.matchScores?.add(playerScore.overallMatchScore())
+        } else {
+            val playerSeasonScore = SplPlayerSeasonScore(name=playerScore.name, team=playerScore.team, role=playerScore.role,
+                matchScores = arrayListOf(playerScore.overallMatchScore()))
+            playerSeasonScores[roleAndTeam] = playerSeasonScore
+        }
+    }
+    return ArrayList(playerSeasonScores.values)
 }

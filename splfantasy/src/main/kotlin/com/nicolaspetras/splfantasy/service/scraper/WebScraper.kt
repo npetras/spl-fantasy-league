@@ -3,6 +3,7 @@ package com.nicolaspetras.splfantasy.service.scraper
 import com.nicolaspetras.splfantasy.model.collection.SplGameStats
 import com.nicolaspetras.splfantasy.model.collection.SplMatchStats
 import com.nicolaspetras.splfantasy.model.collection.SplPlayerStats
+import com.nicolaspetras.splfantasy.model.score.SplPlayerMatchScore
 import io.github.bonigarcia.wdm.WebDriverManager
 import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptExecutor
@@ -12,19 +13,23 @@ import org.openqa.selenium.interactions.Actions
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+const val STANDARD_SLEEP = 500L
+const val LONGER_SLEEP = 800L
+
 val log: Logger = LoggerFactory.getLogger("WebScraper")
 
-fun scrapeSplStats(): SplMatchStats {
+fun scrapeSplStats(): List<SplMatchStats> {
     WebDriverManager.firefoxdriver().setup()
     val driver = FirefoxDriver()
 
     try {
         val resultLinkClass = "link results"
-        driver.get("https://www.smiteproleague.com/matches/3913")
+        driver.get("https://www.smiteproleague.com/schedule")
         val actionProvider = Actions(driver)
+        val js: JavascriptExecutor = driver
 
         // delay allowing the cookies box to pop up
-        Thread.sleep(1000)
+        Thread.sleep(LONGER_SLEEP)
         // accept cookies
         acceptCookies(driver, actionProvider)
 
@@ -35,32 +40,28 @@ fun scrapeSplStats(): SplMatchStats {
 
         val scoresWrapperXPath = "/html/body/div/div/div[1]/div/div[2]/div/div[3]/div[1]/div"
 
+        val scheduleXpath = "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div[1]/div[2]"
+        val dayElements = driver.findElements(By.xpath("$scheduleXpath/div"))
+        val matchDayElements = driver.findElements(By.className("day"))
 
-        // if this week has no stats move to previous week
-//        moveToPrevWeek(driver, actionProvider)
+        val playerMatchStats: ArrayList<SplMatchStats> = arrayListOf()
 
-//        for (i in 1..noMatchGroups) {
-//            val matchesInGroupXPath = "$scoresWrapperXPath/div[$i]/div"
-//            val matchesInGroup = driver.findElements(By.xpath(matchesInGroupXPath))
-//            val noOfMatches = matchesInGroup.size
-//            // for all matches scrape the stats and score the games
-//            for (j in 1..noOfMatches) {
-//                val openMatchStatsButtonXPath = "$matchesInGroupXPath[$j]/div[10]/a"
-//                openGameStats(driver, actionProvider, js, openMatchStatsButtonXPath)
-//                // TODO: date text will be wrong for match groups after the first
-//                val splMatchStats = scrapeMatchStats(dateText, driver, actionProvider)
-//                log.debug("SPL Match Stats: ")
-//                log.debug(splMatchStats.toString())
-////                calculateAndPrintScores(splMatchStats)
-//                // back out of match (set)
-//                driver.navigate().back()
-//                Thread.sleep(1000)
-//            }
-//        }
-        val splMatchStats = scrapeMatchStats("", driver, actionProvider)
-        log.debug("SPL Match Stats: ")
-        print(splMatchStats.toString())
-        return splMatchStats
+        for ((day_index, day) in dayElements.withIndex()) {
+            val matches = driver.findElements(By.xpath("/html/body/div/div/div[1]/div/div[2]/div/div[2]/div[1]/div[2]/div[${day_index+1}]/div[2]/div/div[2]/div"))
+            for ((match_index, match) in matches.withIndex()) {
+                val matchLinkXpath = "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div[1]/div[2]/div[${day_index+1}]/div[2]/div/div[2]/div[${match_index+1}]/div[3]/a"
+                openMatchStats(driver, actionProvider, js, matchLinkXpath)
+                playerMatchStats.add(scrapeMatchStats("", driver, actionProvider))
+                driver.navigate().back()
+                Thread.sleep(STANDARD_SLEEP)
+            }
+        }
+
+//        openMatchStats(driver, actionProvider, js, matchLinksXpath)
+//        val splMatchStats = scrapeMatchStats("", driver, actionProvider)
+//        log.debug("SPL Match Stats: ")
+//        print(splMatchStats.toString())
+        return playerMatchStats
 
 //        openGameStats(driver, actionProvider, js,
 //            "/html/body/div/div/div[1]/div/div[2]/div/div[3]/div[1]/div/div[2]/div[1]/div[10]/a")
@@ -246,7 +247,7 @@ private fun scrapeBasicStats(driver: FirefoxDriver, xpath: String, teamName: Str
 }
 
 
-private fun openGameStats(
+private fun openMatchStats(
     driver: FirefoxDriver,
     actionProvider: Actions,
     js: JavascriptExecutor,
@@ -257,7 +258,7 @@ private fun openGameStats(
     js.executeScript("arguments[0].scrollIntoView();", matchStatsButton)
     actionProvider.clickAndHold(matchStatsButton).build().perform()
     actionProvider.release(matchStatsButton).build().perform()
-    Thread.sleep(2000)
+    Thread.sleep(LONGER_SLEEP)
 }
 
 private fun moveToPrevWeek(
@@ -267,7 +268,7 @@ private fun moveToPrevWeek(
     val prevArrow = driver.findElement(By.cssSelector(".date-selector > div:nth-child(1)"))
     actionProvider.clickAndHold(prevArrow).build().perform()
     actionProvider.release(prevArrow).build().perform()
-    Thread.sleep(2000)
+    Thread.sleep(LONGER_SLEEP)
 }
 
 private fun acceptCookies(
