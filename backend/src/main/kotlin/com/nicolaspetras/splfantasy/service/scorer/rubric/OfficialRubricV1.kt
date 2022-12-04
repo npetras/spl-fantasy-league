@@ -19,6 +19,7 @@ const val SUPP_ASSIST_PTS = 0.75
 
 // damage mitigated
 const val STD_MITIGATED_DMG_PTS = 0.00005
+const val SUPP_MITIGATED_DMG_PTS = 0.000075
 
 // player damage
 const val TANKS_PLAYER_DMG_PTS = 0.000075
@@ -91,7 +92,7 @@ class OfficialRubricV1 : Rubric() {
             killPts = SUPP_KILL_PTS,
             deathPts = DEATH_PTS,
             assistPts = SUPP_ASSIST_PTS,
-            damageMitigationPts = STD_MITIGATED_DMG_PTS,
+            damageMitigationPts = SUPP_MITIGATED_DMG_PTS,
             playerDamagePts = TANKS_PLAYER_DMG_PTS,
             goldPerMinPts = GOLD_PER_MIN_PTS,
             wardPts = WARDS_PTS,
