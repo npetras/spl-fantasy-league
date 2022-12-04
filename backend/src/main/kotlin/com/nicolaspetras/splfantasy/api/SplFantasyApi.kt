@@ -8,6 +8,7 @@ import com.nicolaspetras.splfantasy.model.SplTeamName
 import com.nicolaspetras.splfantasy.model.api.FantasyTeamApiData
 import com.nicolaspetras.splfantasy.service.scorer.Scorer
 import com.nicolaspetras.splfantasy.service.scorer.teams.FantasyTeamScorer
+import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -45,6 +46,7 @@ class SplFantasyApi() {
     private final val fantasyScorer = FantasyTeamScorer(fantasyTeamDrafts)
     val splFantasyManager = SplFantasyManager(scorer = scorer, fantasyTeamScorer = fantasyScorer)
 
+    @CrossOrigin
     @GetMapping("/scores")
     fun getScores(): ArrayList<FantasyTeamApiData> {
         return splFantasyManager.getFantasyApiData()
