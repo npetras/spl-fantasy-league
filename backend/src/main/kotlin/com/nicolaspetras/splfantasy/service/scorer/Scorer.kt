@@ -1,6 +1,7 @@
 package com.nicolaspetras.splfantasy.service.scorer
 
 import com.nicolaspetras.splfantasy.model.SmiteRole
+import com.nicolaspetras.splfantasy.model.SplPlayer
 import com.nicolaspetras.splfantasy.model.SplPlayerSeasonScore
 import com.nicolaspetras.splfantasy.model.SplTeamName
 import com.nicolaspetras.splfantasy.model.collection.SplMatchStats
@@ -11,6 +12,7 @@ import com.nicolaspetras.splfantasy.service.scorer.rubric.OfficialRubricV1
 import com.nicolaspetras.splfantasy.service.scorer.rubric.Rubric
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Service
 
 class Scorer(private val rubric: Rubric = OfficialRubricV1()) {
     private val log: Logger = LoggerFactory.getLogger(javaClass)
@@ -45,7 +47,9 @@ class Scorer(private val rubric: Rubric = OfficialRubricV1()) {
      * Adds bonus points earned by each player in the game
      */
     private fun scoreBonusPoints(homeTeamScores: List<SplPlayerMatchScore>, awayTeamScores: List<SplPlayerMatchScore>) {
-//        scoreTeamBonusPts()
+//        scoreTeamBonusPts(homeTeam)
+        // scoreTeamBonusPts(awayTeam)
+        // scoreGamePts
     }
 
     /**
@@ -148,8 +152,10 @@ fun combineScoresForEachPlayer(playerMatchScores: ArrayList<SplPlayerMatchScore>
         if (playerSeasonScores.contains(roleAndTeam)) {
             playerSeasonScores[roleAndTeam]?.matchScores?.add(playerScore.overallMatchScore())
         } else {
-            val playerSeasonScore = SplPlayerSeasonScore(name=playerScore.name, team=playerScore.team, role=playerScore.role,
-                matchScores = arrayListOf(playerScore.overallMatchScore()))
+            val playerSeasonScore = SplPlayerSeasonScore(
+                splPlayer = SplPlayer(name = playerScore.name, team = playerScore.team, role = playerScore.role),
+                matchScores = arrayListOf(playerScore.overallMatchScore())
+            )
             playerSeasonScores[roleAndTeam] = playerSeasonScore
         }
     }
