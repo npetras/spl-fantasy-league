@@ -1,9 +1,7 @@
 package com.nicolaspetras.splfantasy.model
 
 class SplPlayerSeasonScore(
-    val name: String,
-    val team: SplTeamName,
-    val role: SmiteRole,
+    val splPlayer: SplPlayer,
     val matchScores: ArrayList<Double>
 ) {
     fun overallSeasonScore(): Double {

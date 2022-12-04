@@ -1,6 +1,6 @@
 package com.nicolaspetras.splfantasy.model.api
 
-data class FantasyTeam(
+data class FantasyTeamApiData(
     val fantasyPlayerName: String,
     val solo: String,
     val soloScore: Double,

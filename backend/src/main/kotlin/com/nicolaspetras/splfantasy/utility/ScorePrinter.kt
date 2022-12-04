@@ -7,7 +7,7 @@ import java.math.RoundingMode
 
 fun printSeasonScores(seasonScores: ArrayList<SplPlayerSeasonScore>) {
     for (player in seasonScores) {
-        println("${player.name} ${player.role} ${player.team}")
+        println("${player.splPlayer.name} ${player.splPlayer.role} ${player.splPlayer.team}")
         println(player.overallSeasonScore().toBigDecimal().setScale(3, RoundingMode.UP).toDouble())
     }
 }
