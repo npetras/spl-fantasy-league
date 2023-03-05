@@ -1,0 +1,47 @@
+
+  <div class="col-12">
+    <h1>Group Scores</h1>
+    <div class="row" *ngFor="let group of fantasyGroups$ | async">
+      <h2>{{ group.groupName }}</h2>
+      <table class="table table-striped table-hover">
+        <thead class="table-primary">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Player</th>
+            <th scope="col">Solo</th>
+            <th scope="col">Pts</th>
+            <th scope="col">Jungle</th>
+            <th scope="col">Pts</th>
+            <th scope="col">Mid</th>
+            <th scope="col">Pts</th>
+            <th scope="col">Support</th>
+            <th scope="col">Pts</th>
+            <th scope="col">Hunter</th>
+            <th scope="col">Pts</th>
+            <th scope="col">Total Pts</th>
+          </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let i = index; let team of group.fantasyTeams">
+              <td>{{ i + 1 }}</td>
+              <td>
+                <strong>{{ team.fantasyPlayerName }}</strong>
+              </td>
+              <td>{{ team.solo }}</td>
+              <td>{{ team.soloScore }}</td>
+              <td>{{ team.jungle }}</td>
+              <td>{{ team.jungleScore }}</td>
+              <td>{{ team.mid }}</td>
+              <td>{{ team.midScore }}</td>
+              <td>{{ team.support }}</td>
+              <td>{{ team.supportScore }}</td>
+              <td>{{ team.hunter }}</td>
+              <td>{{ team.hunterScore }}</td>
+              <td>
+                <strong>{{ team.totalTeamScore }}</strong>
+              </td>
+            </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>

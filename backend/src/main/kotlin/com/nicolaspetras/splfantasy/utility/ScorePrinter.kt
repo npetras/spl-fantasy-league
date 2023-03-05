@@ -1,6 +1,6 @@
 package com.nicolaspetras.splfantasy.utility
 
-import com.nicolaspetras.splfantasy.model.SplPlayerSeasonScore
+import com.nicolaspetras.splfantasy.model.score.SplPlayerSeasonScore
 import com.nicolaspetras.splfantasy.model.score.SplMatchScore
 import com.nicolaspetras.splfantasy.model.score.SplPlayerMatchScore
 import java.math.RoundingMode

@@ -35,3 +35,10 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Mac Temp Files ###
+.DS_Store
+
+### Kotlin, JVM, Maven, Gradle ###
+*.class
+target/

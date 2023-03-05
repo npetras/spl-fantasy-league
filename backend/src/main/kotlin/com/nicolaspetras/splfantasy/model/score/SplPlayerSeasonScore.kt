@@ -1,4 +1,6 @@
-package com.nicolaspetras.splfantasy.model
+package com.nicolaspetras.splfantasy.model.score
+
+import com.nicolaspetras.splfantasy.model.SplPlayer
 
 class SplPlayerSeasonScore(
     val splPlayer: SplPlayer,

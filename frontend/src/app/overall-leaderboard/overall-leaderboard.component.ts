@@ -16,7 +16,7 @@ export class OverallLeaderboardComponent implements OnInit {
   constructor(private scoresService: ScoresService) { }
 
   ngOnInit(): void {
-    this.fantasyTeams$ = this.scoresService.get()
+    this.fantasyTeams$ = this.scoresService.getOverallScores()
   }
 
 }

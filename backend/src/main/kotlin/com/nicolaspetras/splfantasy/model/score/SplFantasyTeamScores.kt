@@ -1,7 +1,11 @@
-package com.nicolaspetras.splfantasy.model
+package com.nicolaspetras.splfantasy.model.score
+
+import com.nicolaspetras.splfantasy.model.FantasyTeamGroupName
+import com.nicolaspetras.splfantasy.model.score.SplPlayerSeasonScore
 
 class SplFantasyTeamScores(
     val playerName: String,
+    val group: FantasyTeamGroupName,
     val solo: SplPlayerSeasonScore,
     val jungle: SplPlayerSeasonScore,
     val mid: SplPlayerSeasonScore,

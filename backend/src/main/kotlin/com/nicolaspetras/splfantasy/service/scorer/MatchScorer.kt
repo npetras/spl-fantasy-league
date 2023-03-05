@@ -2,7 +2,7 @@ package com.nicolaspetras.splfantasy.service.scorer
 
 import com.nicolaspetras.splfantasy.model.SmiteRole
 import com.nicolaspetras.splfantasy.model.SplPlayer
-import com.nicolaspetras.splfantasy.model.SplPlayerSeasonScore
+import com.nicolaspetras.splfantasy.model.score.SplPlayerSeasonScore
 import com.nicolaspetras.splfantasy.model.SplTeamName
 import com.nicolaspetras.splfantasy.model.collection.SplMatchStats
 import com.nicolaspetras.splfantasy.model.collection.SplPlayerStats
@@ -12,7 +12,6 @@ import com.nicolaspetras.splfantasy.service.scorer.rubric.OfficialRubricV1
 import com.nicolaspetras.splfantasy.service.scorer.rubric.Rubric
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Service
 
 class Scorer(private val rubric: Rubric = OfficialRubricV1()) {
     private val log: Logger = LoggerFactory.getLogger(javaClass)

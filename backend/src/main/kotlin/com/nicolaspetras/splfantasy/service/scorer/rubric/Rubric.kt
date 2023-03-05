@@ -23,7 +23,7 @@ abstract class Rubric {
             SmiteRole.JUNGLE -> jungleCalculator.calculatePoints(playerStats)
             SmiteRole.MID -> midCalculator.calculatePoints(playerStats)
             SmiteRole.SUPPORT -> supportCalculator.calculatePoints(playerStats)
-            SmiteRole.HUNTER -> hunterCalculator.calculatePoints(playerStats)
+            SmiteRole.CARRY -> hunterCalculator.calculatePoints(playerStats)
             else -> {
                 log.error("Invalid role type provided: $playerStats.role")
                 -1.0
