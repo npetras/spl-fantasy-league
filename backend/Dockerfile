@@ -1,17 +1,5 @@
-FROM eclipse-temurin:8 as build
-WORKDIR /workspace/app
-
-COPY gradle gradle
-COPY build.gradle.kts settings.gradle.kts gradlew ./
-COPY src src
-
-RUN ./gradlew build -x test
-RUN mkdir -p build/libs/dependency && (cd build/libs/dependency; jar -xf ../*.jar)
-
-FROM eclipse-temurin:8
+FROM eclipse-temurin:8-jdk-alpine
 VOLUME /tmp
-ARG DEPENDENCY=/workspace/app/build/libs/dependency
-COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
-COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
-COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
-ENTRYPOINT ["java","-cp","app:app/lib/*","com.nicolaspetras.splfantasy.SplFantasyApplication"]
+ARG JAR_FILE
+COPY ${JAR_FILE} app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
