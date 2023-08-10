@@ -20,32 +20,51 @@ class SplFantasyApi() {
     final val scorer = Scorer()
     private final val fantasyTeamDrafts = arrayListOf<FantasyTeamPicks>(
         FantasyTeamPicks(
-            "Xenico",
-            FantasyTeamGroupName.AO_KUANG,
-            SplPlayer("", SplTeamName.TITAN, SmiteRole.SOLO),
-            SplPlayer("", SplTeamName.TITAN, SmiteRole.JUNGLE),
-            SplPlayer("", SplTeamName.HOUND, SmiteRole.MID),
-            SplPlayer("", SplTeamName.HOUND, SmiteRole.SUPPORT),
-            SplPlayer("", SplTeamName.AARU, SmiteRole.CARRY)
-        ),
-        FantasyTeamPicks(
             "KingUrk",
             FantasyTeamGroupName.AO_KUANG,
-            SplPlayer("", SplTeamName.VALKS, SmiteRole.SOLO),
-            SplPlayer("", SplTeamName.VALKS, SmiteRole.JUNGLE),
-            SplPlayer("", SplTeamName.AARU, SmiteRole.MID),
-            SplPlayer("", SplTeamName.AARU, SmiteRole.SUPPORT),
+            SplPlayer("", SplTeamName.ONI, SmiteRole.SOLO),
+            SplPlayer("", SplTeamName.LVTHN, SmiteRole.JUNGLE),
+            SplPlayer("", SplTeamName.KINGS, SmiteRole.MID),
+            SplPlayer("", SplTeamName.LVTHN, SmiteRole.SUPPORT),
+            SplPlayer("", SplTeamName.JADE, SmiteRole.CARRY)
+        ),
+        FantasyTeamPicks(
+            "Threadus",
+            FantasyTeamGroupName.AO_KUANG,
+            SplPlayer("", SplTeamName.LVTHN, SmiteRole.SOLO),
+            SplPlayer("", SplTeamName.KINGS, SmiteRole.JUNGLE),
+            SplPlayer("", SplTeamName.ONI, SmiteRole.MID),
+            SplPlayer("", SplTeamName.JADE, SmiteRole.SUPPORT),
+            SplPlayer("", SplTeamName.ONI, SmiteRole.CARRY)
+        ),
+        FantasyTeamPicks(
+            "Lochie",
+            FantasyTeamGroupName.AO_KUANG,
+            SplPlayer("", SplTeamName.JADE, SmiteRole.SOLO),
+            SplPlayer("", SplTeamName.JADE, SmiteRole.JUNGLE),
+            SplPlayer("", SplTeamName.STYX, SmiteRole.MID),
+            SplPlayer("", SplTeamName.ONI, SmiteRole.SUPPORT),
             SplPlayer("", SplTeamName.HOUND, SmiteRole.CARRY)
         ),
         FantasyTeamPicks(
-            "Dawzy",
-            FantasyTeamGroupName.BAKASURA,
-            SplPlayer("", SplTeamName.TITAN, SmiteRole.SOLO),
-            SplPlayer("", SplTeamName.TITAN, SmiteRole.JUNGLE),
-            SplPlayer("", SplTeamName.HOUND, SmiteRole.MID),
-            SplPlayer("", SplTeamName.HOUND, SmiteRole.SUPPORT),
-            SplPlayer("", SplTeamName.VALKS, SmiteRole.CARRY)
+            "Xenico",
+            FantasyTeamGroupName.AO_KUANG,
+            SplPlayer("", SplTeamName.STYX, SmiteRole.SOLO),
+            SplPlayer("", SplTeamName.ONI, SmiteRole.JUNGLE),
+            SplPlayer("", SplTeamName.JADE, SmiteRole.MID),
+            SplPlayer("", SplTeamName.STYX, SmiteRole.SUPPORT),
+            SplPlayer("", SplTeamName.KINGS, SmiteRole.CARRY)
+        ),
+        FantasyTeamPicks(
+            "Coochieman",
+            FantasyTeamGroupName.AO_KUANG,
+            SplPlayer("", SplTeamName.KINGS, SmiteRole.SOLO),
+            SplPlayer("", SplTeamName.RAVEN, SmiteRole.JUNGLE),
+            SplPlayer("", SplTeamName.RAVEN, SmiteRole.MID),
+            SplPlayer("", SplTeamName.KINGS, SmiteRole.SUPPORT),
+            SplPlayer("", SplTeamName.LVTHN, SmiteRole.CARRY)
         )
+
     )
 
     private final val fantasyScorer = FantasyTeamScorer(fantasyTeamDrafts)

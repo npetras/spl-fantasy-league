@@ -19,5 +19,6 @@ enum class SplTeamName {
     STORM,
     AARU,
     SAGES,
+    STYX,
     NONE
 }
