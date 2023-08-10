@@ -62,7 +62,14 @@ fun scrapeSplStats(): List<SplMatchStats> {
 //                goToPhase3(driver, phase3Xpath, actionProvider, js)
                 val matchLinkXpath = "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div[1]/div[2]/div[${dayIndex+1}]/div[2]/div/div[2]/div[${matchIndex+1}]/div[3]/a"
                 if (openMatchStats(driver, actionProvider, js, matchLinkXpath)) {
-                    playerMatchStats.add(scrapeMatchStats("", driver, actionProvider))
+                    try {
+                        playerMatchStats.add(scrapeMatchStats("", driver, actionProvider))
+                    } catch (missingElementInMatch: NoSuchElementException) {
+                        // TODO: Try and grab the name of the teams playing & log the match name
+                        log.error("Match $matchIndex had an unexpected structure and was missing an element")
+                    } catch (exception: Exception) {
+                        log.error("Other exception caught during scrape of Match $matchIndex ")
+                    }
                     driver.navigate().back()
                     
                 } else {
@@ -91,7 +98,9 @@ private fun goToPhase3(
     
 }
 
-
+/**
+ * Scrape and store all stats of both teams for one match
+ */
 private fun scrapeMatchStats(
     dateText: String,
     driver: FirefoxDriver,
@@ -111,9 +120,8 @@ private fun scrapeMatchStats(
     val homeTeamScoreInt = homeTeamScore.text.toInt()
     val awayTeamScoreInt = awayTeamScore.text.toInt()
 
-    println("$homeTeamNameText vs $awayTeamNameText")
-    println("Score: $homeTeamNameText $homeTeamScoreInt $awayTeamNameText $awayTeamScoreInt")
-    println()
+    log.info("Scraping $homeTeamNameText vs $awayTeamNameText")
+    log.debug("Score: $homeTeamNameText $homeTeamScoreInt $awayTeamNameText $awayTeamScoreInt")
 
     val numOfGames = homeTeamScoreInt + awayTeamScoreInt
     log.debug("No. of Games: $numOfGames")
@@ -122,37 +130,36 @@ private fun scrapeMatchStats(
 
     for (gameNum in 1..numOfGames) {
 
-        log.debug("Game $gameNum Stats: ")
+        log.debug("Scraping Game $gameNum Stats")
 
+        log.debug("Scraping Order Team Stats")
         // Scrape stats for order team
         val orderTeamStatsHeader =
             driver.findElement(By.xpath("/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[1]/h2"))
         val orderTeamText = orderTeamStatsHeader.text.substringBefore(" ")
         val orderTeamBasicStatsXPath =
             "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[1]/div/div/div"
-
         val orderTeamBasicStats = scrapeBasicStats(
             driver = driver,
             xpath = orderTeamBasicStatsXPath,
             teamName = orderTeamText
         )
-        // get damage stats for order team
+
         val orderTeamAdditionalStatsXPath =
             "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[2]/div/table/tbody/tr"
         val orderTeamAdditionalStatsTable = driver.findElements(By.xpath(orderTeamAdditionalStatsXPath))
-
         val orderTeamCompleteStats = scrapeAdditionalStats(
             additionalStatsTable = orderTeamAdditionalStatsTable,
             teamGameStats = orderTeamBasicStats
         )
 
         // scrape stats for chaos team
-        val chaosTeamBasicStatsXPath =
-            "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[4]/div/div/div"
+        log.debug("Scraping Chaos Team Stats")
         val chaosTeam =
             driver.findElement(By.xpath("""/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[3]/h2"""))
         val chaosTeamText = chaosTeam.text.substringBefore(" ")
-
+        val chaosTeamBasicStatsXPath =
+            "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[4]/div/div/div"
         val chaosTeamBasicStats = scrapeBasicStats(
             driver = driver,
             xpath = chaosTeamBasicStatsXPath,
@@ -213,7 +220,6 @@ private fun scrapeAdditionalStats(
         val healingInt = healing.replace(",", "").toInt()
         val wards = player.findElement(By.className("wards")).text.toInt()
 
-
         val playerStats = teamGameStats[i]
 
         if (playerStats.name == name) {
@@ -224,9 +230,20 @@ private fun scrapeAdditionalStats(
             playerStats.healing = healingInt
             playerStats.wards = wards
         } else {
-            System.err.println("Names do not match")
+            log.warn("Player $i in Additional Stats and Basic Stats names don't match")
+            log.info("Trying to find matching player in Basic Stats")
+            val playerStatsRetry = teamGameStats.find { it.name == name }
+            if (playerStatsRetry != null) {
+                playerStatsRetry.goldPerMin = goldPerMin
+                playerStatsRetry.playerDamage = playerDamageInt
+                playerStatsRetry.mitigatedDamage = mitigatedDamageInt
+                playerStatsRetry.structureDamage = structureDamageInt
+                playerStatsRetry.healing = healingInt
+                playerStatsRetry.wards = wards
+            } else {
+                log.error("Could not find player with name: $name in Basic Stats Player List")
+            }
         }
-
         log.debug(playerStats.toString())
     }
     return teamGameStats
@@ -238,33 +255,37 @@ private fun scrapeBasicStats(driver: FirefoxDriver, xpath: String, teamName: Str
     var divNum = 10
 
     for (i in 1..5) {
+        try {
+            val name = driver.findElement(By.xpath("$xpath[$divNum]")).text
+            // if less than 5 players are present the team totals will be reached early
+            if (name == "Team Totals" && i < 5) {
+                log.warn("There are only $i players listed for this $teamName's game. Instead of the expected 5")
+                break;
+            }
+            divNum += 1
+            val role = driver.findElement(By.xpath("$xpath[$divNum]")).text
+            divNum += 2
+            val kills = driver.findElement(By.xpath("$xpath[$divNum]")).text
+            divNum += 1
+            val deaths = driver.findElement(By.xpath("$xpath[$divNum]")).text
+            divNum += 1
+            val assists = driver.findElement(By.xpath("$xpath[$divNum]")).text
+            divNum += 4
 
-        val name = driver.findElement(By.xpath("$xpath[$divNum]")).text
-        // if less than 5 players are present the team totals will be reached early
-        if (name == "Team Totals" && i < 5) {
-            log.warn("There are only $i players listed for this $teamName's game. Instead of the expected 5")
-            break;
+            val playerStats = SplPlayerStats(
+                name = name.uppercase(),
+                splTeam = enumValueOf(teamName),
+                role = enumValueOf(role),
+                kills = kills.toInt(),
+                deaths = deaths.toInt(),
+                assists = assists.toInt()
+            )
+            log.debug(playerStats.toString())
+            teamsGameStats.add(playerStats)
+        } catch (missingElementInMatch: NoSuchElementException) {
+            log.error("Could not scrape basic data for player number: $i")
+            continue
         }
-        divNum += 1
-        val role = driver.findElement(By.xpath("$xpath[$divNum]")).text
-        divNum += 2
-        val kills = driver.findElement(By.xpath("$xpath[$divNum]")).text
-        divNum += 1
-        val deaths = driver.findElement(By.xpath("$xpath[$divNum]")).text
-        divNum += 1
-        val assists = driver.findElement(By.xpath("$xpath[$divNum]")).text
-        divNum += 4
-
-        val playerStats = SplPlayerStats(
-            name = name.uppercase(),
-            splTeam = enumValueOf(teamName),
-            role = enumValueOf(role),
-            kills = kills.toInt(),
-            deaths = deaths.toInt(),
-            assists = assists.toInt()
-        )
-        log.debug(playerStats.toString())
-        teamsGameStats.add(playerStats)
     }
     return teamsGameStats
 }
@@ -296,7 +317,6 @@ private fun moveToPrevWeek(
     val prevArrow = driver.findElement(By.cssSelector(".date-selector > div:nth-child(1)"))
     actionProvider.clickAndHold(prevArrow).build().perform()
     actionProvider.release(prevArrow).build().perform()
-    
 }
 
 private fun acceptCookies(
