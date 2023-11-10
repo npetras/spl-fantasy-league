@@ -7,6 +7,7 @@ import { OverallLeaderboardComponent } from './overall-leaderboard/overall-leade
 import {HttpClientModule} from "@angular/common/http";
 import { GroupsLeaderboardComponent } from './groups-leaderboard/groups-leaderboard.component';
 import { HeaderComponent } from './header/header.component';
+// import { SplTeamsLeaderboardComponent } from './app/spl-teams-leaderboard/spl-teams-leaderboard.component';
 
 const appRoutes: Routes = [
   { path: '', component: OverallLeaderboardComponent },
@@ -19,7 +20,8 @@ const appRoutes: Routes = [
     AppComponent,
     OverallLeaderboardComponent,
     GroupsLeaderboardComponent,
-    HeaderComponent
+    HeaderComponent,
+    // SplTeamsLeaderboardComponent
   ],
   imports: [
     BrowserModule,
