@@ -25,8 +25,9 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
     // other dependencies
-    implementation("org.seleniumhq.selenium:selenium-java:4.6.0")
-    implementation("io.github.bonigarcia:webdrivermanager:5.3.1")
+    implementation("org.seleniumhq.selenium:selenium-java:4.14.1")
+    implementation("org.apache.httpcomponents:httpcore:4.3.3")
+    implementation("io.github.bonigarcia:webdrivermanager:5.3.2")
 
 }
 
