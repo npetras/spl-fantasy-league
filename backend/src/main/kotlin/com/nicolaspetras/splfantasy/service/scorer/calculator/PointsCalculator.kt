@@ -1,6 +1,6 @@
 package com.nicolaspetras.splfantasy.service.scorer.calculator
 
-import com.nicolaspetras.splfantasy.model.collection.SplPlayerStats
+import com.nicolaspetras.splfantasy.model.stat.collection.SplPlayerStats
 
 interface PointsCalculator {
     /**

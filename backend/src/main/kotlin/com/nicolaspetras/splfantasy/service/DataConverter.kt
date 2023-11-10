@@ -1,14 +1,13 @@
 /**
  * Functions for converting between data structures
  */
-package com.nicolaspetras.splfantasy.utility
+package com.nicolaspetras.splfantasy.service
 
-import com.nicolaspetras.splfantasy.model.FantasyTeamGroupName
-import com.nicolaspetras.splfantasy.model.api.FantasyGroupApiData
-import com.nicolaspetras.splfantasy.model.score.SplFantasyTeamScores
-import com.nicolaspetras.splfantasy.model.api.FantasyTeamApiData
-import com.nicolaspetras.splfantasy.model.score.SplMatchScore
-import com.nicolaspetras.splfantasy.model.score.SplPlayerMatchScore
+import com.nicolaspetras.splfantasy.model.output.FantasyGroup
+import com.nicolaspetras.splfantasy.model.scoring.output.FantasyTeamScores
+import com.nicolaspetras.splfantasy.model.output.FantasyTeam
+import com.nicolaspetras.splfantasy.model.scoring.internal.SplMatchScore
+import com.nicolaspetras.splfantasy.model.scoring.internal.SplPlayerMatchScore
 import java.math.RoundingMode
 
 /**
@@ -28,11 +27,11 @@ fun convertMatchScoresToPlayerScore(matchScores: ArrayList<SplMatchScore>): Arra
  * Converting the internal format used in this service to a more basic format suitable for transmission to the frontend.
  */
 fun convertFantasyTeamScoresToOverallScoresForApi(
-    fantasyTeamScores: ArrayList<SplFantasyTeamScores>
-): ArrayList<FantasyTeamApiData> {
-    val fantasyTeamApiDataList = arrayListOf<FantasyTeamApiData>()
+    fantasyTeamScores: ArrayList<FantasyTeamScores>
+): ArrayList<FantasyTeam> {
+    val fantasyTeamList = arrayListOf<FantasyTeam>()
     for (score in fantasyTeamScores) {
-        val fantasyTeamApiData = FantasyTeamApiData(
+        val fantasyTeam = FantasyTeam(
             fantasyPlayerName = score.playerName,
             fantasyTeamGroup = score.group.toString(),
             solo = score.solo.splPlayer.name,
@@ -45,32 +44,32 @@ fun convertFantasyTeamScoresToOverallScoresForApi(
             supportScore = score.support.overallSeasonScore().toBigDecimal().setScale(1, RoundingMode.UP).toDouble(),
             hunter = score.hunter.splPlayer.name,
             hunterScore = score.hunter.overallSeasonScore().toBigDecimal().setScale(1, RoundingMode.UP).toDouble(),
-            totalTeamScore = score.overallTeamScore().toBigDecimal().setScale(1, RoundingMode.UP).toDouble()
+            totalTeamScore = score.overallTeamScore.toBigDecimal().setScale(1, RoundingMode.UP).toDouble()
         )
-        fantasyTeamApiDataList.add(fantasyTeamApiData)
+        fantasyTeamList.add(fantasyTeam)
     }
-    fantasyTeamApiDataList.sortBy { it.totalTeamScore }
-    fantasyTeamApiDataList.reverse()
-    return fantasyTeamApiDataList
+    fantasyTeamList.sortBy { it.totalTeamScore }
+    fantasyTeamList.reverse()
+    return fantasyTeamList
 }
 
 /**
  * Returns the list off all fantasy team groups and the
  */
 fun covertFantasyTeamScoresToGroupScoresForApi(
-    fantasyTeamScores: ArrayList<SplFantasyTeamScores>
-): ArrayList<FantasyGroupApiData> {
+    fantasyTeamScores: ArrayList<FantasyTeamScores>
+): ArrayList<FantasyGroup> {
     val allTeamScores = convertFantasyTeamScoresToOverallScoresForApi(fantasyTeamScores)
     val existingGroups = arrayListOf<String>()
-    val groupsScores = arrayListOf<FantasyGroupApiData>()
+    val groupsScores = arrayListOf<FantasyGroup>()
 
     for (teamScores in allTeamScores) {
         if (existingGroups.contains(teamScores.fantasyTeamGroup)) {
-            val relevantGroup = groupsScores.find { it.groupName == teamScores.fantasyTeamGroup }
+            val relevantGroup = groupsScores.find { it.name == teamScores.fantasyTeamGroup }
             relevantGroup?.fantasyTeams?.add(teamScores)
         } else {
             groupsScores.add(
-                FantasyGroupApiData(
+                FantasyGroup(
                     teamScores.fantasyTeamGroup,
                     arrayListOf(teamScores)
                 )
@@ -78,6 +77,6 @@ fun covertFantasyTeamScoresToGroupScoresForApi(
             existingGroups.add(teamScores.fantasyTeamGroup)
         }
     }
-    groupsScores.sortBy { it.groupName }
+    groupsScores.sortBy { it.name }
     return groupsScores
 }

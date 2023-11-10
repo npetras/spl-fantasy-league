@@ -1,13 +1,13 @@
 package com.nicolaspetras.splfantasy.service.scorer
 
 import com.nicolaspetras.splfantasy.model.draft.FantasyTeamPicks
-import com.nicolaspetras.splfantasy.model.score.SplFantasyTeamScores
-import com.nicolaspetras.splfantasy.model.score.SplPlayerSeasonScore
+import com.nicolaspetras.splfantasy.model.scoring.output.FantasyTeamScores
+import com.nicolaspetras.splfantasy.model.scoring.output.SplPlayerSeasonScore
 
 class FantasyTeamScorer(
     private val fantasyTeamDrafts: ArrayList<FantasyTeamPicks>
 ) {
-    val fantasyTeamScores: ArrayList<SplFantasyTeamScores> = arrayListOf()
+    val fantasyTeamScores: ArrayList<FantasyTeamScores> = arrayListOf()
 
     fun scoreFantasyTeams(playerSeasonScores: ArrayList<SplPlayerSeasonScore>) {
         for (fantasyTeam in fantasyTeamDrafts) {
@@ -27,7 +27,7 @@ class FantasyTeamScorer(
                 it.splPlayer == fantasyTeam.hunterPick
             } ?: SplPlayerSeasonScore(fantasyTeam.hunterPick, arrayListOf(0.0))
             fantasyTeamScores.add(
-                SplFantasyTeamScores(
+                FantasyTeamScores(
                     playerName = fantasyTeam.playerName,
                     group = fantasyTeam.group,
                     solo = soloSeasonScore,

@@ -1,4 +1,4 @@
-package com.nicolaspetras.splfantasy.model.score
+package com.nicolaspetras.splfantasy.model.scoring.internal
 
 import com.nicolaspetras.splfantasy.model.SplTeamName
 

@@ -1,4 +1,4 @@
-package com.nicolaspetras.splfantasy.model.collection
+package com.nicolaspetras.splfantasy.model.stat.collection
 
 import com.nicolaspetras.splfantasy.model.SmiteRole
 import com.nicolaspetras.splfantasy.model.SplTeamName

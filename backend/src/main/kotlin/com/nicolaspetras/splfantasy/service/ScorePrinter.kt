@@ -1,8 +1,8 @@
-package com.nicolaspetras.splfantasy.utility
+package com.nicolaspetras.splfantasy.service
 
-import com.nicolaspetras.splfantasy.model.score.SplPlayerSeasonScore
-import com.nicolaspetras.splfantasy.model.score.SplMatchScore
-import com.nicolaspetras.splfantasy.model.score.SplPlayerMatchScore
+import com.nicolaspetras.splfantasy.model.scoring.output.SplPlayerSeasonScore
+import com.nicolaspetras.splfantasy.model.scoring.internal.SplMatchScore
+import com.nicolaspetras.splfantasy.model.scoring.internal.SplPlayerMatchScore
 import java.math.RoundingMode
 
 fun printSeasonScores(seasonScores: ArrayList<SplPlayerSeasonScore>) {

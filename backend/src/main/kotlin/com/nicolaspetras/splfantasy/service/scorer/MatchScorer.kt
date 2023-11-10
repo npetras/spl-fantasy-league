@@ -2,27 +2,35 @@ package com.nicolaspetras.splfantasy.service.scorer
 
 import com.nicolaspetras.splfantasy.model.SmiteRole
 import com.nicolaspetras.splfantasy.model.SplPlayer
-import com.nicolaspetras.splfantasy.model.score.SplPlayerSeasonScore
+import com.nicolaspetras.splfantasy.model.scoring.output.SplPlayerSeasonScore
 import com.nicolaspetras.splfantasy.model.SplTeamName
-import com.nicolaspetras.splfantasy.model.collection.SplMatchStats
-import com.nicolaspetras.splfantasy.model.collection.SplPlayerStats
-import com.nicolaspetras.splfantasy.model.score.SplMatchScore
-import com.nicolaspetras.splfantasy.model.score.SplPlayerMatchScore
+import com.nicolaspetras.splfantasy.model.stat.collection.SplMatchStats
+import com.nicolaspetras.splfantasy.model.stat.collection.SplPlayerStats
+import com.nicolaspetras.splfantasy.model.scoring.internal.SplMatchScore
+import com.nicolaspetras.splfantasy.model.scoring.internal.SplPlayerMatchScore
 import com.nicolaspetras.splfantasy.service.scorer.rubric.OfficialRubricV1
 import com.nicolaspetras.splfantasy.service.scorer.rubric.Rubric
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class Scorer(private val rubric: Rubric = OfficialRubricV1()) {
+class MatchScorer(private val rubric: Rubric = OfficialRubricV1()) {
     private val log: Logger = LoggerFactory.getLogger(javaClass)
 
-    fun scoreMatch(matchStats: SplMatchStats): SplMatchScore {
+    fun scoreMatches(matchStatsList: List<SplMatchStats>): ArrayList<SplMatchScore> {
+        val matchScores = arrayListOf<SplMatchScore>()
+        for (match in matchStatsList) {
+            matchScores.add(scoreMatch(match))
+        }
+        return matchScores
+    }
+
+    private fun scoreMatch(matchStats: SplMatchStats): SplMatchScore {
         val homeTeamScores = createHomeTeamScoresBase(matchStats)
         val awayTeamScores = createAwayTeamScoresBase(matchStats)
 
         for (game in matchStats.games) {
-            scorePlayersOnTeam(game.orderTeamStats, matchStats, homeTeamScores, awayTeamScores)
-            scorePlayersOnTeam(game.chaosTeamStats, matchStats, homeTeamScores, awayTeamScores)
+            scorePlayersOnTeamInGame(game.orderTeamStats, matchStats, homeTeamScores, awayTeamScores)
+            scorePlayersOnTeamInGame(game.chaosTeamStats, matchStats, homeTeamScores, awayTeamScores)
             scoreBonusPoints(homeTeamScores, awayTeamScores)
         }
 
@@ -32,14 +40,6 @@ class Scorer(private val rubric: Rubric = OfficialRubricV1()) {
             homeTeamScores = homeTeamScores,
             awayTeamScores = awayTeamScores
         )
-    }
-
-    fun scoreMatches(matchStatsList: List<SplMatchStats>): ArrayList<SplMatchScore> {
-        val matchScores = arrayListOf<SplMatchScore>()
-        for (match in matchStatsList) {
-            matchScores.add(scoreMatch(match))
-        }
-        return matchScores
     }
 
     /**
@@ -52,23 +52,30 @@ class Scorer(private val rubric: Rubric = OfficialRubricV1()) {
     }
 
     /**
-     * Scores all the players on the team provided: Order or Chaos
+     * Uses [teamStats] to score that team's players for a single game, storing those scores in the relevant list of
+     * match scores -- home or away team.
+     *
+     * @param teamStats The stats for all members of the team for a single game
+     * @param matchStats The stats for the whole match, contains the names of the home and away teams
+     * @param homeTeamPlayerScores The match scores for the home team players
+     * @param awayTeamPlayerScores The match scores for the away team players
      */
-    private fun scorePlayersOnTeam(
+    private fun scorePlayersOnTeamInGame(
         teamStats: ArrayList<SplPlayerStats>,
         matchStats: SplMatchStats,
-        homeTeamScores: ArrayList<SplPlayerMatchScore>,
-        awayTeamScores: ArrayList<SplPlayerMatchScore>
+        homeTeamPlayerScores: ArrayList<SplPlayerMatchScore>,
+        awayTeamPlayerScores: ArrayList<SplPlayerMatchScore>
     ) {
+        // TODO: determine the team once at the start
         for (playerStats in teamStats) {
             val playerScore = rubric.calculatePlayerScore(playerStats)
             val teamScoresForCurrentPlayer =
                 when (playerStats.splTeam) {
                     matchStats.homeTeamName -> {
-                        homeTeamScores
+                        homeTeamPlayerScores
                     }
                     matchStats.awayTeamName -> {
-                        awayTeamScores
+                        awayTeamPlayerScores
                     }
                     else -> {
                         log.error("Invalid team name: ${playerStats.splTeam}")
@@ -76,6 +83,7 @@ class Scorer(private val rubric: Rubric = OfficialRubricV1()) {
                     }
                 }
             val player = teamScoresForCurrentPlayer.find { it.name == playerStats.name }
+            // TODO: log error if player not found in team
             player?.gameScores?.add(playerScore)
         }
     }

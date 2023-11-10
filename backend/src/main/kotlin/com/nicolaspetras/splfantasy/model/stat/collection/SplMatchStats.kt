@@ -1,4 +1,4 @@
-package com.nicolaspetras.splfantasy.model.collection
+package com.nicolaspetras.splfantasy.model.stat.collection
 
 import com.nicolaspetras.splfantasy.model.SplTeamName
 import kotlin.collections.ArrayList

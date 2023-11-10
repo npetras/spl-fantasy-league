@@ -1,7 +1,7 @@
 package com.nicolaspetras.splfantasy.service.scorer.rubric
 
 import com.nicolaspetras.splfantasy.model.SmiteRole
-import com.nicolaspetras.splfantasy.model.collection.SplPlayerStats
+import com.nicolaspetras.splfantasy.model.stat.collection.SplPlayerStats
 import com.nicolaspetras.splfantasy.service.scorer.calculator.player.PlayerPointsCalculator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

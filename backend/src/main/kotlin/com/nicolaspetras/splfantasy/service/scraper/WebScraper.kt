@@ -1,13 +1,16 @@
 package com.nicolaspetras.splfantasy.service.scraper
 
-import com.nicolaspetras.splfantasy.model.collection.SplGameStats
-import com.nicolaspetras.splfantasy.model.collection.SplMatchStats
-import com.nicolaspetras.splfantasy.model.collection.SplPlayerStats
+import com.nicolaspetras.splfantasy.model.stat.collection.SplGameStats
+import com.nicolaspetras.splfantasy.model.stat.collection.SplMatchStats
+import com.nicolaspetras.splfantasy.model.stat.collection.SplPlayerStats
 import io.github.bonigarcia.wdm.WebDriverManager
 import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.NoSuchElementException
+import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
+import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.firefox.FirefoxOptions
 import org.openqa.selenium.interactions.Actions
@@ -25,7 +28,7 @@ val log: Logger = LoggerFactory.getLogger("WebScraper")
 fun scrapeSplStats(): List<SplMatchStats> {
     val options = FirefoxOptions()
     options.addArguments("--headless");
-    WebDriverManager.firefoxdriver().setup()
+    WebDriverManager.chromedriver().setup()
     val driver = FirefoxDriver(options)
     driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
 
@@ -86,7 +89,7 @@ fun scrapeSplStats(): List<SplMatchStats> {
 }
 
 private fun goToPhase3(
-    driver: FirefoxDriver,
+    driver: WebDriver,
     phase3Xpath: String,
     actionProvider: Actions,
     js: JavascriptExecutor
@@ -103,7 +106,7 @@ private fun goToPhase3(
  */
 private fun scrapeMatchStats(
     dateText: String,
-    driver: FirefoxDriver,
+    driver: WebDriver,
     actionProvider: Actions
 ): SplMatchStats {
     // get the team name & match score
@@ -249,7 +252,7 @@ private fun scrapeAdditionalStats(
     return teamGameStats
 }
 
-private fun scrapeBasicStats(driver: FirefoxDriver, xpath: String, teamName: String): ArrayList<SplPlayerStats> {
+private fun scrapeBasicStats(driver: WebDriver, xpath: String, teamName: String): ArrayList<SplPlayerStats> {
 
     val teamsGameStats = arrayListOf<SplPlayerStats>()
     var divNum = 10
@@ -291,7 +294,7 @@ private fun scrapeBasicStats(driver: FirefoxDriver, xpath: String, teamName: Str
 }
 
 private fun openMatchStats(
-    driver: FirefoxDriver,
+    driver: WebDriver,
     actionProvider: Actions,
     js: JavascriptExecutor,
     openMatchStatsButtonXPath: String
@@ -311,7 +314,7 @@ private fun openMatchStats(
 }
 
 private fun moveToPrevWeek(
-    driver: FirefoxDriver,
+    driver: WebDriver,
     actionProvider: Actions
 ) {
     val prevArrow = driver.findElement(By.cssSelector(".date-selector > div:nth-child(1)"))
@@ -320,7 +323,7 @@ private fun moveToPrevWeek(
 }
 
 private fun acceptCookies(
-    driver: FirefoxDriver,
+    driver: WebDriver,
     actionProvider: Actions
 ) {
     val acceptCookiesButton = driver.findElement(By.cssSelector(".approve"))
