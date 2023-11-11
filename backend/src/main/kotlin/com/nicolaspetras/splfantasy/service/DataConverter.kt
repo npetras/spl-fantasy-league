@@ -10,6 +10,8 @@ import com.nicolaspetras.splfantasy.model.scoring.internal.SplMatchScore
 import com.nicolaspetras.splfantasy.model.scoring.internal.SplPlayerMatchScore
 import java.math.RoundingMode
 
+const val ROUNDING_SCALE = 1
+
 /**
  * Returns all the player scores for the match in one [ArrayList]
  */
@@ -31,20 +33,21 @@ fun convertFantasyTeamScoresToOverallScoresForApi(
 ): ArrayList<FantasyTeam> {
     val fantasyTeamList = arrayListOf<FantasyTeam>()
     for (score in fantasyTeamScores) {
+        // TODO: Check the rounding is done correctly
         val fantasyTeam = FantasyTeam(
             fantasyPlayerName = score.playerName,
             fantasyTeamGroup = score.group.toString(),
             solo = score.solo.splPlayer.name,
-            soloScore = score.solo.overallSeasonScore().toBigDecimal().setScale(1, RoundingMode.UP).toDouble(),
+            soloScore = score.solo.overallSeasonScore().setScale(ROUNDING_SCALE, RoundingMode.UP).toDouble(),
             jungle = score.jungle.splPlayer.name,
-            jungleScore = score.jungle.overallSeasonScore().toBigDecimal().setScale(1, RoundingMode.UP).toDouble(),
+            jungleScore = score.jungle.overallSeasonScore().setScale(ROUNDING_SCALE, RoundingMode.UP).toDouble(),
             mid = score.mid.splPlayer.name,
-            midScore = score.mid.overallSeasonScore().toBigDecimal().setScale(1, RoundingMode.UP).toDouble(),
+            midScore = score.mid.overallSeasonScore().setScale(ROUNDING_SCALE, RoundingMode.UP).toDouble(),
             support = score.support.splPlayer.name,
-            supportScore = score.support.overallSeasonScore().toBigDecimal().setScale(1, RoundingMode.UP).toDouble(),
+            supportScore = score.support.overallSeasonScore().setScale(ROUNDING_SCALE, RoundingMode.UP).toDouble(),
             hunter = score.hunter.splPlayer.name,
-            hunterScore = score.hunter.overallSeasonScore().toBigDecimal().setScale(1, RoundingMode.UP).toDouble(),
-            totalTeamScore = score.overallTeamScore.toBigDecimal().setScale(1, RoundingMode.UP).toDouble()
+            hunterScore = score.hunter.overallSeasonScore().setScale(ROUNDING_SCALE, RoundingMode.UP).toDouble(),
+            totalTeamScore = score.overallTeamScore.setScale(ROUNDING_SCALE, RoundingMode.UP).toDouble()
         )
         fantasyTeamList.add(fantasyTeam)
     }

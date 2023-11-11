@@ -8,7 +8,7 @@ import java.math.RoundingMode
 fun printSeasonScores(seasonScores: ArrayList<SplPlayerSeasonScore>) {
     for (player in seasonScores) {
         println("${player.splPlayer.name} ${player.splPlayer.role} ${player.splPlayer.team}")
-        println(player.overallSeasonScore().toBigDecimal().setScale(3, RoundingMode.UP).toDouble())
+        println(player.overallSeasonScore().setScale(3, RoundingMode.UP).toDouble())
     }
 }
 
@@ -30,8 +30,8 @@ fun printTeamsScores(teamScores: List<SplPlayerMatchScore>) {
     for (playerScore in teamScores) {
         println("${playerScore.name} ")
         playerScore.gameScores.forEach {
-            print("${it.toBigDecimal().setScale(3, RoundingMode.UP).toDouble()} ")
+            print("${it.setScale(3, RoundingMode.UP).toDouble()} ")
         }
-        println("\t\t${playerScore.overallMatchScore().toBigDecimal().setScale(3, RoundingMode.UP)}")
+        println("\t\t${playerScore.overallMatchScore().setScale(3, RoundingMode.UP)}")
     }
 }

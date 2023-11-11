@@ -5,6 +5,7 @@ import com.nicolaspetras.splfantasy.model.stat.collection.SplPlayerStats
 import com.nicolaspetras.splfantasy.service.scorer.calculator.player.PlayerPointsCalculator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.math.BigDecimal
 
 abstract class Rubric {
     private val log: Logger = LoggerFactory.getLogger(javaClass)
@@ -17,7 +18,7 @@ abstract class Rubric {
     /**
      * Returns the player's score. The score will be calculated differently for each role.
      */
-    fun calculatePlayerScore(playerStats: SplPlayerStats): Double {
+    fun calculatePlayerScore(playerStats: SplPlayerStats): BigDecimal {
         return when(playerStats.role) {
             SmiteRole.SOLO -> soloCalculator.calculatePoints(playerStats)
             SmiteRole.JUNGLE -> jungleCalculator.calculatePoints(playerStats)
@@ -26,7 +27,7 @@ abstract class Rubric {
             SmiteRole.CARRY -> hunterCalculator.calculatePoints(playerStats)
             else -> {
                 log.error("Invalid role type provided: $playerStats.role")
-                -1.0
+                BigDecimal("-1.0")
             }
         }
     }

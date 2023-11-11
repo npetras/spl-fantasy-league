@@ -1,6 +1,7 @@
 package com.nicolaspetras.splfantasy.model.scoring.output
 
 import com.nicolaspetras.splfantasy.model.FantasyTeamGroupName
+import java.math.BigDecimal
 
 /**
  * Scores a Fantasy Player's Team, includes the Season Scores for each player and the overall team score.
@@ -14,7 +15,7 @@ data class FantasyTeamScores(
     val support: SplPlayerSeasonScore,
     val hunter: SplPlayerSeasonScore
 ) {
-    val overallTeamScore = solo.overallSeasonScore() +
+    val overallTeamScore: BigDecimal = solo.overallSeasonScore() +
             jungle.overallSeasonScore() +
             mid.overallSeasonScore() +
             support.overallSeasonScore() +

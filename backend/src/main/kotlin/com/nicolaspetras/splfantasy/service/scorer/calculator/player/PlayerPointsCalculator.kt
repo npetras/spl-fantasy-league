@@ -2,6 +2,7 @@ package com.nicolaspetras.splfantasy.service.scorer.calculator.player
 
 import com.nicolaspetras.splfantasy.model.stat.collection.SplPlayerStats
 import com.nicolaspetras.splfantasy.service.scorer.calculator.PointsCalculator
+import java.math.BigDecimal
 
 class PlayerPointsCalculator(
     private val killPts: Double,
@@ -15,17 +16,17 @@ class PlayerPointsCalculator(
     private val deathlessPts: Double,
     private val healingPts: Double
 ): PointsCalculator {
-    override fun calculatePoints(playerStats: SplPlayerStats): Double {
-        val killsScore = killPts * playerStats.kills
-        val deathsScore = deathPts * playerStats.deaths
-        val assistScore = assistPts * playerStats.assists
-        val damageMitigationScore = damageMitigationPts * playerStats.mitigatedDamage
-        val playerDamageScore = playerDamagePts * playerStats.playerDamage
-        val goldScore = goldPerMinPts * playerStats.goldPerMin
-        val wardScore = wardPts * playerStats.wards
-        val structureDamageScore = structureDamagePts * playerStats.structureDamage
-        val deathlessScore = if (playerStats.deaths == 0) deathlessPts else 0.0
-        val healingScore = healingPts * playerStats.healing
+    override fun calculatePoints(playerStats: SplPlayerStats): BigDecimal {
+        val killsScore = BigDecimal(killPts.toString()) * BigDecimal(playerStats.kills)
+        val deathsScore = BigDecimal(deathPts.toString()) * BigDecimal(playerStats.deaths)
+        val assistScore = BigDecimal(assistPts.toString()) * BigDecimal(playerStats.assists)
+        val damageMitigationScore = BigDecimal(damageMitigationPts.toString()) * BigDecimal(playerStats.mitigatedDamage)
+        val playerDamageScore = BigDecimal(playerDamagePts.toString()) * BigDecimal(playerStats.playerDamage)
+        val goldScore = BigDecimal(goldPerMinPts.toString()) * BigDecimal(playerStats.goldPerMin)
+        val wardScore = BigDecimal(wardPts.toString()) * BigDecimal(playerStats.wards)
+        val structureDamageScore = BigDecimal(structureDamagePts.toString()) * BigDecimal(playerStats.structureDamage)
+        val deathlessScore = BigDecimal(if (playerStats.deaths == 0) deathlessPts.toString() else "0")
+        val healingScore = BigDecimal(healingPts.toString()) * BigDecimal(playerStats.healing)
         return killsScore + deathsScore + assistScore + damageMitigationScore +
                 playerDamageScore + goldScore + wardScore + structureDamageScore +
                 deathlessScore + healingScore
