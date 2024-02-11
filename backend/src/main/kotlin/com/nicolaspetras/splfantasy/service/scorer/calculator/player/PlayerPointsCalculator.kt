@@ -4,6 +4,9 @@ import com.nicolaspetras.splfantasy.model.stat.collection.SplPlayerStats
 import com.nicolaspetras.splfantasy.service.scorer.calculator.PointsCalculator
 import java.math.BigDecimal
 
+/**
+ * Calculates all independent points for the player (does not include bonus points like first bloods, top kills, assists)
+ */
 class PlayerPointsCalculator(
     private val killPts: Double,
     private val deathPts: Double,
