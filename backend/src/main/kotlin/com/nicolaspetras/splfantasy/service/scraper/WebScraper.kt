@@ -9,8 +9,6 @@ import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.NoSuchElementException
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
-import org.openqa.selenium.chrome.ChromeDriver
-import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.firefox.FirefoxOptions
 import org.openqa.selenium.interactions.Actions
@@ -33,24 +31,14 @@ fun scrapeSplStats(): List<SplMatchStats> {
     driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
 
     try {
+        // got to schedule page, which includes results for each match
         driver.get("https://www.smiteproleague.com/schedule")
         val actionProvider = Actions(driver)
         val js: JavascriptExecutor = driver
 
-        // delay allowing the cookies box to pop up
-        Thread.sleep(1000)
-        // accept cookies
+        Thread.sleep(1000)              // delay allowing the cookies box to pop up
         acceptCookies(driver, actionProvider)
-        val phase3Xpath = "/html/body/div/div/div[1]/div/div[2]/div/div[1]/div[3]/div[7]"
 
-//        goToPhase3(driver, phase3Xpath, actionProvider, js)
-
-        // for every group of matches
-//        val matchesGroupedByDayXpath = "/html/body/div/div/div[1]/div/div[2]/div/div[3]/div[1]/div/div"
-//        val matchGroups = driver.findElements(By.xpath(matchesGroupedByDayXpath))
-//        val noMatchGroups = matchGroups.size
-
-        val scoresWrapperXPath = "/html/body/div/div/div[1]/div/div[2]/div/div[3]/div[1]/div"
         val scheduleXpath = "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div[1]/div[2]"
         val dayElements = driver.findElements(By.xpath("$scheduleXpath/div"))
 
@@ -59,10 +47,8 @@ fun scrapeSplStats(): List<SplMatchStats> {
         val playerMatchStats: ArrayList<SplMatchStats> = arrayListOf()
 
         for ((dayIndex, _) in dayElements.withIndex()) {
-//            goToPhase3(driver, phase3Xpath, actionProvider, js)
             val matches = driver.findElements(By.xpath("/html/body/div/div/div[1]/div/div[2]/div/div[2]/div[1]/div[2]/div[${dayIndex+1}]/div[2]/div/div[2]/div"))
             for ((matchIndex, _) in matches.withIndex()) {
-//                goToPhase3(driver, phase3Xpath, actionProvider, js)
                 val matchLinkXpath = "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div[1]/div[2]/div[${dayIndex+1}]/div[2]/div/div[2]/div[${matchIndex+1}]/div[3]/a"
                 if (openMatchStats(driver, actionProvider, js, matchLinkXpath)) {
                     try {
@@ -74,7 +60,7 @@ fun scrapeSplStats(): List<SplMatchStats> {
                         log.error("Other exception caught during scrape of Match $matchIndex ")
                     }
                     driver.navigate().back()
-                    
+
                 } else {
                     break
                 }
@@ -88,14 +74,20 @@ fun scrapeSplStats(): List<SplMatchStats> {
     }
 }
 
-private fun goToPhase3(
+/**
+ * Go to specific phase or tournament on the Schedule page, the default will usually be the latest phase/split/tournament
+ * that has happened but if a specific phase should be scraped and scored then the [phaseTournamentXpath] should be
+ * provided, and the web page will be changed to that phase/tournament/split using the existing [driver],
+ * [actionProvider] and [jsExecutor] that is provided.
+ */
+private fun goToSpecificPhaseOrTournament(
     driver: WebDriver,
-    phase3Xpath: String,
+    phaseTournamentXpath: String,
     actionProvider: Actions,
-    js: JavascriptExecutor
+    jsExecutor: JavascriptExecutor
 ) {
-    val phase3Button = driver.findElement(By.xpath(phase3Xpath))
-    js.executeScript("arguments[0].scrollIntoView();", phase3Button)
+    val phase3Button = driver.findElement(By.xpath(phaseTournamentXpath))
+    jsExecutor.executeScript("arguments[0].scrollIntoView();", phase3Button)
     actionProvider.clickAndHold(phase3Button).build().perform()
     actionProvider.release(phase3Button).build().perform()
     
