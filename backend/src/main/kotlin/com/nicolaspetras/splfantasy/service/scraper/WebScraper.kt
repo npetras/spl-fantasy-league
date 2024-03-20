@@ -3,20 +3,21 @@ package com.nicolaspetras.splfantasy.service.scraper
 import com.nicolaspetras.splfantasy.model.stat.collection.SplGameStats
 import com.nicolaspetras.splfantasy.model.stat.collection.SplMatchStats
 import com.nicolaspetras.splfantasy.model.stat.collection.SplPlayerStats
-import org.openqa.selenium.By
-import org.openqa.selenium.JavascriptExecutor
-import org.openqa.selenium.NoSuchElementException
-import org.openqa.selenium.WebDriver
-import org.openqa.selenium.WebElement
+import org.openqa.selenium.*
 import org.openqa.selenium.firefox.FirefoxDriver
-import org.openqa.selenium.firefox.FirefoxOptions
 import org.openqa.selenium.interactions.Actions
+import org.openqa.selenium.support.ui.Wait
+import org.openqa.selenium.support.ui.WebDriverWait
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.Duration
 
 
 val log: Logger = LoggerFactory.getLogger("WebScraper")
+
+const val SCHEDULE_XPATH = "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div[1]/div[2]"
+const val UNKNOWN = "UNKNOWN"
+
 
 /**
  * Scrapes the stats from the Smite Pro website
@@ -26,7 +27,7 @@ fun scrapeSplStats(): List<SplMatchStats> {
 //    val options = FirefoxOptions()
 //    options.addArguments("-headless");
     val driver = FirefoxDriver()
-    driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
+    driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 
     try {
         // got to schedule page, which includes results for each match
@@ -34,20 +35,38 @@ fun scrapeSplStats(): List<SplMatchStats> {
         val actionProvider = Actions(driver)
         val js: JavascriptExecutor = driver
 
-        // TODO: Check if I can I remove the line below with implicit waits?
-        Thread.sleep(1000)              // delay allowing the cookies box to pop up
-        acceptCookies(driver, actionProvider)
+        // check for error conditions
+        if (!acceptCookies(driver, actionProvider)) {
+            log.error("No stats scraped - could not accept cookies")
+            return arrayListOf()
+        }
 
-        val scheduleXpath = "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div[1]/div[2]"
-        val dayElements = driver.findElements(By.xpath("$scheduleXpath/div"))
+        val dayElements = driver.findElements(By.xpath("$SCHEDULE_XPATH/div"))
+        log.info("Found ${dayElements.size} days of matches")
+        if (dayElements.isEmpty()) {
+            log.error("No stats scraped - could not find any match days")
+            return arrayListOf()
+        }
 
         val playerMatchStats: ArrayList<SplMatchStats> = arrayListOf()
 
         for ((dayIndex, _) in dayElements.withIndex()) {
-            val matches = driver.findElements(By.xpath("/html/body/div/div/div[1]/div/div[2]/div/div[2]/div[1]/div[2]/div[${dayIndex+1}]/div[2]/div/div[2]/div"))
+            val dateXpath = "$SCHEDULE_XPATH/div[1]/div[1]"
+            val matches = driver.findElements(By.xpath("$SCHEDULE_XPATH/div[${dayIndex + 1}]/div[2]/div/div[2]/div"))
+            log.info("Found ${matches.size} matches for day ${dayIndex + 1}")
             for ((matchIndex, _) in matches.withIndex()) {
+                val matchUpXpath =
+                    "$SCHEDULE_XPATH/div[${dayIndex + 1}]/div[2]/div/div[2]/div[${matchIndex + 1}]/div[1]"
+                val homeTeamElementSchedulePage = driver.findElements(By.xpath("$matchUpXpath/div[1]"))
+                val awayTeamElementSchedulePage = driver.findElements(By.xpath("$matchUpXpath/div[3]"))
+                val dateElement = driver.findElements(By.xpath("$SCHEDULE_XPATH/div[${dayIndex+1}]/div[1]"))
+
+                val date = if (dateElement.isNotEmpty()) dateElement[0].text else UNKNOWN
+                log.info("Day ${dayIndex + 1} date: $date")
+
                 // button to open the match and game stats
-                val matchLinkXpath = "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div[1]/div[2]/div[${dayIndex+1}]/div[2]/div/div[2]/div[${matchIndex+1}]/div[3]/a"
+                val matchLinkXpath =
+                    "$SCHEDULE_XPATH/div[${dayIndex + 1}]/div[2]/div/div[2]/div[${matchIndex + 1}]/div[3]/a"
                 if (openMatchStats(driver, actionProvider, js, matchLinkXpath)) {
                     try {
                         playerMatchStats.add(scrapeMatchStats("", driver, actionProvider))
@@ -315,8 +334,17 @@ private fun moveToPrevWeek(
 private fun acceptCookies(
     driver: WebDriver,
     actionProvider: Actions
-) {
-    val acceptCookiesButton = driver.findElement(By.cssSelector(".approve"))
-    actionProvider.clickAndHold(acceptCookiesButton).build().perform()
-    actionProvider.release(acceptCookiesButton).build().perform()
+): Boolean {
+    val wait: Wait<WebDriver> = WebDriverWait(driver, Duration.ofSeconds(2))
+    val acceptCookiesButton = driver.findElements(By.cssSelector(".approve"))
+    // needed in addition to implicit wait for Cookies Pop-up
+    wait.until { acceptCookiesButton[0].isDisplayed }
+    return if (acceptCookiesButton.isNotEmpty()) {
+        actionProvider.clickAndHold(acceptCookiesButton[0]).build().perform()
+        actionProvider.release(acceptCookiesButton[0]).build().perform()
+        true
+    } else {
+        false
+    }
+}
 }
