@@ -3,7 +3,6 @@ package com.nicolaspetras.splfantasy.service.scraper
 import com.nicolaspetras.splfantasy.model.stat.collection.SplGameStats
 import com.nicolaspetras.splfantasy.model.stat.collection.SplMatchStats
 import com.nicolaspetras.splfantasy.model.stat.collection.SplPlayerStats
-import io.github.bonigarcia.wdm.WebDriverManager
 import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.NoSuchElementException
@@ -24,10 +23,9 @@ val log: Logger = LoggerFactory.getLogger("WebScraper")
  * Scraping is done from the Schedule page, and scrapes all the games that have available stats
  */
 fun scrapeSplStats(): List<SplMatchStats> {
-    val options = FirefoxOptions()
-    options.addArguments("--headless");
-    WebDriverManager.chromedriver().setup()
-    val driver = FirefoxDriver(options)
+//    val options = FirefoxOptions()
+//    options.addArguments("-headless");
+    val driver = FirefoxDriver()
     driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
 
     try {
@@ -36,32 +34,32 @@ fun scrapeSplStats(): List<SplMatchStats> {
         val actionProvider = Actions(driver)
         val js: JavascriptExecutor = driver
 
+        // TODO: Check if I can I remove the line below with implicit waits?
         Thread.sleep(1000)              // delay allowing the cookies box to pop up
         acceptCookies(driver, actionProvider)
 
         val scheduleXpath = "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div[1]/div[2]"
         val dayElements = driver.findElements(By.xpath("$scheduleXpath/div"))
 
-
-
         val playerMatchStats: ArrayList<SplMatchStats> = arrayListOf()
 
         for ((dayIndex, _) in dayElements.withIndex()) {
             val matches = driver.findElements(By.xpath("/html/body/div/div/div[1]/div/div[2]/div/div[2]/div[1]/div[2]/div[${dayIndex+1}]/div[2]/div/div[2]/div"))
             for ((matchIndex, _) in matches.withIndex()) {
+                // button to open the match and game stats
                 val matchLinkXpath = "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div[1]/div[2]/div[${dayIndex+1}]/div[2]/div/div[2]/div[${matchIndex+1}]/div[3]/a"
                 if (openMatchStats(driver, actionProvider, js, matchLinkXpath)) {
                     try {
                         playerMatchStats.add(scrapeMatchStats("", driver, actionProvider))
                     } catch (missingElementInMatch: NoSuchElementException) {
                         // TODO: Try and grab the name of the teams playing & log the match name
-                        log.error("Match $matchIndex had an unexpected structure and was missing an element")
+                        log.error("Match $matchIndex: unexpected structure and was missing an element")
                     } catch (exception: Exception) {
-                        log.error("Other exception caught during scrape of Match $matchIndex ")
+                        log.error("Match $matchIndex: unknown error caught")
                     }
                     driver.navigate().back()
-
                 } else {
+                    log.error("Match $matchIndex: cannot open match link for match and game stats")
                     break
                 }
             }

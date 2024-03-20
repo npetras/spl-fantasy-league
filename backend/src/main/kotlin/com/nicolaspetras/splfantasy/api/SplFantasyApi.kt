@@ -18,7 +18,7 @@ import com.nicolaspetras.splfantasy.service.scorer.FantasyTeamScorer
 @RestController
 class SplFantasyApi() {
 
-    final val matchScorer = MatchScorer()
+    private final val matchScorer = MatchScorer()
     private final val fantasyTeamDrafts = arrayListOf<FantasyTeamPicks>(
         FantasyTeamPicks(
             "KingUrk",
@@ -65,7 +65,6 @@ class SplFantasyApi() {
             SplPlayer("", SplTeamName.KINGS, SmiteRole.SUPPORT),
             SplPlayer("", SplTeamName.KINGS, SmiteRole.CARRY)
         )
-
     )
 
     private final val fantasyScorer = FantasyTeamScorer(fantasyTeamDrafts)

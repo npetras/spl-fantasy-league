@@ -3,6 +3,8 @@ package com.nicolaspetras.splfantasy.service.scorer.rubric
 import com.nicolaspetras.splfantasy.model.SmiteRole
 import com.nicolaspetras.splfantasy.model.SplTeamName
 import com.nicolaspetras.splfantasy.model.stat.collection.SplPlayerStats
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
@@ -36,6 +38,7 @@ class OfficialRubricV1Test {
             healing = 0,
             wards = 30
         )
+        println(Json.encodeToString(baskinGame1Stats))
         val baskinGame1Score = officialRubricV1.calculatePlayerScore(baskinGame1Stats)
         val expectedScore: BigDecimal =
             (BigDecimal(baskinGame1Stats.kills) * BigDecimal("2")) +
