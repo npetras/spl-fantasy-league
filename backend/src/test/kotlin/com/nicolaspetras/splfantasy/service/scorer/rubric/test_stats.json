@@ -1,0 +1,74 @@
+{
+  "orderTeamStats": [
+    {
+      "name": "CycloneSpin",
+      "splTeam": "STYX",
+      "role": "CARRY",
+      "kills": 0,
+      "deaths": 2,
+      "assists": 5,
+      "mitigatedDamage": 14333,
+      "playerDamage": 20819,
+      "goldPerMin": 475,
+      "wards": 7,
+      "structureDamage": 5007,
+      "healing": 0
+    },
+    {
+      "name": "Paul",
+      "splTeam": "STYX",
+      "role": "MID",
+      "kills": 0,
+      "deaths": 2,
+      "assists": 2,
+      "mitigatedDamage": 6037,
+      "playerDamage": 11530,
+      "goldPerMin": 484,
+      "wards": 10,
+      "structureDamage": 564,
+      "healing": 0
+    },
+    {
+      "name": "Cyno",
+      "splTeam": "STYX",
+      "role": "JUNGLE",
+      "kills": 0,
+      "deaths": 2,
+      "assists": 7,
+      "mitigatedDamage": 24198,
+      "playerDamage": 12935,
+      "goldPerMin": 506,
+      "wards": 12,
+      "structureDamage": 735,
+      "healing": 0
+    },
+    {
+      "name": "Baskin",
+      "splTeam": "STYX",
+      "role": "SOLO",
+      "kills": 8,
+      "deaths": 3,
+      "assists": 0,
+      "mitigatedDamage": 28404,
+      "playerDamage": 44292,
+      "goldPerMin": 544,
+      "wards": 30,
+      "structureDamage": 1340,
+      "healing": 0
+    },
+    {
+      "name": "Aror",
+      "splTeam": "STYX",
+      "role": "SUPPORT",
+      "kills": 2,
+      "deaths": 6,
+      "assists": 5,
+      "mitigatedDamage": 60833,
+      "playerDamage": 9906,
+      "goldPerMin": 454,
+      "wards": 16,
+      "structureDamage": 69,
+      "healing": 0
+    }
+  ]
+}
