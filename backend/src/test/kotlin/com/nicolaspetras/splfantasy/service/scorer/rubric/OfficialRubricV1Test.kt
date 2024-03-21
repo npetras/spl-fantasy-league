@@ -71,6 +71,8 @@ class OfficialRubricV1Test {
             wards = 10
         )
         val paulGame1Score = officialRubricV1.calculatePlayerScore(paulGame1Stats)
+        println(Json.encodeToString(paulGame1Stats))
+
         val expectedScore: BigDecimal =
             (BigDecimal(paulGame1Stats.kills) * BigDecimal("2.5")) +
                     (BigDecimal(paulGame1Stats.deaths) * BigDecimal("-1")) +
@@ -86,9 +88,42 @@ class OfficialRubricV1Test {
     }
 
     @Test
+    fun `test jungle stats - Cyno ferrymen vs warriors game 1`() {
+        val cynoGame1Stats = SplPlayerStats(
+            name = "Cyno",
+            splTeam = SplTeamName.STYX,
+            role = SmiteRole.JUNGLE,
+            kills = 0,
+            deaths = 2,
+            assists = 7,
+            goldPerMin = 506,
+            playerDamage = 12_935,
+            mitigatedDamage = 24_198,
+            structureDamage = 735,
+            healing = 0,
+            wards = 12
+        )
+        val cynoGame1Score = officialRubricV1.calculatePlayerScore(cynoGame1Stats)
+        println(Json.encodeToString(cynoGame1Stats))
+        val expectedScore: BigDecimal =
+            (BigDecimal(cynoGame1Stats.kills) * BigDecimal("2.5")) +
+                    (BigDecimal(cynoGame1Stats.deaths) * BigDecimal("-1")) +
+                    (BigDecimal(cynoGame1Stats.assists) * BigDecimal("0.2")) +
+                    (BigDecimal(cynoGame1Stats.mitigatedDamage) * BigDecimal("0.00005")) +
+                    (BigDecimal(cynoGame1Stats.playerDamage) * BigDecimal("0.0001")) +
+                    (BigDecimal(cynoGame1Stats.goldPerMin) * BigDecimal("0.001")) +
+                    (BigDecimal(cynoGame1Stats.wards) * BigDecimal("0.1")) +
+                    (BigDecimal(cynoGame1Stats.structureDamage) * BigDecimal("0.00025")) +
+                    (BigDecimal(0)) + // deathless
+                    (BigDecimal(cynoGame1Stats.healing) * BigDecimal("0.0001"))
+        assertEquals(expectedScore.setScale(5, RoundingMode.UP), cynoGame1Score.setScale(5, RoundingMode.UP))
+
+    }
+
+    @Test
     fun `test carry stats - CycloneSpin ferrymen vs warriors game 1`() {
 
-        val arorGame1Stats = SplPlayerStats(
+        val cycloneGame1Stats = SplPlayerStats(
             name = "CycloneSpin",
             splTeam = SplTeamName.STYX,
             role = SmiteRole.CARRY,
@@ -102,18 +137,19 @@ class OfficialRubricV1Test {
             healing = 0,
             wards = 7
         )
-        val cycloneGame1Score = officialRubricV1.calculatePlayerScore(arorGame1Stats)
+        val cycloneGame1Score = officialRubricV1.calculatePlayerScore(cycloneGame1Stats)
+        println(Json.encodeToString(cycloneGame1Stats))
         val expectedScore: BigDecimal =
-            (BigDecimal(arorGame1Stats.kills) * BigDecimal("2.5")) +
-                    (BigDecimal(arorGame1Stats.deaths) * BigDecimal("-1")) +
-                    (BigDecimal(arorGame1Stats.assists) * BigDecimal("0.1")) +
-                    (BigDecimal(arorGame1Stats.mitigatedDamage) * BigDecimal("0.00005")) +
-                    (BigDecimal(arorGame1Stats.playerDamage) * BigDecimal("0.0001")) +
-                    (BigDecimal(arorGame1Stats.goldPerMin) * BigDecimal("0.001")) +
-                    (BigDecimal(arorGame1Stats.wards) * BigDecimal("0.1")) +
-                    (BigDecimal(arorGame1Stats.structureDamage) * BigDecimal("0.00025")) +
+            (BigDecimal(cycloneGame1Stats.kills) * BigDecimal("2.5")) +
+                    (BigDecimal(cycloneGame1Stats.deaths) * BigDecimal("-1")) +
+                    (BigDecimal(cycloneGame1Stats.assists) * BigDecimal("0.1")) +
+                    (BigDecimal(cycloneGame1Stats.mitigatedDamage) * BigDecimal("0.00005")) +
+                    (BigDecimal(cycloneGame1Stats.playerDamage) * BigDecimal("0.0001")) +
+                    (BigDecimal(cycloneGame1Stats.goldPerMin) * BigDecimal("0.001")) +
+                    (BigDecimal(cycloneGame1Stats.wards) * BigDecimal("0.1")) +
+                    (BigDecimal(cycloneGame1Stats.structureDamage) * BigDecimal("0.00025")) +
                     (BigDecimal(0)) + // deathless
-                    (BigDecimal(arorGame1Stats.healing) * BigDecimal("0.0001"))
+                    (BigDecimal(cycloneGame1Stats.healing) * BigDecimal("0.0001"))
         assertEquals(expectedScore.setScale(5, RoundingMode.UP), cycloneGame1Score.setScale(5, RoundingMode.UP))
     }
 
@@ -135,6 +171,7 @@ class OfficialRubricV1Test {
             wards = 16
         )
         val arorGame1Score = officialRubricV1.calculatePlayerScore(arorGame1Stats)
+        println(Json.encodeToString(arorGame1Stats))
         val expectedScore: BigDecimal =
             (BigDecimal(arorGame1Stats.kills) * BigDecimal("1.5")) +
                     (BigDecimal(arorGame1Stats.deaths) * BigDecimal("-1")) +
