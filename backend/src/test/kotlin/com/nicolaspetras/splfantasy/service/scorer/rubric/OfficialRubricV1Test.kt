@@ -185,4 +185,36 @@ class OfficialRubricV1Test {
                     (BigDecimal(arorGame1Stats.healing) * BigDecimal("0.0001"))
         assertEquals(expectedScore.setScale(5, RoundingMode.UP), arorGame1Score.setScale(5, RoundingMode.UP))
     }
+
+    @Test
+    fun `test mid laner stats - Pegon ferrymen vs warriors game 1`() {
+
+        val pegonGame1Stats = SplPlayerStats(
+            name = "Pegon",
+            splTeam = SplTeamName.ONI,
+            role = SmiteRole.MID,
+            kills = 7,
+            deaths = 0,
+            assists = 7,
+            goldPerMin = 554,
+            playerDamage = 44_144,
+            mitigatedDamage = 17_990,
+            structureDamage = 1_877,
+            healing = 302,
+            wards = 12
+        )
+        val pegonGame1Score = officialRubricV1.calculatePlayerScore(pegonGame1Stats)
+        val expectedScore: BigDecimal =
+            (BigDecimal(pegonGame1Stats.kills) * BigDecimal("2.5")) +
+                    (BigDecimal(pegonGame1Stats.deaths) * BigDecimal("-1")) +
+                    (BigDecimal(pegonGame1Stats.assists) * BigDecimal("0.1")) +
+                    (BigDecimal(pegonGame1Stats.mitigatedDamage) * BigDecimal("0.00005")) +
+                    (BigDecimal(pegonGame1Stats.playerDamage) * BigDecimal("0.0001")) +
+                    (BigDecimal(pegonGame1Stats.goldPerMin) * BigDecimal("0.001")) +
+                    (BigDecimal(pegonGame1Stats.wards) * BigDecimal("0.1")) +
+                    (BigDecimal(pegonGame1Stats.structureDamage) * BigDecimal("0.00025")) +
+                    (BigDecimal(1) * BigDecimal("3.0")) + // deathless
+                    (BigDecimal(pegonGame1Stats.healing) * BigDecimal("0.0001"))
+        assertEquals(expectedScore.setScale(5, RoundingMode.UP), pegonGame1Score.setScale(5, RoundingMode.UP))
+    }
 }
