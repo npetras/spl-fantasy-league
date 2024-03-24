@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import kotlin.collections.MutableList
 
 plugins {
     id("org.springframework.boot") version "3.2.3"
@@ -41,4 +42,8 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.getByName<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
+    jvmArgs = mutableListOf("-Dspring.output.ansi.enabled=ALWAYS")
 }
