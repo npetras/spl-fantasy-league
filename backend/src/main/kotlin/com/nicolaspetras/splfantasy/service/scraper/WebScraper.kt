@@ -312,8 +312,8 @@ private fun scrapeMatchStats(
         val game = SplGameStats(
             orderTeamName = enumValueOf(orderTeamText),
             chaosTeamName = enumValueOf(chaosTeamText),
-            orderTeamStats = orderTeamCompleteStats,
-            chaosTeamStats = chaosTeamCompleteStats
+            orderTeamPlayerStats = orderTeamCompleteStats,
+            chaosTeamPlayerStats = chaosTeamCompleteStats
         )
         log.debug(game.toString())
         matchGames.add(game)

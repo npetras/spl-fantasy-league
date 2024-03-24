@@ -29,8 +29,8 @@ class MatchScorer(private val rubric: Rubric = OfficialRubricV1()) {
         val awayTeamScores = createAwayTeamScoresBase(matchStats)
 
         for (game in matchStats.games) {
-            scorePlayersOnTeamInGame(game.orderTeamStats, matchStats, homeTeamScores, awayTeamScores)
-            scorePlayersOnTeamInGame(game.chaosTeamStats, matchStats, homeTeamScores, awayTeamScores)
+            scorePlayersOnTeamInGame(game.orderTeamPlayerStats, matchStats, homeTeamScores, awayTeamScores)
+            scorePlayersOnTeamInGame(game.chaosTeamPlayerStats, matchStats, homeTeamScores, awayTeamScores)
             scoreBonusPoints(homeTeamScores, awayTeamScores)
         }
 
@@ -96,8 +96,8 @@ class MatchScorer(private val rubric: Rubric = OfficialRubricV1()) {
         return createTeamScoresBase(
             orderTeamName = matchStats.games[0].orderTeamName,
             teamName = matchStats.homeTeamName,
-            orderTeamStats = matchStats.games[0].orderTeamStats,
-            chaosTeamStats = matchStats.games[0].chaosTeamStats
+            orderTeamStats = matchStats.games[0].orderTeamPlayerStats,
+            chaosTeamStats = matchStats.games[0].chaosTeamPlayerStats
         )
     }
 
@@ -109,8 +109,8 @@ class MatchScorer(private val rubric: Rubric = OfficialRubricV1()) {
         return createTeamScoresBase(
             orderTeamName = matchStats.games[0].orderTeamName,
             teamName = matchStats.awayTeamName,
-            orderTeamStats = matchStats.games[0].orderTeamStats,
-            chaosTeamStats = matchStats.games[0].chaosTeamStats
+            orderTeamStats = matchStats.games[0].orderTeamPlayerStats,
+            chaosTeamStats = matchStats.games[0].chaosTeamPlayerStats
         )
     }
 
