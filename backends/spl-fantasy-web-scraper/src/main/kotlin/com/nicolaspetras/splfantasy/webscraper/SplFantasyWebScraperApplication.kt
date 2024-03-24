@@ -1,4 +1,4 @@
-package com.nicolaspetras.splfantasywebscraper
+package com.nicolaspetras.splfantasy.webscraper
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

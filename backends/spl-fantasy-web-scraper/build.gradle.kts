@@ -7,7 +7,7 @@ plugins {
 	kotlin("plugin.spring") version "1.9.22"
 }
 
-group = "com.nicolaspetras"
+group = "com.nicolaspetras.splfantasy"
 version = "0.0.1-SNAPSHOT"
 
 java {
@@ -19,11 +19,14 @@ repositories {
 }
 
 dependencies {
+	// spring
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	// selenium
+	implementation("org.seleniumhq.selenium:selenium-java:4.18.1")
 }
 
 tasks.withType<KotlinCompile> {
@@ -36,3 +39,7 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
+
+//tasks.getByName<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
+//	jvmArgs = mutableListOf("-Dspring.output.ansi.enabled=ALWAYS")
+//}
