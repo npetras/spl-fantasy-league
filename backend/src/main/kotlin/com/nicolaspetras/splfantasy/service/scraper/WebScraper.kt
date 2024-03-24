@@ -77,7 +77,7 @@ fun scrapeSplStats(): List<SplMatchStats> {
                     "$SCHEDULE_XPATH/div[${dayIndex + 1}]/div[2]/div/div[2]/div[${matchIndex + 1}]/div[3]/a"
 
                 if (openMatchStats(webDriver, actionProvider, js, matchLinkXpath)) {
-                    scrapeMatch(webDriver, matchIndex, playerMatchStats, actionProvider, date)
+                    scrapeMatch(webDriver, actionProvider, date, matchIndex, playerMatchStats)
                 } else {
                     log.warn("Cannot open Match ${matchIndex + 1} - $homeTeamSchedulePage vs $awayTeamSchedulePage")
                     continue
@@ -91,12 +91,97 @@ fun scrapeSplStats(): List<SplMatchStats> {
     }
 }
 
+/**
+ * Accept the cookies on launching the website, cannot proceed with scraping before these cookies are accepted
+ */
+private fun acceptCookies(
+    driver: WebDriver,
+    actionProvider: Actions
+): Boolean {
+    val wait: Wait<WebDriver> = WebDriverWait(driver, Duration.ofSeconds(2))
+    val acceptCookiesButton = driver.findElements(By.cssSelector(".approve"))
+    // needed in addition to implicit wait for Cookies Pop-up
+    wait.until { acceptCookiesButton[0].isDisplayed }
+    return if (acceptCookiesButton.isNotEmpty()) {
+        actionProvider.clickAndHold(acceptCookiesButton[0]).build().perform()
+        actionProvider.release(acceptCookiesButton[0]).build().perform()
+        true
+    } else {
+        false
+    }
+}
+
+/**
+ * Go to specific phase or tournament on the Schedule page, the default will usually be the latest phase/split/tournament
+ * that has happened but if a specific phase should be scraped and scored then the [phaseTournamentXpath] should be
+ * provided, and the web page will be changed to that phase/tournament/split using the existing [driver],
+ * [actionProvider] and [jsExecutor] that is provided.
+ */
+private fun goToSpecificPhaseOrTournament(
+    driver: WebDriver,
+    phaseTournamentXpath: String,
+    actionProvider: Actions,
+    jsExecutor: JavascriptExecutor
+) {
+    val phase3Button = driver.findElement(By.xpath(phaseTournamentXpath))
+    jsExecutor.executeScript("arguments[0].scrollIntoView();", phase3Button)
+    actionProvider.clickAndHold(phase3Button).build().perform()
+    actionProvider.release(phase3Button).build().perform()
+
+}
+
+/**
+ * Function to move to the previous week when scraping the stats from the /scores pages.
+ */
+private fun moveToPrevWeek(
+    driver: WebDriver,
+    actionProvider: Actions
+) {
+    val prevArrow = driver.findElement(By.cssSelector(".date-selector > div:nth-child(1)"))
+    actionProvider.clickAndHold(prevArrow).build().perform()
+    actionProvider.release(prevArrow).build().perform()
+}
+
+/**
+ * Open the match stats for a particular match from the Schedule screen, and return true if the stats can be opened for
+ * the match and false if they cannot.
+ */
+private fun openMatchStats(
+    driver: WebDriver,
+    actionProvider: Actions,
+    js: JavascriptExecutor,
+    openMatchStatsButtonXPath: String
+): Boolean {
+    var result = true
+    try {
+        val matchStatsButton =
+            driver.findElement(By.xpath(openMatchStatsButtonXPath))
+        js.executeScript("arguments[0].scrollIntoView();", matchStatsButton)
+        actionProvider.clickAndHold(matchStatsButton).build().perform()
+        actionProvider.release(matchStatsButton).build().perform()
+
+    } catch (noSuchElement: NoSuchElementException) {
+        result = false
+    }
+    return result
+}
+
+/**
+ * Scrape a single match - basic and advanced stats for each player for each game. Adding those stats to
+ * [playerMatchStats].
+ *
+ * @param webDriver Selenium WebDriver for driving the browsers, used to select elements in the DOM and navigate
+ * @param actionProvider Action provider to perform  user gestures like clicking buttons
+ * @param date Date as a string
+ * @param matchIndex The index of the match to be scraped
+ * @param playerMatchStats The list of match stats containing all of the match stats
+ */
 private fun scrapeMatch(
-    webDriver: FirefoxDriver,
+    webDriver: WebDriver,
+    actionProvider: Actions,
+    date: String,
     matchIndex: Int,
     playerMatchStats: ArrayList<SplMatchStats>,
-    actionProvider: Actions,
-    date: String
 ) {
     val homeTeamElementMatchPage =
         webDriver.findElements(By.xpath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/div/div[1]/div/strong"))
@@ -132,27 +217,9 @@ private fun scrapeMatch(
     webDriver.navigate().back()
 }
 
-/**
- * Go to specific phase or tournament on the Schedule page, the default will usually be the latest phase/split/tournament
- * that has happened but if a specific phase should be scraped and scored then the [phaseTournamentXpath] should be
- * provided, and the web page will be changed to that phase/tournament/split using the existing [driver],
- * [actionProvider] and [jsExecutor] that is provided.
- */
-private fun goToSpecificPhaseOrTournament(
-    driver: WebDriver,
-    phaseTournamentXpath: String,
-    actionProvider: Actions,
-    jsExecutor: JavascriptExecutor
-) {
-    val phase3Button = driver.findElement(By.xpath(phaseTournamentXpath))
-    jsExecutor.executeScript("arguments[0].scrollIntoView();", phase3Button)
-    actionProvider.clickAndHold(phase3Button).build().perform()
-    actionProvider.release(phase3Button).build().perform()
-
-}
 
 /**
- * Scrape and store all stats of both teams for one match
+ * Return the scraped stats for the match for both teams, and all players in those teams.
  */
 private fun scrapeMatchStats(
     webDriver: WebDriver,
@@ -199,7 +266,7 @@ private fun scrapeMatchStats(
 //        if (orderTeamText != UNKNOWN) {
             val orderTeamBasicStatsXPath =
                 "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[1]/div/div/div"
-            val orderTeamBasicStats = scrapeBasicStats(
+            val orderTeamBasicStats = scrapeBasicStatsForGame(
                 driver = webDriver,
                 xpath = orderTeamBasicStatsXPath,
                 teamName = orderTeamText
@@ -209,7 +276,7 @@ private fun scrapeMatchStats(
                 "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[2]/div/table/tbody/tr"
             val orderTeamAdditionalStatsTable =
                 webDriver.findElements(By.xpath(orderTeamAdditionalStatsXPath))
-            val orderTeamCompleteStats = scrapeAdditionalStats(
+            val orderTeamCompleteStats = scrapeAdditionalStatsForGame(
                 additionalStatsTable = orderTeamAdditionalStatsTable,
                 teamGameStats = orderTeamBasicStats
             )
@@ -225,7 +292,7 @@ private fun scrapeMatchStats(
 //        if (chaosTeamText != UNKNOWN) {
             val chaosTeamBasicStatsXPath =
                 "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[4]/div/div/div"
-            val chaosTeamBasicStats = scrapeBasicStats(
+            val chaosTeamBasicStats = scrapeBasicStatsForGame(
                 driver = webDriver,
                 xpath = chaosTeamBasicStatsXPath,
                 teamName = chaosTeamText
@@ -236,7 +303,7 @@ private fun scrapeMatchStats(
             val chaosTeamAdditionalStatsTable =
                 webDriver.findElements(By.xpath(chaosTeamAdditionalStatsXPath))
 
-            val chaosTeamCompleteStats = scrapeAdditionalStats(
+            val chaosTeamCompleteStats = scrapeAdditionalStatsForGame(
                 additionalStatsTable = chaosTeamAdditionalStatsTable,
                 teamGameStats = chaosTeamBasicStats
             )
@@ -271,53 +338,10 @@ private fun scrapeMatchStats(
     )
 }
 
-private fun scrapeAdditionalStats(
-    additionalStatsTable: List<WebElement>,
-    teamGameStats: ArrayList<SplPlayerStats>
-): ArrayList<SplPlayerStats> {
-    for ((i, player) in additionalStatsTable.withIndex()) {
-        val name = player.findElement(By.className("name")).text.uppercase()
-        val goldPerMin = player.findElement(By.className("gpm")).text.toInt()
-        val playerDamage = player.findElement(By.className("damage")).text
-        val playerDamageInt = playerDamage.replace(",", "").toInt()
-        val mitigatedDamage = player.findElement(By.className("dmg_mtgtd")).text
-        val mitigatedDamageInt = mitigatedDamage.replace(",", "").toInt()
-        val structureDamage = player.findElement(By.className("strct_dmg")).text
-        val structureDamageInt = structureDamage.replace(",", "").toInt()
-        val healing = player.findElement(By.className("healing")).text
-        val healingInt = healing.replace(",", "").toInt()
-        val wards = player.findElement(By.className("wards")).text.toInt()
-
-        val playerStats = teamGameStats[i]
-
-        if (playerStats.name == name) {
-            playerStats.goldPerMin = goldPerMin
-            playerStats.playerDamage = playerDamageInt
-            playerStats.mitigatedDamage = mitigatedDamageInt
-            playerStats.structureDamage = structureDamageInt
-            playerStats.healing = healingInt
-            playerStats.wards = wards
-        } else {
-            log.warn("Player $i in Additional Stats and Basic Stats names don't match")
-            log.info("Trying to find matching player in Basic Stats")
-            val playerStatsRetry = teamGameStats.find { it.name == name }
-            if (playerStatsRetry != null) {
-                playerStatsRetry.goldPerMin = goldPerMin
-                playerStatsRetry.playerDamage = playerDamageInt
-                playerStatsRetry.mitigatedDamage = mitigatedDamageInt
-                playerStatsRetry.structureDamage = structureDamageInt
-                playerStatsRetry.healing = healingInt
-                playerStatsRetry.wards = wards
-            } else {
-                log.error("Could not find player with name: $name in Basic Stats Player List")
-            }
-        }
-        log.debug(playerStats.toString())
-    }
-    return teamGameStats
-}
-
-private fun scrapeBasicStats(
+/**
+ * Scrape the basic stats like kills, deaths and assist for the players on both teams for the current game.
+ */
+private fun scrapeBasicStatsForGame(
     driver: WebDriver,
     xpath: String,
     teamName: String
@@ -362,51 +386,52 @@ private fun scrapeBasicStats(
     return teamsGameStats
 }
 
-private fun openMatchStats(
-    driver: WebDriver,
-    actionProvider: Actions,
-    js: JavascriptExecutor,
-    openMatchStatsButtonXPath: String
-): Boolean {
-    var result = true
-    try {
-        val matchStatsButton =
-            driver.findElement(By.xpath(openMatchStatsButtonXPath))
-        js.executeScript("arguments[0].scrollIntoView();", matchStatsButton)
-        actionProvider.clickAndHold(matchStatsButton).build().perform()
-        actionProvider.release(matchStatsButton).build().perform()
-
-    } catch (noSuchElement: NoSuchElementException) {
-        result = false
-    }
-    return result
-}
-
-private fun moveToPrevWeek(
-    driver: WebDriver,
-    actionProvider: Actions
-) {
-    val prevArrow = driver.findElement(By.cssSelector(".date-selector > div:nth-child(1)"))
-    actionProvider.clickAndHold(prevArrow).build().perform()
-    actionProvider.release(prevArrow).build().perform()
-}
-
 /**
- * Accept the cookies on launching the website, cannot proceed with scraping before these cookies are accepted
+ * Scrapes the additional stats like gold per minute (GPM) and damage for the players on both teams for the current
+ * game.
  */
-private fun acceptCookies(
-    driver: WebDriver,
-    actionProvider: Actions
-): Boolean {
-    val wait: Wait<WebDriver> = WebDriverWait(driver, Duration.ofSeconds(2))
-    val acceptCookiesButton = driver.findElements(By.cssSelector(".approve"))
-    // needed in addition to implicit wait for Cookies Pop-up
-    wait.until { acceptCookiesButton[0].isDisplayed }
-    return if (acceptCookiesButton.isNotEmpty()) {
-        actionProvider.clickAndHold(acceptCookiesButton[0]).build().perform()
-        actionProvider.release(acceptCookiesButton[0]).build().perform()
-        true
-    } else {
-        false
+private fun scrapeAdditionalStatsForGame(
+    additionalStatsTable: List<WebElement>,
+    teamGameStats: ArrayList<SplPlayerStats>
+): ArrayList<SplPlayerStats> {
+    for ((i, player) in additionalStatsTable.withIndex()) {
+        val name = player.findElement(By.className("name")).text.uppercase()
+        val goldPerMin = player.findElement(By.className("gpm")).text.toInt()
+        val playerDamage = player.findElement(By.className("damage")).text
+        val playerDamageInt = playerDamage.replace(",", "").toInt()
+        val mitigatedDamage = player.findElement(By.className("dmg_mtgtd")).text
+        val mitigatedDamageInt = mitigatedDamage.replace(",", "").toInt()
+        val structureDamage = player.findElement(By.className("strct_dmg")).text
+        val structureDamageInt = structureDamage.replace(",", "").toInt()
+        val healing = player.findElement(By.className("healing")).text
+        val healingInt = healing.replace(",", "").toInt()
+        val wards = player.findElement(By.className("wards")).text.toInt()
+
+        val playerStats = teamGameStats[i]
+
+        if (playerStats.name == name) {
+            playerStats.goldPerMin = goldPerMin
+            playerStats.playerDamage = playerDamageInt
+            playerStats.mitigatedDamage = mitigatedDamageInt
+            playerStats.structureDamage = structureDamageInt
+            playerStats.healing = healingInt
+            playerStats.wards = wards
+        } else {
+            log.warn("Player $i in Additional Stats and Basic Stats names don't match")
+            log.info("Trying to find matching player in Basic Stats")
+            val playerStatsRetry = teamGameStats.find { it.name == name }
+            if (playerStatsRetry != null) {
+                playerStatsRetry.goldPerMin = goldPerMin
+                playerStatsRetry.playerDamage = playerDamageInt
+                playerStatsRetry.mitigatedDamage = mitigatedDamageInt
+                playerStatsRetry.structureDamage = structureDamageInt
+                playerStatsRetry.healing = healingInt
+                playerStatsRetry.wards = wards
+            } else {
+                log.error("Could not find player with name: $name in Basic Stats Player List")
+            }
+        }
+        log.debug(playerStats.toString())
     }
+    return teamGameStats
 }
