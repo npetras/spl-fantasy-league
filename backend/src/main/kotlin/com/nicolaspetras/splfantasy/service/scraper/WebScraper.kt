@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory
 import java.time.Duration
 
 
-val log: Logger = LoggerFactory.getLogger("WebScraper")
+val log: Logger = LoggerFactory.getLogger("com.nicolaspetras.splfantasy.service.scraper.WebScraper")
 
 const val SCHEDULE_XPATH = "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div[1]/div[2]"
 const val UNKNOWN = "UNKNOWN"
@@ -56,8 +56,8 @@ fun scrapeSplStats(): List<SplMatchStats> {
             val dateElement =
                 webDriver.findElements(By.xpath("$SCHEDULE_XPATH/div[${dayIndex + 1}]/div[1]"))
             val date = if (dateElement.isNotEmpty()) dateElement[0].text else UNKNOWN
-            log.info("Scraping day ${dayIndex + 1} - $date")
-            log.debug("Found ${matches.size} on day ${dayIndex + 1}")
+            log.info("Scraping Day ${dayIndex + 1} - $date")
+            log.debug("Found ${matches.size} matches on Day ${dayIndex + 1}")
             for ((matchIndex, _) in matches.withIndex()) {
                 val matchUpXpath =
                     "$SCHEDULE_XPATH/div[${dayIndex + 1}]/div[2]/div/div[2]/div[${matchIndex + 1}]/div[1]"
@@ -69,63 +69,67 @@ fun scrapeSplStats(): List<SplMatchStats> {
                     if (homeTeamElementSchedulePage.isNotEmpty()) homeTeamElementSchedulePage[0].text else UNKNOWN
                 val awayTeamSchedulePage =
                     if (awayTeamElementSchedulePage.isNotEmpty()) awayTeamElementSchedulePage[0].text else UNKNOWN
+
+                log.info("Scraping Match ${matchIndex + 1} - $homeTeamSchedulePage vs $awayTeamSchedulePage")
+
                 // button to open the match and game stats
                 val matchLinkXpath =
                     "$SCHEDULE_XPATH/div[${dayIndex + 1}]/div[2]/div/div[2]/div[${matchIndex + 1}]/div[3]/a"
+
                 if (openMatchStats(webDriver, actionProvider, js, matchLinkXpath)) {
-                    val homeTeamElementMatchPage =
-                        webDriver.findElements(By.xpath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/div/div[1]/div/strong"))
-                    val awayTeamElementMatchPage =
-                        webDriver.findElements(By.xpath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/div/div[3]/div/strong"))
-                    val homeTeamMatchPage =
-                        if (homeTeamElementMatchPage.isNotEmpty()) homeTeamElementMatchPage[0].text else UNKNOWN
-                    val awayTeamMatchPage =
-                        if (awayTeamElementMatchPage.isNotEmpty()) awayTeamElementMatchPage[0].text else UNKNOWN
-
-
-                    val noStatsForMatchXpath = "/html/body/div/div/div[1]/div/div[2]/h1"
-                    if (webDriver.findElements(By.xpath(noStatsForMatchXpath)).isEmpty()) {
-                        log.warn("No stats for match")
-                        continue
-                    } else if (homeTeamSchedulePage == UNKNOWN && homeTeamMatchPage == UNKNOWN) {
-                        log.error("No home team name on schedule or match page")
-                        continue
-                    } else if (awayTeamSchedulePage == UNKNOWN && awayTeamMatchPage == UNKNOWN) {
-                        log.error("No away team name on schedule or match page")
-                        continue
-                    } else {
-                        val homeTeam =
-                            if (homeTeamSchedulePage != UNKNOWN) {
-                                homeTeamSchedulePage
-                            } else {
-                                log.warn("Away team name is missing on schedule page, using name from match page: $homeTeamMatchPage")
-                                homeTeamMatchPage
-                            }
-                        val awayTeam = if (awayTeamSchedulePage != UNKNOWN) {
-                            awayTeamSchedulePage
-                        } else {
-                            log.warn("Away team name is missing on schedule page, using name from match page: $awayTeamMatchPage")
-                            awayTeamMatchPage
-                        }
-
-                        log.info("Scraping $homeTeam vs $awayTeam - day ${dayIndex + 1} match ${matchIndex + 1}")
-                        playerMatchStats.add(scrapeMatchStats(webDriver = webDriver, actionProvider = actionProvider, date = date, homeTeam = homeTeam, awayTeam = awayTeam))
-                    }
-                    webDriver.navigate().back()
+                    scrapeMatch(webDriver, matchIndex, playerMatchStats, actionProvider, date)
                 } else {
-                    log.warn("Cannot open match link for match and game stats for Day ${dayIndex + 1} Match ${matchIndex + 1} $homeTeamSchedulePage vs $awayTeamSchedulePage")
-                    break
+                    log.warn("Cannot open Match ${matchIndex + 1} - $homeTeamSchedulePage vs $awayTeamSchedulePage")
+                    continue
                 }
             }
         }
         return playerMatchStats
 
-    } catch (exception: Exception) {
-        log.error("No stats scraped - Fatal Exception caught: ${exception.message}")
-        return arrayListOf()
     } finally {
         webDriver.quit()
     }
+}
+
+private fun scrapeMatch(
+    webDriver: FirefoxDriver,
+    matchIndex: Int,
+    playerMatchStats: ArrayList<SplMatchStats>,
+    actionProvider: Actions,
+    date: String
+) {
+    val homeTeamElementMatchPage =
+        webDriver.findElements(By.xpath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/div/div[1]/div/strong"))
+    val awayTeamElementMatchPage =
+        webDriver.findElements(By.xpath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/div/div[3]/div/strong"))
+    val homeTeamMatchPage =
+        if (homeTeamElementMatchPage.isNotEmpty()) homeTeamElementMatchPage[0].text else UNKNOWN
+    val awayTeamMatchPage =
+        if (awayTeamElementMatchPage.isNotEmpty()) awayTeamElementMatchPage[0].text else UNKNOWN
+
+
+    val noStatsForMatchXpath = "/html/body/div/div/div[1]/div/div[2]/h1"
+    if (webDriver.findElements(By.xpath(noStatsForMatchXpath)).isNotEmpty()) {
+        log.error("No stats for Match ${matchIndex + 1}")
+        webDriver.navigate().back()
+        return
+    } else if (homeTeamMatchPage == UNKNOWN) {
+        log.error("No Home Team name on the Match page")
+    } else if (awayTeamMatchPage == UNKNOWN) {
+        log.error("No Away Team name on the Match page")
+    } else {
+        log.debug("Scraping Match Stats")
+        playerMatchStats.add(
+            scrapeMatchStats(
+                webDriver = webDriver,
+                actionProvider = actionProvider,
+                date = date,
+                homeTeam = homeTeamMatchPage,
+                awayTeam = awayTeamMatchPage
+            )
+        )
+    }
+    webDriver.navigate().back()
 }
 
 /**
@@ -157,78 +161,86 @@ private fun scrapeMatchStats(
     homeTeam: String,
     awayTeam: String,
 ): SplMatchStats {
-    // get the team name & match score
 
     val homeTeamScoreElement =
         webDriver.findElements(By.xpath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/div/div[2]/div[1]/div[1]"))
     val awayTeamScoreElement =
         webDriver.findElements(By.xpath("/html/body/div/div/div[1]/div/div[2]/div/div[1]/div/div[2]/div[1]/div[3]"))
-
-//    val homeTeamNameText = if(homeTeamNameElement.isNotEmpty()) homeTeamNameElement[0].text else UNKNOWN
-//    val awayTeamNameText = if(awayTeamNameElement.isNotEmpty()) awayTeamNameElement[0].text else UNKNOWN
-    // TODO: add verification on home scores/number of games
-    val homeTeamScoreInt =
-        if (homeTeamScoreElement.isNotEmpty()) homeTeamScoreElement[0].text.toInt() else 0
-    val awayTeamScoreInt =
-        if (awayTeamScoreElement.isNotEmpty()) awayTeamScoreElement[0].text.toInt() else 0
-
-//    log.info("Scraping $homeTeamNameText vs $awayTeamNameText")
-//    log.debug("Score: $homeTeamNameText $homeTeamScoreInt $awayTeamNameText $awayTeamScoreInt")
+    val homeTeamScore =
+        if (homeTeamScoreElement.isNotEmpty()) {
+            homeTeamScoreElement[0].text.toInt()
+        } else {
+            log.warn("Home Team Score is missing for $homeTeam, it will not be considered in the scoring calculation")
+            0
+        }
+    val awayTeamScore =
+        if (awayTeamScoreElement.isNotEmpty()) {
+            awayTeamScoreElement[0].text.toInt()
+        } else {
+            log.warn("Away Team Score is missing for $awayTeam, it will not be considered in the scoring calculation")
+            0
+        }
 
     // TODO: if you can't find number of games from scores - try and check it from game tabs
-    val numOfGames = homeTeamScoreInt + awayTeamScoreInt
-    log.debug("No. of Games: $numOfGames")
+    val numOfGames = homeTeamScore + awayTeamScore
+    log.debug("No. of Games: $numOfGames. Score $homeTeam $homeTeamScore - $awayTeamScore $awayTeam")
 
     val matchGames = arrayListOf<SplGameStats>()
 
     for (gameNum in 1..numOfGames) {
 
-        log.debug("Scraping Game $gameNum Stats")
+        log.info("Scraping Game $gameNum Stats")
 
         log.debug("Scraping Order Team Stats")
-        // Scrape stats for order team
-        val orderTeamStatsHeader =
-            webDriver.findElement(By.xpath("/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[1]/h2"))
-        val orderTeamText = orderTeamStatsHeader.text.substringBefore(" ")
-        val orderTeamBasicStatsXPath =
-            "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[1]/div/div/div"
-        val orderTeamBasicStats = scrapeBasicStats(
-            driver = webDriver,
-            xpath = orderTeamBasicStatsXPath,
-            teamName = orderTeamText
-        )
+        val orderTeamStatsHeaderElement =
+            webDriver.findElements(By.xpath("/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[1]/h2"))
+        val orderTeamText = if (orderTeamStatsHeaderElement.isNotEmpty()) orderTeamStatsHeaderElement[0].text.substringBefore(" ") else UNKNOWN
 
-        val orderTeamAdditionalStatsXPath =
-            "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[2]/div/table/tbody/tr"
-        val orderTeamAdditionalStatsTable =
-            webDriver.findElements(By.xpath(orderTeamAdditionalStatsXPath))
-        val orderTeamCompleteStats = scrapeAdditionalStats(
-            additionalStatsTable = orderTeamAdditionalStatsTable,
-            teamGameStats = orderTeamBasicStats
-        )
+//        if (orderTeamText != UNKNOWN) {
+            val orderTeamBasicStatsXPath =
+                "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[1]/div/div/div"
+            val orderTeamBasicStats = scrapeBasicStats(
+                driver = webDriver,
+                xpath = orderTeamBasicStatsXPath,
+                teamName = orderTeamText
+            )
 
-        // scrape stats for chaos team
+            val orderTeamAdditionalStatsXPath =
+                "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[2]/div/table/tbody/tr"
+            val orderTeamAdditionalStatsTable =
+                webDriver.findElements(By.xpath(orderTeamAdditionalStatsXPath))
+            val orderTeamCompleteStats = scrapeAdditionalStats(
+                additionalStatsTable = orderTeamAdditionalStatsTable,
+                teamGameStats = orderTeamBasicStats
+            )
+//        } else {
+//            log.error("Order Team Name is missing cannot scrape Order Team Stats")
+//        }
+
         log.debug("Scraping Chaos Team Stats")
-        val chaosTeam =
-            webDriver.findElement(By.xpath("""/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[3]/h2"""))
-        val chaosTeamText = chaosTeam.text.substringBefore(" ")
-        val chaosTeamBasicStatsXPath =
-            "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[4]/div/div/div"
-        val chaosTeamBasicStats = scrapeBasicStats(
-            driver = webDriver,
-            xpath = chaosTeamBasicStatsXPath,
-            teamName = chaosTeamText
-        )
+        val chaosTeamElement =
+            webDriver.findElements(By.xpath("/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[3]/h2"))
+        val chaosTeamText = if (chaosTeamElement.isNotEmpty()) chaosTeamElement[0].text.substringBefore(" ") else UNKNOWN
 
-        val chaosTeamAdditionalStatsXPath =
-            "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[5]/div/table/tbody/tr"
-        val chaosTeamAdditionalStatsTable =
-            webDriver.findElements(By.xpath(chaosTeamAdditionalStatsXPath))
+//        if (chaosTeamText != UNKNOWN) {
+            val chaosTeamBasicStatsXPath =
+                "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[4]/div/div/div"
+            val chaosTeamBasicStats = scrapeBasicStats(
+                driver = webDriver,
+                xpath = chaosTeamBasicStatsXPath,
+                teamName = chaosTeamText
+            )
 
-        val chaosTeamCompleteStats = scrapeAdditionalStats(
-            additionalStatsTable = chaosTeamAdditionalStatsTable,
-            teamGameStats = chaosTeamBasicStats
-        )
+            val chaosTeamAdditionalStatsXPath =
+                "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[5]/div/table/tbody/tr"
+            val chaosTeamAdditionalStatsTable =
+                webDriver.findElements(By.xpath(chaosTeamAdditionalStatsXPath))
+
+            val chaosTeamCompleteStats = scrapeAdditionalStats(
+                additionalStatsTable = chaosTeamAdditionalStatsTable,
+                teamGameStats = chaosTeamBasicStats
+            )
+//        }
 
         val game = SplGameStats(
             orderTeamName = enumValueOf(orderTeamText),
@@ -253,8 +265,8 @@ private fun scrapeMatchStats(
         date = date,
         homeTeamName = enumValueOf(homeTeam),
         awayTeamName = enumValueOf(awayTeam),
-        homeTeamScore = homeTeamScoreInt,
-        awayTeamScore = awayTeamScoreInt,
+        homeTeamScore = homeTeamScore,
+        awayTeamScore = awayTeamScore,
         games = matchGames
     )
 }
