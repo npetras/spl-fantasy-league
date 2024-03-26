@@ -1,6 +1,4 @@
-package com.nicolaspetras.splfantasy.model.stat.collection
-
-import com.nicolaspetras.splfantasy.model.SplTeamName
+package com.nicolaspetras.splfantasy.webscraper.model
 
 /**
  * The scraped stats for a particular game with [orderTeamName] and [orderTeamPlayerStats] (team with first pick playing

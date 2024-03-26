@@ -1,8 +1,8 @@
-package com.nicolaspetras.splfantasy.service.scraper
+package com.nicolaspetras.splfantasy.webscraper.service
 
-import com.nicolaspetras.splfantasy.model.stat.collection.SplGameStats
-import com.nicolaspetras.splfantasy.model.stat.collection.SplMatchStats
-import com.nicolaspetras.splfantasy.model.stat.collection.SplPlayerStats
+import com.nicolaspetras.splfantasy.webscraper.model.SplGameStats
+import com.nicolaspetras.splfantasy.webscraper.model.SplMatchStats
+import com.nicolaspetras.splfantasy.webscraper.model.SplPlayerStats
 import org.openqa.selenium.*
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.interactions.Actions
@@ -12,12 +12,10 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.Duration
 
-
 val log: Logger = LoggerFactory.getLogger("com.nicolaspetras.splfantasy.service.scraper.WebScraper")
 
 const val SCHEDULE_XPATH = "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div[1]/div[2]"
 const val UNKNOWN = "UNKNOWN"
-
 
 /**
  * Scrapes the stats from the Smite Pro website
