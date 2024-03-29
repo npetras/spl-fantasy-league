@@ -1,4 +1,4 @@
-package com.nicolaspetras.splfantasy.webscraper.model
+package com.nicolaspetras.splfantasy.statistics.model
 
 enum class SplTeamName {
     LVTHN,

@@ -1,8 +1,8 @@
-package com.nicolaspetras.splfantasy.webscraper.service
+package com.nicolaspetras.splfantasy.statistics.service
 
-import com.nicolaspetras.splfantasy.webscraper.model.SplGameStats
-import com.nicolaspetras.splfantasy.webscraper.model.SplMatchStats
-import com.nicolaspetras.splfantasy.webscraper.model.SplPlayerStats
+import com.nicolaspetras.splfantasy.statistics.model.SplGameStats
+import com.nicolaspetras.splfantasy.statistics.model.SplMatchStats
+import com.nicolaspetras.splfantasy.statistics.model.SplPlayerStats
 import org.openqa.selenium.*
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.interactions.Actions

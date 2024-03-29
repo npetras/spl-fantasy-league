@@ -1,7 +1,9 @@
-package com.nicolaspetras.splfantasy.webscraper.model
+package com.nicolaspetras.splfantasy.statistics.model
 
+import org.springframework.data.mongodb.core.mapping.Document
 import kotlin.collections.ArrayList
 
+@Document("splMatchStats")
 data class SplMatchStats(
     val date: String,
     val homeTeamName: SplTeamName,

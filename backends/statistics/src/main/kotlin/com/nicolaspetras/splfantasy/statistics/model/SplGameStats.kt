@@ -1,4 +1,4 @@
-package com.nicolaspetras.splfantasy.webscraper.model
+package com.nicolaspetras.splfantasy.statistics.model
 
 /**
  * The scraped stats for a particular game with [orderTeamName] and [orderTeamPlayerStats] (team with first pick playing
