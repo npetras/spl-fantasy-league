@@ -2,7 +2,9 @@ package com.nicolaspetras.splfantasy.statistics.service
 
 import com.nicolaspetras.splfantasy.statistics.model.SplGameStats
 import com.nicolaspetras.splfantasy.statistics.model.SplMatchStats
+import com.nicolaspetras.splfantasy.statistics.model.SplPlayer
 import com.nicolaspetras.splfantasy.statistics.model.SplPlayerStats
+import com.nicolaspetras.splfantasy.statistics.utilities.convertStringToLocalDate
 import org.openqa.selenium.*
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.interactions.Actions
@@ -259,25 +261,26 @@ private fun scrapeMatchStats(
         log.debug("Scraping Order Team Stats")
         val orderTeamStatsHeaderElement =
             webDriver.findElements(By.xpath("/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[1]/h2"))
-        val orderTeamText = if (orderTeamStatsHeaderElement.isNotEmpty()) orderTeamStatsHeaderElement[0].text.substringBefore(" ") else UNKNOWN
+        val orderTeamText =
+            if (orderTeamStatsHeaderElement.isNotEmpty()) orderTeamStatsHeaderElement[0].text.substringBefore(" ") else UNKNOWN
 
 //        if (orderTeamText != UNKNOWN) {
-            val orderTeamBasicStatsXPath =
-                "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[1]/div/div/div"
-            val orderTeamBasicStats = scrapeBasicStatsForGame(
-                driver = webDriver,
-                xpath = orderTeamBasicStatsXPath,
-                teamName = orderTeamText
-            )
+        val orderTeamBasicStatsXPath =
+            "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[1]/div/div/div"
+        val orderTeamBasicStats = scrapeBasicStatsForGame(
+            driver = webDriver,
+            xpath = orderTeamBasicStatsXPath,
+            teamName = orderTeamText
+        )
 
-            val orderTeamAdditionalStatsXPath =
-                "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[2]/div/table/tbody/tr"
-            val orderTeamAdditionalStatsTable =
-                webDriver.findElements(By.xpath(orderTeamAdditionalStatsXPath))
-            val orderTeamCompleteStats = scrapeAdditionalStatsForGame(
-                additionalStatsTable = orderTeamAdditionalStatsTable,
-                teamGameStats = orderTeamBasicStats
-            )
+        val orderTeamAdditionalStatsXPath =
+            "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[2]/div/table/tbody/tr"
+        val orderTeamAdditionalStatsTable =
+            webDriver.findElements(By.xpath(orderTeamAdditionalStatsXPath))
+        val orderTeamCompleteStats = scrapeAdditionalStatsForGame(
+            additionalStatsTable = orderTeamAdditionalStatsTable,
+            teamGameStats = orderTeamBasicStats
+        )
 //        } else {
 //            log.error("Order Team Name is missing cannot scrape Order Team Stats")
 //        }
@@ -285,26 +288,27 @@ private fun scrapeMatchStats(
         log.debug("Scraping Chaos Team Stats")
         val chaosTeamElement =
             webDriver.findElements(By.xpath("/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[3]/h2"))
-        val chaosTeamText = if (chaosTeamElement.isNotEmpty()) chaosTeamElement[0].text.substringBefore(" ") else UNKNOWN
+        val chaosTeamText =
+            if (chaosTeamElement.isNotEmpty()) chaosTeamElement[0].text.substringBefore(" ") else UNKNOWN
 
 //        if (chaosTeamText != UNKNOWN) {
-            val chaosTeamBasicStatsXPath =
-                "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[4]/div/div/div"
-            val chaosTeamBasicStats = scrapeBasicStatsForGame(
-                driver = webDriver,
-                xpath = chaosTeamBasicStatsXPath,
-                teamName = chaosTeamText
-            )
+        val chaosTeamBasicStatsXPath =
+            "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[4]/div/div/div"
+        val chaosTeamBasicStats = scrapeBasicStatsForGame(
+            driver = webDriver,
+            xpath = chaosTeamBasicStatsXPath,
+            teamName = chaosTeamText
+        )
 
-            val chaosTeamAdditionalStatsXPath =
-                "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[5]/div/table/tbody/tr"
-            val chaosTeamAdditionalStatsTable =
-                webDriver.findElements(By.xpath(chaosTeamAdditionalStatsXPath))
+        val chaosTeamAdditionalStatsXPath =
+            "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div/div[3]/div[2]/div[5]/div/table/tbody/tr"
+        val chaosTeamAdditionalStatsTable =
+            webDriver.findElements(By.xpath(chaosTeamAdditionalStatsXPath))
 
-            val chaosTeamCompleteStats = scrapeAdditionalStatsForGame(
-                additionalStatsTable = chaosTeamAdditionalStatsTable,
-                teamGameStats = chaosTeamBasicStats
-            )
+        val chaosTeamCompleteStats = scrapeAdditionalStatsForGame(
+            additionalStatsTable = chaosTeamAdditionalStatsTable,
+            teamGameStats = chaosTeamBasicStats
+        )
 //        }
 
         val game = SplGameStats(
@@ -326,8 +330,11 @@ private fun scrapeMatchStats(
         }
     }
 
+    val dateObject = convertStringToLocalDate(date)
     return SplMatchStats(
-        date = date,
+        date = dateObject,
+        originalDate = date,
+        splSplitOrTournament = "", // TODO: update once the website is available
         homeTeamName = enumValueOf(homeTeam),
         awayTeamName = enumValueOf(awayTeam),
         homeTeamScore = homeTeamScore,
@@ -367,9 +374,11 @@ private fun scrapeBasicStatsForGame(
             divNum += 4
 
             val playerStats = SplPlayerStats(
-                name = name.uppercase(),
-                splTeam = enumValueOf(teamName),
-                role = enumValueOf(role),
+                SplPlayer(
+                    name = name.uppercase(),
+                    team = enumValueOf(teamName),
+                    role = enumValueOf(role)
+                ),
                 kills = kills.toInt(),
                 deaths = deaths.toInt(),
                 assists = assists.toInt()
@@ -407,7 +416,7 @@ private fun scrapeAdditionalStatsForGame(
 
         val playerStats = teamGameStats[i]
 
-        if (playerStats.name == name) {
+        if (playerStats.splPlayer.name == name) {
             playerStats.goldPerMin = goldPerMin
             playerStats.playerDamage = playerDamageInt
             playerStats.mitigatedDamage = mitigatedDamageInt
@@ -417,7 +426,7 @@ private fun scrapeAdditionalStatsForGame(
         } else {
             log.warn("Player $i in Additional Stats and Basic Stats names don't match")
             log.info("Trying to find matching player in Basic Stats")
-            val playerStatsRetry = teamGameStats.find { it.name == name }
+            val playerStatsRetry = teamGameStats.find { it.splPlayer.name == name }
             if (playerStatsRetry != null) {
                 playerStatsRetry.goldPerMin = goldPerMin
                 playerStatsRetry.playerDamage = playerDamageInt

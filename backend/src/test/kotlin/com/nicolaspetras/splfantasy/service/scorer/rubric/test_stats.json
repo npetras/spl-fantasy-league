@@ -1,5 +1,7 @@
 {
-  "date": "Saturday, 21st October",
+  "date": "2024-10-21",
+  "originalDate": "Saturday, 21st October",
+  "splSplitOrTournament": "Road to Worlds",
   "homeTeamName": "ONI",
   "awayTeamName": "STYX",
   "homeTeamScore": 1,
@@ -10,9 +12,11 @@
       "chaosTeamName": "STYX",
       "orderTeamStats": [
         {
-          "name": "Netrioid",
-          "splTeam": "ONI",
-          "role": "CARRY",
+          "splPlayer": {
+            "name": "Netrioid",
+            "team": "ONI",
+            "role": "CARRY"
+          },
           "kills": 5,
           "deaths": 1,
           "assists": 7,
@@ -24,9 +28,11 @@
           "healing": 0
         },
         {
-          "name": "Genetics",
-          "splTeam": "ONI",
-          "role": "SUPPORT",
+          "splPlayer": {
+            "name": "Genetics",
+            "team": "ONI",
+            "role": "SUPPORT"
+          },
           "kills": 0,
           "deaths": 1,
           "assists": 12,
@@ -38,9 +44,11 @@
           "healing": 9566
         },
         {
-          "name": "Pegon",
-          "splTeam": "ONI",
-          "role": "MID",
+          "splPlayer": {
+            "name": "Pegon",
+            "team": "ONI",
+            "role": "MID"
+          },
           "kills": 7,
           "deaths": 0,
           "assists": 7,
@@ -52,9 +60,11 @@
           "healing": 302
         },
         {
-          "name": "Aror",
-          "splTeam": "STYX",
-          "role": "SUPPORT",
+          "splPlayer": {
+            "name": "Aror",
+            "team": "STYX",
+            "role": "SUPPORT"
+          },
           "kills": 2,
           "deaths": 6,
           "assists": 5,
@@ -66,9 +76,11 @@
           "healing": 0
         },
         {
-          "name": "SoloOrTroll",
-          "splTeam": "ONI",
-          "role": "SOLO",
+          "splPlayer": {
+            "name": "SoloOrTroll",
+            "team": "ONI",
+            "role": "SOLO"
+          },
           "kills": 1,
           "deaths": 6,
           "assists": 11,
@@ -82,9 +94,11 @@
       ],
       "chaosTeamStats": [
         {
-          "name": "CycloneSpin",
-          "splTeam": "STYX",
-          "role": "CARRY",
+          "splPlayer": {
+            "name": "CycloneSpin",
+            "team": "STYX",
+            "role": "CARRY"
+          },
           "kills": 0,
           "deaths": 2,
           "assists": 5,
@@ -96,9 +110,11 @@
           "healing": 0
         },
         {
-          "name": "Paul",
-          "splTeam": "STYX",
-          "role": "MID",
+          "splPlayer": {
+            "name": "Paul",
+            "team": "STYX",
+            "role": "MID"
+          },
           "kills": 0,
           "deaths": 2,
           "assists": 2,
@@ -110,9 +126,11 @@
           "healing": 0
         },
         {
-          "name": "Cyno",
-          "splTeam": "STYX",
-          "role": "JUNGLE",
+          "splPlayer": {
+            "name": "Cyno",
+            "team": "STYX",
+            "role": "JUNGLE"
+          },
           "kills": 0,
           "deaths": 2,
           "assists": 7,
@@ -124,9 +142,11 @@
           "healing": 0
         },
         {
-          "name": "Baskin",
-          "splTeam": "STYX",
-          "role": "SOLO",
+          "splPlayer": {
+            "name": "Baskin",
+            "team": "STYX",
+            "role": "SOLO"
+          },
           "kills": 8,
           "deaths": 3,
           "assists": 0,
@@ -138,9 +158,11 @@
           "healing": 0
         },
         {
-          "name": "Aror",
-          "splTeam": "STYX",
-          "role": "SUPPORT",
+          "splPlayer": {
+            "name": "Aror",
+            "team": "STYX",
+            "role": "SUPPORT"
+          },
           "kills": 2,
           "deaths": 6,
           "assists": 5,
