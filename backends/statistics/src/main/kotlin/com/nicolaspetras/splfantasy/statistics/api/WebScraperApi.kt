@@ -2,12 +2,14 @@ package com.nicolaspetras.splfantasy.statistics.api
 
 import com.nicolaspetras.splfantasy.statistics.model.SplMatchStats
 import com.nicolaspetras.splfantasy.statistics.model.`interface`.SplMatchStatsRepository
+import com.nicolaspetras.splfantasy.statistics.service.scrapeSplStats
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataAccessException
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.time.*
@@ -22,6 +24,7 @@ class WebScraperApi(
     /**
      * Returns the [SplMatchStats] for a specific timeframe.
      */
+    // TODO: update GET mapping URI to be /statistics/date-range
     @GetMapping("/match-stats/date-range")
     fun getMatchStatsForTimeframe(@RequestParam startDate: String, @RequestParam endDate: String): ResponseEntity<Any> {
         return try {
@@ -53,7 +56,7 @@ class WebScraperApi(
     /**
      * Returns all the statistics in the current season
      */
-    @GetMapping("/statistics/all-for-current-season")
+    @GetMapping("/statistics/season/latest")
     fun getAllStatisticsForSeason() {
         // return all the available data for the season
     }
@@ -61,8 +64,21 @@ class WebScraperApi(
     /**
      *
      */
-    @GetMapping("/statistics/all-for-current-split")
+    @GetMapping("/statistics/split/latest")
     fun getAllStatisticsForSplit() {
+
+    }
+
+    @PostMapping("/scrape/all")
+    fun postScrapeAllStats() {
+//        scrapeSplStats()
+    }
+
+    /**
+     * Check Database for the latest stats scraped, and scrape any stats after that date...
+     */
+    @PostMapping("/scrape/latest")
+    fun postScrapeLatestStats() {
 
     }
 }

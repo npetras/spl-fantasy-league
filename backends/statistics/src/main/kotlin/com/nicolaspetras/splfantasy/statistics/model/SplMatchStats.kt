@@ -19,7 +19,7 @@ import kotlin.collections.ArrayList
  */
 @Document("splMatchStats")
 data class SplMatchStats(
-    // TODO: add time to for multiple matches between teams in one day?
+    // TODO: add time too for multiple matches between teams in one day?
     val date: LocalDate,
     val originalDate: String,
     val splSplitOrTournament: String,
