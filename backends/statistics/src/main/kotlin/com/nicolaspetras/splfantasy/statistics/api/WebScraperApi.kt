@@ -20,6 +20,7 @@ class WebScraperApi(
 ) {
 
     val log: Logger = LoggerFactory.getLogger(javaClass)
+    val splMatchStats = scrapeSplStats()
 
     /**
      * Returns the [SplMatchStats] for a specific timeframe.

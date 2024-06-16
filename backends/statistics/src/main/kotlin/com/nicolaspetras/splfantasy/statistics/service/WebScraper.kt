@@ -7,6 +7,7 @@ import com.nicolaspetras.splfantasy.statistics.model.SplPlayerStats
 import com.nicolaspetras.splfantasy.statistics.utilities.convertStringToLocalDate
 import org.openqa.selenium.*
 import org.openqa.selenium.firefox.FirefoxDriver
+import org.openqa.selenium.firefox.FirefoxOptions
 import org.openqa.selenium.interactions.Actions
 import org.openqa.selenium.support.ui.Wait
 import org.openqa.selenium.support.ui.WebDriverWait
@@ -18,20 +19,21 @@ val log: Logger = LoggerFactory.getLogger("com.nicolaspetras.splfantasy.service.
 
 const val SCHEDULE_XPATH = "/html/body/div/div/div[1]/div/div[2]/div/div[2]/div[1]/div[2]"
 const val UNKNOWN = "UNKNOWN"
+const val URL = "https://www.smiteesports.com/schedule"
 
 /**
  * Scrapes the stats from the Smite Pro website
  * Scraping is done from the Schedule page, and scrapes all the games that have available stats
  */
 fun scrapeSplStats(): List<SplMatchStats> {
-//    val options = FirefoxOptions()
-//    options.addArguments("-headless");
-    val webDriver = FirefoxDriver()
+    val options = FirefoxOptions()
+    options.addArguments("--headless");
+    val webDriver = FirefoxDriver(options)
     webDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5))
 
     try {
         // got to schedule page, which includes results for each match
-        webDriver.get("https://www.smiteproleague.com/schedule")
+        webDriver.get(URL)
         val actionProvider = Actions(webDriver)
         val js: JavascriptExecutor = webDriver
 
