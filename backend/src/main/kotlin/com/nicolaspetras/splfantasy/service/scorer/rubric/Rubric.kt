@@ -27,7 +27,7 @@ abstract class Rubric {
             SmiteRole.CARRY -> hunterCalculator.calculatePoints(playerStats)
             else -> {
                 log.error("Invalid role type provided: $playerStats.role")
-                BigDecimal("-1.0")
+                BigDecimal("0.0")
             }
         }
     }

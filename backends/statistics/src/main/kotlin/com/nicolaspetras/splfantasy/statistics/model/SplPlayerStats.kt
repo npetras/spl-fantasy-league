@@ -1,10 +1,7 @@
 package com.nicolaspetras.splfantasy.statistics.model
 
 data class SplPlayerStats(
-    // TODO: replace name, splTeam, role with SplPlayer
-    val name: String = "",
-    val splTeam: SplTeamName = SplTeamName.NONE,
-    val role: SmiteRole = SmiteRole.NONE,
+    val splPlayer: SplPlayer = SplPlayer(),
     val kills: Int = 0,
     val deaths: Int = 0,
     val assists: Int = 0,
@@ -14,6 +11,4 @@ data class SplPlayerStats(
     var wards: Int = 0,
     var structureDamage: Int = 0,
     var healing: Int = 0
-) {
-
-}
+)
