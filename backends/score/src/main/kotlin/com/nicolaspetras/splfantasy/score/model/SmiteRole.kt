@@ -1,4 +1,4 @@
-package com.nicolaspetras.splfantasy.score.model.statistics
+package com.nicolaspetras.splfantasy.score.model
 
 /**
  * The role of the player on the website most commonly it will be one of: Solo, Jungle, Mid, Support or Carry.

@@ -1,5 +1,11 @@
 package com.nicolaspetras.splfantasy.score.model.statistics
 
+import com.nicolaspetras.splfantasy.score.model.SplPlayer
+
+/**
+ * Represents the statistics for a particular [SplPlayer] -- currently only used to represent the [SplPlayer]'s
+ * statistics for a single game, but is not restricted to this use case.
+ */
 data class SplPlayerStats(
     val splPlayer: SplPlayer = SplPlayer(),
     val kills: Int = 0,

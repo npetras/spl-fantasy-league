@@ -1,6 +1,6 @@
 package com.nicolaspetras.splfantasy.score.model.statistics
 
-import org.springframework.data.mongodb.core.mapping.Document
+import com.nicolaspetras.splfantasy.score.model.SplTeamName
 import java.time.LocalDate
 
 /**
