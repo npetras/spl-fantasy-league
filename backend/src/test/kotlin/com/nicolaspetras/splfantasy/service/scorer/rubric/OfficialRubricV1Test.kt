@@ -13,9 +13,9 @@ import java.math.RoundingMode
 /**
  * Tests for the scoring calculation of the [OfficialRubricV1] scoring rubric.
  *
- * The stats for the test below were taken from "SMITE Pro League Road to Worlds Week 5 : Oni Warriors vs Styx Ferrymen"
- * Game 1 of that set, which was played on 21st October 2023.
- * YouTube link for view of Game 1 stats: https://youtu.be/tdmIpzRiq40?si=qMzj-AUS4JNatp_0&t=4469
+ * The stats for the tests below were taken from game 1 of match "SMITE Pro League Road to Worlds Week 5 : Oni Warriors
+ * vs Styx Ferrymen" played on 21st October 2023.
+ * YouTube link with view of Game 1 stats: https://youtu.be/tdmIpzRiq40?si=qMzj-AUS4JNatp_0&t=4469
  */
 class OfficialRubricV1Test {
 

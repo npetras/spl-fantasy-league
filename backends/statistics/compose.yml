@@ -1,5 +1,6 @@
 version: '3.7'
 
+# containers use the implicit network created by compose
 services:
     mongodb:
         image: mongo:latest
@@ -13,3 +14,9 @@ services:
             - "27017:27017"
         volumes:
             - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+
+    spl-fantasy-statistics:
+        image: spl-fantasy-statistics
+        container_name: spl-fantasy-statistics
+        ports:
+            -   "8090:8090"
