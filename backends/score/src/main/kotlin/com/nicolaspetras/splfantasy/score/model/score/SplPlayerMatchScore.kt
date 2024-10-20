@@ -17,11 +17,16 @@ class SplPlayerMatchScore(
      */
     fun overallMatchScore(): BigDecimal {
         if (gameScores.isNotEmpty()) {
-            val cumlativeGameScore = gameScores.fold(BigDecimal.ZERO) { acc: BigDecimal, bigDecimal: BigDecimal -> acc + bigDecimal }
-            return cumlativeGameScore + matchBonusPts
+            val cumulativeGameScore = gameScores.fold(BigDecimal.ZERO) { acc: BigDecimal, bigDecimal: BigDecimal -> acc + bigDecimal }
+            return cumulativeGameScore + matchBonusPts
         } else {
             log.warn("Game scores are empty")
         }
         return BigDecimal.ZERO
     }
+
+    override fun toString(): String {
+        return "SplPlayerMatchScore(splPlayer=$splPlayer, gameScores=${gameScores.contentToString()}, matchBonusPts=$matchBonusPts)"
+    }
+
 }
