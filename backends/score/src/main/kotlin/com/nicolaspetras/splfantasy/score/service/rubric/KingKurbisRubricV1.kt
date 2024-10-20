@@ -3,6 +3,7 @@ package com.nicolaspetras.splfantasy.score.service.rubric
 import com.nicolaspetras.splfantasy.score.model.SmiteRole
 import com.nicolaspetras.splfantasy.score.model.SplPlayer
 import com.nicolaspetras.splfantasy.score.model.score.SplPlayerMatchScore
+import com.nicolaspetras.splfantasy.score.model.statistics.SplGameStats
 import com.nicolaspetras.splfantasy.score.model.statistics.SplPlayerStats
 import com.nicolaspetras.splfantasy.score.service.points.PlayerPointsCalculator
 import org.slf4j.LoggerFactory
@@ -118,8 +119,32 @@ class KingKurbisRubricV1 : Rubric() {
     override val hunterCalculator: PlayerPointsCalculator
         get() = carryCalculator
 
-    override fun calculateBonusPoints(splPlayerMatchStats: ArrayList<SplPlayerStats>, splPlayerMatchScores: ArrayList<SplPlayerMatchScore>) {
-        TODO("Not yet implemented")
+    /**
+     * Calculate (and award) all the bonus points for a single game
+     */
+    override fun calculateBonusPointsForGame(gameStats: SplGameStats, gameIndex: Int, homeTeamScores: ArrayList<SplPlayerMatchScore>, awayTeamScores: ArrayList<SplPlayerMatchScore>) {
+        // should this be changed with an error else?
+        val homeTeamStats = if (gameStats.orderTeamName == homeTeamScores.first().splPlayer.team) {
+            gameStats.orderTeamPlayerStats
+        } else {
+            gameStats.chaosTeamPlayerStats
+        }
+        val awayTeamStats = if (gameStats.orderTeamName == awayTeamScores.first().splPlayer.team) {
+            gameStats.orderTeamPlayerStats
+        } else {
+            gameStats.chaosTeamPlayerStats
+        }
+
+        // top assists on each team
+        awardTopAssistsGame(homeTeamStats, homeTeamScores, gameIndex)
+        awardTopAssistsGame(awayTeamStats, awayTeamScores, gameIndex)
+        // top assists in the game
+        awardTopAssistsGame(homeTeamStats.plus(awayTeamStats), homeTeamScores.plus(awayTeamScores), gameIndex)
+        // top damage on each team
+        awardTopDamageGame(homeTeamStats, homeTeamScores, gameIndex)
+        awardTopDamageGame(awayTeamStats, awayTeamScores, gameIndex)
+        // top kills in the game
+        awardTopKillsGame(homeTeamStats.plus(awayTeamStats), homeTeamScores.plus(awayTeamScores), gameIndex)
     }
 
     /**
@@ -129,15 +154,15 @@ class KingKurbisRubricV1 : Rubric() {
      * @param playerScores The player scores for the match that the [playerStats] relate to
      */
     fun awardTopAssistsGame(
-        playerStats: ArrayList<SplPlayerStats>,
-        playerScores: ArrayList<SplPlayerMatchScore>,
+        playerStats: List<SplPlayerStats>,
+        playerScores: List<SplPlayerMatchScore>,
         gameIndex: Int
     ) {
         val playerWithTopAssistsOnTeam = playerStats.maxBy { it.assists }.splPlayer
         if (playerWithTopAssistsOnTeam.role == SmiteRole.SUPPORT) {
             val playerMatchScore = playerScores.find { it.splPlayer == playerWithTopAssistsOnTeam }
             if (playerMatchScore != null) {
-                playerMatchScore.gameScores[gameIndex] = playerMatchScore.gameScores[gameIndex] + BigDecimal(TOP_ASSISTS_GAME.toString())
+                playerMatchScore.gameScores[gameIndex] += BigDecimal(TOP_ASSISTS_GAME.toString())
             } else {
                 log.error("Player: $playerWithTopAssistsOnTeam not found in $playerScores when awarding bonus point for top assists on team as support")
             }
@@ -148,8 +173,8 @@ class KingKurbisRubricV1 : Rubric() {
     }
 
     fun awardTopDamageGame(
-        playerStats: ArrayList<SplPlayerStats>,
-        playerScores: ArrayList<SplPlayerMatchScore>,
+        playerStats: List<SplPlayerStats>,
+        playerScores: List<SplPlayerMatchScore>,
         gameIndex: Int
     ) {
         val playerWithTopDamageGame = playerStats.maxBy { it.playerDamage }.splPlayer

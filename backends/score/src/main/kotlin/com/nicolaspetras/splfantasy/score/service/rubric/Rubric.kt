@@ -2,6 +2,7 @@ package com.nicolaspetras.splfantasy.score.service.rubric
 
 import com.nicolaspetras.splfantasy.score.model.SmiteRole
 import com.nicolaspetras.splfantasy.score.model.score.SplPlayerMatchScore
+import com.nicolaspetras.splfantasy.score.model.statistics.SplGameStats
 import com.nicolaspetras.splfantasy.score.model.statistics.SplPlayerStats
 import com.nicolaspetras.splfantasy.score.service.points.PlayerPointsCalculator
 
@@ -41,5 +42,5 @@ abstract class Rubric {
     /**
      *
      */
-    abstract fun calculateBonusPoints(splPlayerMatchStats: ArrayList<SplPlayerStats>, splPlayerMatchScores: ArrayList<SplPlayerMatchScore>);
+    abstract fun calculateBonusPointsForGame(gameStats: SplGameStats, gameIndex: Int, homeTeamScores: ArrayList<SplPlayerMatchScore>, awayTeamScores: ArrayList<SplPlayerMatchScore>);
 }

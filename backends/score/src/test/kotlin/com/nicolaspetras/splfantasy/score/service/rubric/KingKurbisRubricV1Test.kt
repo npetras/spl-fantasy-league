@@ -5,6 +5,7 @@ import com.nicolaspetras.splfantasy.score.model.SplPlayer
 import com.nicolaspetras.splfantasy.score.model.statistics.SplPlayerStats
 import com.nicolaspetras.splfantasy.score.model.SplTeamName
 import com.nicolaspetras.splfantasy.score.model.score.SplPlayerMatchScore
+import com.nicolaspetras.splfantasy.score.model.statistics.SplGameStats
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
@@ -251,4 +252,86 @@ class KingKurbisRubricV1Test {
         assertEquals(BigDecimal("17.0"), gamePlayerScores[2].gameScores[0])
     }
 
+    /**
+     * - Support on order team with top assists in game
+     * - Support on chaos team top assists on team
+     * - Mid laner on order team top damage on team
+     * - Solo laner on chaos team top damage on team
+     * - Solo laner on chaos team with top kills in game
+     */
+    @Test
+    fun `test calculateBonusPointsForGame for a`() {
+        // order team
+        val pegonGame1Stats = SplPlayerStats(
+            splPlayer = SplPlayer(name = "Pegon", team = SplTeamName.ONI, role = SmiteRole.MID),
+            kills = 7,
+            deaths = 0,
+            assists = 7,
+            playerDamage = 44_144
+        )
+        val geneticsGame1Stats = SplPlayerStats(
+            splPlayer = SplPlayer(name = "Genetics", team = SplTeamName.ONI, role = SmiteRole.SUPPORT),
+            kills = 0,
+            deaths = 1,
+            assists = 12,
+            playerDamage = 5_099
+        )
+
+        // chaos team
+        val baskinGame1Stats = SplPlayerStats(
+            splPlayer = SplPlayer(name = "Baskin", team = SplTeamName.STYX, role = SmiteRole.SOLO),
+            kills = 8,
+            deaths = 3,
+            assists = 0,
+            playerDamage = 44_292
+        )
+        val arorGame1Stats = SplPlayerStats(
+            splPlayer = SplPlayer(name = "Aror", team= SplTeamName.STYX, role = SmiteRole.SUPPORT),
+            kills = 2,
+            deaths = 6,
+            assists = 5,
+            playerDamage = 18_528
+        )
+
+        // game stats
+        val gameStats = SplGameStats(
+            orderTeamName = SplTeamName.ONI,
+            chaosTeamName = SplTeamName.STYX,
+            orderTeamPlayerStats = arrayListOf<SplPlayerStats>(pegonGame1Stats, geneticsGame1Stats),
+            chaosTeamPlayerStats = arrayListOf<SplPlayerStats>(baskinGame1Stats, arorGame1Stats)
+        )
+        //home team scores
+        val homeTeamScores = arrayListOf<SplPlayerMatchScore>(
+            SplPlayerMatchScore(
+                splPlayer = SplPlayer(name = "Baskin", team = SplTeamName.STYX, role = SmiteRole.SOLO),
+                gameScores = arrayOf(BigDecimal("17.4292"))),
+            SplPlayerMatchScore(
+                splPlayer = SplPlayer(name = "Aror", team= SplTeamName.STYX, role = SmiteRole.SUPPORT),
+                gameScores = arrayOf(BigDecimal("2.1396"))
+            )
+        )
+        // away team scores
+        val awayTeamScores = arrayListOf<SplPlayerMatchScore>(
+            SplPlayerMatchScore(
+                splPlayer = SplPlayer(name = "Pegon", team = SplTeamName.ONI, role = SmiteRole.MID),
+                gameScores = arrayOf(BigDecimal("22.6144"))
+            ),
+            SplPlayerMatchScore(
+                splPlayer = SplPlayer(name = "Genetics", team = SplTeamName.ONI, role = SmiteRole.SUPPORT),
+                gameScores = arrayOf(BigDecimal("8.382425"))
+            )
+        )
+
+        val kingKurbisRubricV1 = KingKurbisRubricV1()
+        kingKurbisRubricV1.calculateBonusPointsForGame(gameStats = gameStats, gameIndex = 0, homeTeamScores = homeTeamScores, awayTeamScores = awayTeamScores)
+        // bonus pt for top kills game, top kills game as solo, and top damage team
+        assertEquals(BigDecimal("20.4292"), homeTeamScores[0].gameScores[0]) // baskin
+        // top assist team (support)
+        assertEquals(BigDecimal("3.1396"), homeTeamScores[1].gameScores[0]) // aror
+        // top damage team
+        assertEquals(BigDecimal("23.6144"), awayTeamScores[0].gameScores[0]) // pegon
+        // top assist team & game (support)
+        assertEquals(BigDecimal("10.382425"), awayTeamScores[1].gameScores[0]) // genetics
+
+    }
 }
