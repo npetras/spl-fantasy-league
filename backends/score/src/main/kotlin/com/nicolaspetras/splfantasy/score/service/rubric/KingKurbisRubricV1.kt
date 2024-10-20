@@ -48,7 +48,8 @@ const val HEALING_PTS = 0.0001
 // bonus points
 const val TOP_ASSISTS_GAME = 1.0                 // game or team
 const val TOP_DAMAGE_GAME = 1.0
-const val TOP_KILLS_MATCH = 1.0
+const val TOP_KILLS_GAME = 1.0
+const val TOP_KILLS_GAME_SOLO = 1.0
 
 /**
  * Scoring Rubric used in the Smite Pro League Fantasy server from around 2021 to 2023 that was administered and run
@@ -187,14 +188,18 @@ class KingKurbisRubricV1 : Rubric() {
     }
 
     fun awardTopKillsGame(
-        playerStats: ArrayList<SplPlayerStats>,
-        playerScores: ArrayList<SplPlayerMatchScore>,
+        playerStats: List<SplPlayerStats>,
+        playerScores: List<SplPlayerMatchScore>,
         gameIndex: Int,
     ) {
         val playerWithTopKillsGame = playerStats.maxBy { it.kills }.splPlayer
         val playerMatchScore = playerScores.find { it.splPlayer == playerWithTopKillsGame }
         if (playerMatchScore != null) {
-            playerMatchScore.gameScores[gameIndex] += BigDecimal(TOP_KILLS_MATCH.toString())
+            playerMatchScore.gameScores[gameIndex] += BigDecimal(TOP_KILLS_GAME.toString())
+            // solo laners with top kills get an extra bonus point
+            if (playerMatchScore.splPlayer.role == SmiteRole.SOLO) {
+                playerMatchScore.gameScores[gameIndex] += BigDecimal(TOP_KILLS_GAME_SOLO.toString())
+            }
         } else {
             log.error("Player: $playerWithTopKillsGame not found in $playerScores when awarding bonus point for top kills in game")
 

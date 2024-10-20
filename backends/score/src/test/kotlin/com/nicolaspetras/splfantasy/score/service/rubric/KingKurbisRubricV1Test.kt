@@ -194,7 +194,7 @@ class KingKurbisRubricV1Test {
      * Tests [KingKurbisRubricV1.awardTopDamageGame]. Stats from Game 1
      */
     @Test
-    fun `test top kill bonus points per game for team - Pegon has top kills`() {
+    fun `test top kill bonus points per game for team - mid laner has top kills`() {
         val pegonGame1Stats = SplPlayerStats(
             splPlayer = SplPlayer(name = "Pegon", team = SplTeamName.ONI, role = SmiteRole.MID),
             kills = 7,
@@ -222,7 +222,7 @@ class KingKurbisRubricV1Test {
      * Tests [KingKurbisRubricV1.awardTopDamageGame]. Stats from Game 1
      */
     @Test
-    fun `test top kill bonus points per game all players - Baskin has top kills`() {
+    fun `test top kill bonus points per game all players - solo laner has top kills`() {
         val pegonGame1Stats = SplPlayerStats(
             splPlayer = SplPlayer(name = "Pegon", team = SplTeamName.ONI, role = SmiteRole.MID),
             kills = 7,
@@ -231,12 +231,12 @@ class KingKurbisRubricV1Test {
             splPlayer = SplPlayer(name = "Netrioid", team = SplTeamName.ONI, role = SmiteRole.CARRY),
             kills = 5,
         )
-        val baskinGame1Stat = SplPlayerStats(
+        val baskinGame1Stats = SplPlayerStats(
             splPlayer = SplPlayer(name = "Baskin", team = SplTeamName.STYX, role = SmiteRole.SOLO),
             kills = 8,
         )
 
-        val gamePlayerStats = arrayListOf(pegonGame1Stats, netrioidGame1Stats, baskinGame1Stat)
+        val gamePlayerStats = arrayListOf(pegonGame1Stats, netrioidGame1Stats, baskinGame1Stats)
         // given gameScores
         val gamePlayerScores = arrayListOf<SplPlayerMatchScore>(
             SplPlayerMatchScore(SplPlayer(name = "Pegon", SplTeamName.ONI, role = SmiteRole.MID), gameScores = arrayOf(BigDecimal("17.5"))),
@@ -249,7 +249,7 @@ class KingKurbisRubricV1Test {
         // Genetics awarded an extra point for assist the others stay the same
         assertEquals(BigDecimal("17.5"), gamePlayerScores[0].gameScores[0])
         assertEquals(BigDecimal("12.5"), gamePlayerScores[1].gameScores[0])
-        assertEquals(BigDecimal("17.0"), gamePlayerScores[2].gameScores[0])
+        assertEquals(BigDecimal("18.0"), gamePlayerScores[2].gameScores[0])
     }
 
     /**
